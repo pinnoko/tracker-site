@@ -92,6 +92,25 @@ li.drop-a{box-shadow:0 2px 0 var(--ac)}
 .au .row .btn{flex:1}
 .err{color:var(--no);min-height:1.3em;margin:0 0 8px;font-size:13px}
 .lnk{margin-top:14px;border:0;background:none;color:var(--mu);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
+li{flex-wrap:wrap}
+.nw{position:relative;flex:1;min-width:0;display:flex}
+.nw .tn{flex:1;min-width:0}
+.nb{position:absolute;right:2px;top:50%;transform:translateY(-50%);border:0;background:var(--sf);color:var(--mu);border-radius:6px;padding:2px 6px;font:inherit;cursor:pointer;opacity:.4}
+@media (hover:hover){.nb{opacity:0}li:hover .nb,.nb:focus-visible{opacity:1}}
+.nb.has{opacity:1;color:var(--ac)}
+.nw:hover .tn,.nw:focus-within .tn,.nw:has(.nb.has) .tn{padding-right:30px}
+.hr input{width:42px}
+.nt{flex:0 0 100%;padding:0 0 6px 46px}
+.nt textarea{width:100%;resize:vertical;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px}
+.tb{display:flex;flex-wrap:wrap;align-items:center;gap:4px;padding:0 12px 8px;font-size:12.5px}
+.tl{border:0;background:none;color:var(--mu);font:inherit;font-weight:500;cursor:pointer;padding:3px 6px;border-radius:6px}
+.tl:hover{color:var(--tx);background:var(--bg)}
+.sw{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--mu);cursor:pointer}
+.sw input{accent-color:var(--ac);margin:0}
+.al{flex:0 0 100%;padding:0 0 4px 46px;margin-top:-3px}
+.ap{border:1px dashed var(--mu);border-radius:99px;background:none;color:var(--mu);font:inherit;font-size:12px;font-weight:500;padding:2px 10px;cursor:pointer}
+.ap:hover{border-color:var(--ac);color:var(--ac)}
+.ap.on{border:1px solid var(--ac);color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);font-weight:600}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -115,14 +134,14 @@ const $=id=>document.getElementById(id),KEY='study-tracker-v1',uid=()=>Math.rand
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const seed=()=>[
- mk('англ мова','#eda53a',[]),
- mk('Шрифти','#4a6cf0',[['Грецький абетка',2,2],['Грецький стилізація',2,2],['Капітально-квадратний абетка',2,2],['Капітально-квадратний стилізація',2,2]]),
- mk('Нагріній Візуальна комунікація','#1fb5a3',[['Завдання 1',0,2],['Завдання 2',0,1],['Завдання 3',0,0]]),
- mk('історія','#4cb85a',[]),
- mk('основи здоров’я','#e86aa0',[['шпалера',2,2]]),
- mk('ОВМ','#8a63dc',[['1 живопис',0,2],['2 живопис',0,1],['1 рисунок',0,2],['2 рисунок',0,1],['дз',0,0]]),
- mk('проєктування','#29a6dc',[['1 завдання',2,2],['2 завдання',1,2],['3 завдання',5,2]]),
- mk('Комп графіув','#e5584a',Array.from({length:8},(_,i)=>['Завдання '+(i+1),0,2]))
+ mk('Шрифти','#4a6cf0',[['Грецький абетка',2,0],['Грецький стилізація',2,0],['Капітально-квадратний абетка',2,0],['Капітально-квадратний стилізація',2,0],['Унціал абетка',0,0],['Унціал стилізація',0,0],['Готика абетка',0,0],['Готика стилізація',0,0],['Устав абетка',0,0],['Устав стилізація',0,0],['Півустав абетка',0,0],['Півустав стилізація',0,0],['В’язь абетка',0,0],['В’язь стилізація',0,0],['Скоропис абетка',0,0],['Скоропис стилізація',0,0]]),
+ mk('Нагріній Візуальна комунікація','#1fb5a3',[['Завдання 1',0,0],['Завдання 2',0,0],['Завдання 3',0,0]]),
+ mk('Основи здоров’я','#e86aa0',[['шпалера',2,0]]),
+ mk('ОВМ','#8a63dc',[['1 живопис',0,0],['2 живопис',0,0],['1 рисунок',0,0],['2 рисунок',0,0],['дз',0,0]]),
+ mk('Проєктування','#29a6dc',[['1 завдання',2,0],['2 завдання',1,0],['3 завдання',5,0]]),
+ mk('Комп’ютерна графіка','#e5584a',Array.from({length:8},(_,i)=>['Завдання '+(i+1),0,0])),
+ mk('Англ мова','#eda53a',[]),
+ mk('Історія','#4cb85a',[])
 ];
 let S,q='',fl='all',pend=null;
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
@@ -130,21 +149,26 @@ if(!Array.isArray(S))S=seed();
 const PM={'#f0b44c':'#eda53a','#3b78d8':'#4a6cf0','#f2c13a':'#1fb5a3','#22c55e':'#4cb85a','#e58fa5':'#e86aa0','#8e7cc3':'#8a63dc','#f09a4a':'#29a6dc','#e05d5d':'#e5584a'};
 S.forEach(s=>{s.color=PM[s.color]||s.color});
 const lsave=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},save=()=>{lsave();push()};
-const OPEN=new Set(),LIM=6;
-const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);return{n:a.length,d:d.length,h:f(a),dh:f(d)}};
+const OPEN=new Set(),OPENN=new Set(),LIM=6;
+const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);return{n:a.length,d:d.length,ap:a.filter(x=>x.a).length,h:f(a),dh:f(d)}};
 const fh=n=>Math.round(n*10)/10+' год',pc=o=>o.n?Math.round(o.d/o.n*100):0;
-const mt=o=>`<span>${o.d} з ${o.n} завдань</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
+const mt=(o,s)=>`<span>${o.d} з ${o.n} завдань${s&&s.ap!==false&&o.n?`, затверджено ${o.ap}`:''}</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
+const tb=(s,ap)=>`<div class="tb">${s.tasks.length?'<button class="tl" data-act="all">Відмітити все</button><button class="tl" data-act="none">Зняти все</button>':''}<label class="sw"><input type="checkbox" data-f="ap"${ap?' checked':''}>Затвердження</label></div>`;
 const sum=()=>{const o=st(S.flatMap(s=>s.tasks));$('sum').innerHTML=`<div class="tile"><small>Загальний прогрес</small><b>${pc(o)}%</b><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><small>Виконано завдань</small><b>${o.d}</b> <span class="mu">з ${o.n}</span></div><div class="tile"><small>Годин виконано</small><b>${fh(o.dh)}</b></div><div class="tile"><small>Годин залишилось</small><b>${fh(o.h-o.dh)}</b></div>`};
 const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
 const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
-const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM);return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div><ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button></li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div></section>`};
-function render(){sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
-const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color)};
+const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false;return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div></section>`};
+function render(){S=[...S.filter(s=>s.tasks.length),...S.filter(s=>!s.tasks.length)];sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
+const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o,s);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color)};
 const G=$('grid');
 G.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b)return;
  const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
  if(a=='st')t.s=(t.s+1)%3;
+ else if(a=='ap')t.a=!t.a;
+ else if(a=='all')s.tasks.forEach(x=>x.s=2);
+ else if(a=='none')s.tasks.forEach(x=>x.s=0);
+ else if(a=='note'){OPENN.has(t.id)?OPENN.delete(t.id):OPENN.add(t.id);render();const n=G.querySelector(`[data-tid="${t.id}"] textarea`);n&&n.focus();return}
  else if(a=='more'){OPEN.has(s.id)?OPEN.delete(s.id):OPEN.add(s.id);render();return}
  else if(a=='delt')s.tasks=s.tasks.filter(x=>x!=t);
  else if(a=='delsub'){
@@ -162,7 +186,8 @@ G.addEventListener('change',e=>{
  const s=S.find(x=>x.id==sc.dataset.sid),li=el.closest('[data-tid]');
  if(f=='name')s.name=el.value.trim()||s.name;
  else if(f=='color')s.color=el.value;
- else{const t=s.tasks.find(x=>x.id==li.dataset.tid);if(f=='h')t.h=Math.max(0,+el.value||0);else t.t=el.value.trim()||t.t}
+ else if(f=='ap'){s.ap=el.checked;save();render();return}
+ else{const t=s.tasks.find(x=>x.id==li.dataset.tid);if(f=='h')t.h=Math.max(0,+el.value||0);else if(f=='n'){t.n=el.value.trim();const nb=li.querySelector('.nb');nb&&nb.classList.toggle('has',!!t.n)}else t.t=el.value.trim()||t.t}
  save();upd(sc,s);sum()});
 G.addEventListener('keydown',e=>{
  const gh=e.target.closest('.gh');
@@ -210,7 +235,7 @@ $('seg').onclick=e=>{const b=e.target.closest('[data-fl]');if(!b)return;fl=b.dat
 $('th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark'};
 $('bkb').onclick=()=>{const b=$('bk');b.hidden=!b.hidden;$('bt').value=JSON.stringify(S,null,1)};
 $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)||!d.every(s=>s&&s.name&&Array.isArray(s.tasks)))throw 0;
- S=d.map(s=>({id:s.id||uid(),name:String(s.name),color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#4f5bd5',tasks:s.tasks.map(t=>({id:t.id||uid(),t:String(t.t),h:+t.h||0,s:+t.s||0}))}));
+ S=d.map(s=>({id:s.id||uid(),name:String(s.name),color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#4f5bd5',tasks:s.tasks.map(t=>({id:t.id||uid(),t:String(t.t),h:+t.h||0,s:+t.s||0,a:!!t.a,n:String(t.n||'')})),ap:s.ap!==false}));
  save();render();$('bk').hidden=true}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
 render();
 /* ===== Синхронізація через Supabase ===== */
