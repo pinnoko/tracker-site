@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Навчальний трекер</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f5fa;--sf:#fff;--tx:#151a2d;--mu:#677089;--ln:#e5e8f1;--ac:#4f5bd5;--ok:#1f9d6b;--wip:#e08e2b;--no:#e0485a;--tt:16%;--sh:0 1px 2px rgba(21,26,45,.05),0 8px 20px -10px rgba(21,26,45,.12);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.w{max-width:1280px;margin:0 auto;padding:28px 20px 56px}
+.top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:28px;letter-spacing:-.025em;margin:0}
+.sub{color:var(--mu);margin:2px 0 0}
+.btn{border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:10px;padding:8px 14px;font:inherit;font-weight:500;cursor:pointer}
+.btn:hover{border-color:var(--ac)}
+.btn.p{background:var(--ac);border-color:var(--ac);color:var(--bg)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px}
+.tile{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;box-shadow:var(--sh)}
+.tile small{color:var(--mu);font-weight:500;display:block;margin-bottom:2px}
+.tile b{font-size:28px;letter-spacing:-.025em}
+.mu{color:var(--mu)}
+.pb{height:8px;border-radius:99px;background:var(--ln);overflow:hidden}
+.pb i{display:block;height:100%;border-radius:inherit;background:var(--ac);transition:width .3s}
+.tools{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.tools input{flex:1 1 220px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:10px;padding:9px 14px;font:inherit}
+.seg{display:flex;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:3px;gap:2px;overflow-x:auto}
+.seg button{border:0;background:none;color:var(--mu);padding:6px 12px;border-radius:8px;font:inherit;font-weight:500;cursor:pointer;white-space:nowrap}
+.seg .on{background:var(--ac);color:var(--bg)}
+.grid{columns:330px;column-gap:16px}
+.card{display:inline-block;width:100%;margin:0 0 16px;break-inside:avoid;background:var(--sf);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--sh);overflow:hidden;--c:var(--ac)}
+.card::before{content:"";display:block;height:4px;background:var(--c)}
+.ch{display:flex;align-items:center;gap:8px;padding:10px 10px 10px 14px;background:color-mix(in srgb,var(--c) var(--tt),var(--sf))}
+.clr{width:24px;height:24px;border:0;padding:0;background:none;border-radius:50%;cursor:pointer;flex:none}
+.clr::-webkit-color-swatch-wrapper{padding:0}
+.clr::-webkit-color-swatch{border:0;border-radius:50%}
+.clr::-moz-color-swatch{border:0;border-radius:50%}
+.nm{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:600 16px Inter,system-ui,sans-serif;padding:4px 6px;border-radius:6px}
+input:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+
+.meta{display:flex;justify-content:space-between;gap:8px;color:var(--mu);font-size:12.5px;padding:12px 16px 6px}
+.card .pb{margin:0 16px 8px;height:6px}
+.card .pb i{background:var(--c)}
+ul{list-style:none;margin:0;padding:0 10px}
+li{display:flex;align-items:center;gap:8px;padding:6px 4px;border-top:1px solid var(--ln)}
+.st{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid var(--no);background:none;cursor:pointer;position:relative;padding:0}
+.s1 .st{border-color:var(--wip);background:linear-gradient(90deg,var(--wip) 50%,transparent 50%)}
+.s2 .st{border-color:var(--ok);background:var(--ok)}
+.s2 .st::after{content:"";position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.s2 .tn{color:var(--mu);text-decoration:line-through}
+.tn,.hr input,.add input{border:1px solid transparent;background:none;color:var(--tx);font:inherit;border-radius:6px;padding:5px 6px;min-width:0}
+.tn{flex:1}
+.hr{display:flex;align-items:center;gap:2px;color:var(--mu);font-size:12px}
+.hr input{width:50px;text-align:right}
+.tn:hover,.hr input:hover{border-color:var(--ln)}
+input[type=number]{-moz-appearance:textfield}
+input::-webkit-inner-spin-button{display:none}
+.ib{border:0;background:none;color:var(--mu);cursor:pointer;border-radius:6px;padding:4px 6px;font:inherit}
+.ib:hover{color:var(--no)}
+.ch .ib{color:var(--mu)}
+.ib.arm{color:var(--no);background:var(--sf);font-weight:600}
+.add{display:flex;gap:6px;padding:10px 14px 14px;border-top:1px solid var(--ln)}
+.add input{border-color:var(--ln);flex:1}
+.add input[type=number]{flex:none;width:62px}
+.add .clr{flex:none;width:34px;height:34px;border:0;border-radius:8px}
+.empty{color:var(--mu);padding:10px 4px;border-top:1px solid var(--ln)}
+.more{display:block;width:calc(100% - 20px);margin:2px 10px 10px;border:1px dashed var(--ln);background:none;color:var(--mu);border-radius:8px;padding:6px;font:inherit;font-weight:500;cursor:pointer}
+.more:hover{color:var(--tx);border-color:var(--c)}
+.gh{flex:none;width:12px;height:18px;color:var(--mu);background:radial-gradient(circle,currentColor 1.3px,transparent 1.7px) 0 0/6px 6px;opacity:.5;cursor:grab;touch-action:none;border-radius:3px}
+.gh:hover,.gh:focus-visible{opacity:1}
+.gh:focus-visible{outline:2px solid var(--ac);outline-offset:3px}
+.dragging{opacity:.35}
+body.dn,body.dn *{cursor:grabbing!important;user-select:none;-webkit-user-select:none}
+.ghost{position:fixed;z-index:100;margin:0;pointer-events:none;background:var(--sf);border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.28)}
+li.ghost{border:1px solid var(--ln);padding:6px 8px}
+li.drop-b{box-shadow:0 -2px 0 var(--ac)}
+li.drop-a{box-shadow:0 2px 0 var(--ac)}
+.card.drop-b{box-shadow:0 -8px 0 -4px var(--ac)}
+.card.drop-a{box-shadow:0 8px 0 -4px var(--ac)}
+.card.drop-in{outline:2px solid var(--ac);outline-offset:-2px}
+#bk textarea{width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace}
+@media (prefers-reduced-motion:reduce){.pb i{transition:none}}
+.au{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;background:var(--bg)}
+.au[hidden]{display:none}
+.au .tile{width:min(100%,380px)}
+.au h2{margin:0 0 4px;font-size:22px;letter-spacing:-.02em}
+.au input{display:block;width:100%;margin:0 0 10px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:10px;padding:10px 12px;font:inherit}
+.au .row{display:flex;gap:8px}
+.au .row .btn{flex:1}
+.err{color:var(--no);min-height:1.3em;margin:0 0 8px;font-size:13px}
+.lnk{margin-top:14px;border:0;background:none;color:var(--mu);font:inherit;cursor:pointer;text-decoration:underline;padding:0}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+</head>
+<body>
+<div class="au" id="au" hidden><div class="tile"><h2>Навчальний трекер</h2><p class="sub" style="margin:0 0 16px">Увійдіть, щоб предмети й завдання синхронізувалися між усіма вашими пристроями.</p><input id="ae" type="email" placeholder="Пошта" autocomplete="email"><input id="ap" type="password" placeholder="Пароль, від 6 символів" autocomplete="current-password"><p class="err" id="ar" role="alert"></p><div class="row"><button class="btn p" id="si">Увійти</button><button class="btn" id="su">Створити акаунт</button></div><button class="lnk" id="skip">Без акаунта, дані лише в цьому браузері</button></div></div>
+<div class="w">
+<div class="top">
+ <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="sy" class="mu"></span><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="out" hidden>Вийти</button></div>
+</div>
+<div class="tile" id="bk" hidden style="margin-bottom:18px"><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
+<div class="tiles" id="sum"></div>
+<div class="tools">
+ <input type="search" id="q" placeholder="Пошук за завданням або предметом">
+ <div class="seg" id="seg"><button data-fl="all" class="on">Усі</button><button data-fl="0">Не виконані</button><button data-fl="1">В процесі</button><button data-fl="2">Виконані</button></div>
+</div>
+<div class="grid" id="grid"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id),KEY='study-tracker-v1',uid=()=>Math.random().toString(36).slice(2,9);
+const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
+const seed=()=>[
+ mk('англ мова','#eda53a',[]),
+ mk('Шрифти','#4a6cf0',[['Грецький абетка',2,2],['Грецький стилізація',2,2],['Капітально-квадратний абетка',2,2],['Капітально-квадратний стилізація',2,2]]),
+ mk('Нагріній Візуальна комунікація','#1fb5a3',[['Завдання 1',0,2],['Завдання 2',0,1],['Завдання 3',0,0]]),
+ mk('історія','#4cb85a',[]),
+ mk('основи здоров’я','#e86aa0',[['шпалера',2,2]]),
+ mk('ОВМ','#8a63dc',[['1 живопис',0,2],['2 живопис',0,1],['1 рисунок',0,2],['2 рисунок',0,1],['дз',0,0]]),
+ mk('проєктування','#29a6dc',[['1 завдання',2,2],['2 завдання',1,2],['3 завдання',5,2]]),
+ mk('Комп графіув','#e5584a',Array.from({length:8},(_,i)=>['Завдання '+(i+1),0,2]))
+];
+let S,q='',fl='all',pend=null;
+try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!Array.isArray(S))S=seed();
+const PM={'#f0b44c':'#eda53a','#3b78d8':'#4a6cf0','#f2c13a':'#1fb5a3','#22c55e':'#4cb85a','#e58fa5':'#e86aa0','#8e7cc3':'#8a63dc','#f09a4a':'#29a6dc','#e05d5d':'#e5584a'};
+S.forEach(s=>{s.color=PM[s.color]||s.color});
+const lsave=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},save=()=>{lsave();push()};
+const OPEN=new Set(),LIM=6;
+const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);return{n:a.length,d:d.length,h:f(a),dh:f(d)}};
+const fh=n=>Math.round(n*10)/10+' год',pc=o=>o.n?Math.round(o.d/o.n*100):0;
+const mt=o=>`<span>${o.d} з ${o.n} завдань</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
+const sum=()=>{const o=st(S.flatMap(s=>s.tasks));$('sum').innerHTML=`<div class="tile"><small>Загальний прогрес</small><b>${pc(o)}%</b><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><small>Виконано завдань</small><b>${o.d}</b> <span class="mu">з ${o.n}</span></div><div class="tile"><small>Годин виконано</small><b>${fh(o.dh)}</b></div><div class="tile"><small>Годин залишилось</small><b>${fh(o.h-o.dh)}</b></div>`};
+const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
+const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
+const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM);return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div><ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button></li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div></section>`};
+function render(){sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
+const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color)};
+const G=$('grid');
+G.addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;
+ const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
+ if(a=='st')t.s=(t.s+1)%3;
+ else if(a=='more'){OPEN.has(s.id)?OPEN.delete(s.id):OPEN.add(s.id);render();return}
+ else if(a=='delt')s.tasks=s.tasks.filter(x=>x!=t);
+ else if(a=='delsub'){
+  if(pend!=s.id){pend=s.id;b.textContent='Точно видалити?';b.classList.add('arm');setTimeout(()=>{if(pend==s.id){pend=null;b.textContent='Видалити';b.classList.remove('arm')}},3000);return}
+  S=S.filter(x=>x!=s);pend=null}
+ else if(a=='addt'){
+  const i=sc.querySelectorAll('.add input'),v=i[0].value.trim();if(!v){i[0].focus();return}
+  s.tasks.push({id:uid(),t:v,h:+i[1].value||0,s:0});if(s.tasks.length>LIM)OPEN.add(s.id);save();render();G.querySelector(`[data-sid="${s.id}"] .add input`).focus();return}
+ else if(a=='adds'){
+  const i=b.parentElement.querySelectorAll('input'),v=i[0].value.trim();if(!v){i[0].focus();return}
+  S.push({id:uid(),name:v,color:i[1].value,tasks:[]})}
+ save();render()});
+G.addEventListener('change',e=>{
+ const el=e.target,f=el.dataset.f,sc=el.closest('[data-sid]');if(!f||!sc)return;
+ const s=S.find(x=>x.id==sc.dataset.sid),li=el.closest('[data-tid]');
+ if(f=='name')s.name=el.value.trim()||s.name;
+ else if(f=='color')s.color=el.value;
+ else{const t=s.tasks.find(x=>x.id==li.dataset.tid);if(f=='h')t.h=Math.max(0,+el.value||0);else t.t=el.value.trim()||t.t}
+ save();upd(sc,s);sum()});
+G.addEventListener('keydown',e=>{
+ const gh=e.target.closest('.gh');
+ if(gh&&(e.key=='ArrowUp'||e.key=='ArrowDown')){e.preventDefault();
+  const d=e.key=='ArrowUp'?-1:1,sc=gh.closest('[data-sid]'),s=S.find(x=>x.id==sc.dataset.sid),li=gh.closest('[data-tid]'),a=li?s.tasks:S,it=li?s.tasks.find(x=>x.id==li.dataset.tid):s,i=a.indexOf(it),j=i+d;
+  if(j<0||j>=a.length)return;a.splice(i,1);a.splice(j,0,it);if(li&&j>=LIM)OPEN.add(s.id);save();render();
+  const n=G.querySelector(`[data-${li?'tid':'sid'}="${it.id}"] .gh`);n&&n.focus();return}
+ if(e.key!='Enter')return;const ad=e.target.closest('.add');
+ if(ad)ad.querySelector('[data-act]').click();else if(e.target.matches('.tn,.nm,.hr input'))e.target.blur()});
+let D=null;
+const clr=()=>document.querySelectorAll('.drop-b,.drop-a,.drop-in').forEach(n=>n.classList.remove('drop-b','drop-a','drop-in'));
+function mark(){
+ clr();D.t=null;const n=document.elementFromPoint(D.x,D.y),c=n&&n.closest('.card');if(!c)return;
+ const mid=n=>D.y>n.getBoundingClientRect().top+n.offsetHeight/2;
+ if(D.k=='task'){
+  const li=n.closest('[data-tid]');
+  if(li){if(li!==D.el){const a=mid(li);li.classList.add(a?'drop-a':'drop-b');D.t={id:li.dataset.tid,a}}}
+  else if(c.dataset.sid){c.classList.add('drop-in');D.t={sid:c.dataset.sid,start:!!n.closest('.ch')}}
+ }else if(c!==D.el){const a=!!c.dataset.sid&&mid(c);c.classList.add(a?'drop-a':'drop-b');D.t={sid:c.dataset.sid||null,a}}
+}
+function end(ok){
+ const{k,el,g,t,raf}=D;D=null;cancelAnimationFrame(raf);
+ removeEventListener('pointermove',mv);removeEventListener('pointerup',up);removeEventListener('pointercancel',cx);
+ g.remove();clr();document.body.classList.remove('dn');
+ if(ok&&t){
+  const id=el.dataset.tid||el.dataset.sid;
+  if(k=='sub'){const m=S.find(x=>x.id==id);S=S.filter(x=>x!=m);S.splice(t.sid?S.findIndex(x=>x.id==t.sid)+(t.a?1:0):S.length,0,m)}
+  else{
+   const fr=S.find(s=>s.id==el.closest('[data-sid]').dataset.sid),m=fr.tasks.find(x=>x.id==id);fr.tasks=fr.tasks.filter(x=>x!=m);
+   const to=t.id?S.find(s=>s.tasks.some(x=>x.id==t.id)):S.find(s=>s.id==t.sid),i=t.id?to.tasks.findIndex(x=>x.id==t.id)+(t.a?1:0):t.start?0:to.tasks.length;
+   to.tasks.splice(i,0,m);if(i>=LIM)OPEN.add(to.id)}
+  save()}
+ render()}
+const mv=e=>{D.g.style.left=e.clientX-D.dx+'px';D.g.style.top=e.clientY-D.dy+'px';D.x=e.clientX;D.y=e.clientY;D.sy=e.clientY<80?-14:e.clientY>innerHeight-80?14:0;mark()},up=()=>end(1),cx=()=>end(0);
+function tick(){if(!D)return;if(D.sy&&D.y!=null){scrollBy(0,D.sy);mark()}D.raf=requestAnimationFrame(tick)}
+G.addEventListener('pointerdown',e=>{
+ const h=e.target.closest('.gh');if(!h||e.button>0||D)return;e.preventDefault();
+ const el=h.closest(h.dataset.drag=='task'?'[data-tid]':'[data-sid]'),r=el.getBoundingClientRect(),g=el.cloneNode(true);
+ g.classList.add('ghost');g.style.cssText=`width:${r.width}px;left:${r.left}px;top:${r.top}px`;
+ document.body.append(g);el.classList.add('dragging');document.body.classList.add('dn');
+ D={k:h.dataset.drag,el,g,dx:e.clientX-r.left,dy:e.clientY-r.top};
+ addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',cx);tick()});
+$('q').oninput=e=>{q=e.target.value;render()};
+$('seg').onclick=e=>{const b=e.target.closest('[data-fl]');if(!b)return;fl=b.dataset.fl;[...$('seg').children].forEach(x=>x.classList.toggle('on',x==b));render()};
+$('th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark'};
+$('bkb').onclick=()=>{const b=$('bk');b.hidden=!b.hidden;$('bt').value=JSON.stringify(S,null,1)};
+$('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)||!d.every(s=>s&&s.name&&Array.isArray(s.tasks)))throw 0;
+ S=d.map(s=>({id:s.id||uid(),name:String(s.name),color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#4f5bd5',tasks:s.tasks.map(t=>({id:t.id||uid(),t:String(t.t),h:+t.h||0,s:+t.s||0}))}));
+ save();render();$('bk').hidden=true}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
+render();
+/* ===== Синхронізація через Supabase ===== */
+/* 1) Вставте сюди дані свого проєкту (Project URL і publishable/anon key). Секретний service_role ключ сюди НЕ вставляти. */
+const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
+let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
+const sy=t=>{$('sy').textContent=(acc?acc+' · ':'')+t};
+const showAu=on=>{$('au').hidden=!on};
+function push(){if(!sb||!me)return;dirty=true;clearTimeout(tm);sy('Збереження…');tm=setTimeout(()=>pushNow(0),600)}
+async function pushNow(n){
+ const{data,error}=await sb.from('trackers').upsert({user_id:me,data:S}).select('updated_at').single();
+ if(error){if(n<3){tm=setTimeout(()=>pushNow(n+1),4000);sy('Повторюю збереження…')}else sy('Не вдалося зберегти');return}
+ stamp=data.updated_at;dirty=false;sy('Збережено')}
+async function pull(first){
+ if(!sb||!me||dirty)return;
+ const{data,error}=await sb.from('trackers').select('data,updated_at').maybeSingle();
+ if(error){sy('Немає зв’язку');return}
+ if(!data){if(first){dirty=true;await pushNow(0)}return}
+ if(data.updated_at!==stamp&&!dirty&&Array.isArray(data.data)){stamp=data.updated_at;S=data.data;lsave();render()}
+ sy('Збережено')}
+async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;showAu(false);sy('Завантаження…');await pull(true)}
+const msg=m=>/invalid login/i.test(m)?'Невірна пошта або пароль':/already|registered/i.test(m)?'Ця пошта вже зареєстрована. Натисніть «Увійти»':/password/i.test(m)?'Пароль має бути від 6 символів':m;
+async function doAuth(up){
+ const email=$('ae').value.trim(),password=$('ap').value,er=$('ar');er.textContent='';
+ if(!email||password.length<6){er.textContent='Введіть пошту й пароль (від 6 символів)';return}
+ const r=up?await sb.auth.signUp({email,password}):await sb.auth.signInWithPassword({email,password});
+ if(r.error){er.textContent=msg(r.error.message);return}
+ if(!r.data.session){er.textContent='Підтвердіть пошту за листом, потім увійдіть';return}
+ await start(r.data.session.user)}
+$('si').onclick=()=>doAuth(false);
+$('su').onclick=()=>doAuth(true);
+$('ap').onkeydown=e=>{if(e.key=='Enter')doAuth(false)};
+$('skip').onclick=()=>{showAu(false);sy('Лише цей браузер')};
+$('out').onclick=async()=>{clearTimeout(tm);await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;sy('');render();showAu(true)};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+(async()=>{
+ if(!(window.supabase&&/^https:\/\/[\w-]+\.supabase\.co$/.test(SB_URL)&&SB_KEY.length>20)){sy('Лише цей браузер');return}
+ sb=supabase.createClient(SB_URL,SB_KEY);
+ const{data}=await sb.auth.getSession();
+ if(data.session)start(data.session.user);else showAu(true)})();
+</script>
+</body>
+</html>
