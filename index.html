@@ -111,6 +111,17 @@ li{flex-wrap:wrap}
 .ap{border:1px dashed var(--mu);border-radius:99px;background:none;color:var(--mu);font:inherit;font-size:12px;font-weight:500;padding:2px 10px;cursor:pointer}
 .ap:hover{border-color:var(--ac);color:var(--ac)}
 .ap.on{border:1px solid var(--ac);color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);font-weight:600}
+.rw{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:13px}
+.tile details{margin-top:8px}
+.tile summary{cursor:pointer;color:var(--mu);font-size:12.5px}
+.tr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 14px 12px;font-size:12.5px}
+.tired{border:1px solid var(--no);color:var(--no);background:color-mix(in srgb,var(--no) 10%,transparent);border-radius:99px;font:inherit;font-weight:600;padding:4px 12px;cursor:pointer}
+.tired:hover{background:color-mix(in srgb,var(--no) 20%,transparent)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:300;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.toast[hidden]{display:none}
+#pf input[type=text]{display:block;width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px 10px;font:inherit}
+.sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
+.sw2 input{margin-top:3px;accent-color:var(--ac)}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
@@ -119,10 +130,12 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="sy" class="mu"></span><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="out" hidden>Вийти</button></div>
+ <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span id="sy" class="mu"></span><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn" id="out" hidden>Вийти</button></div>
 </div>
 <div class="tile" id="bk" hidden style="margin-bottom:18px"><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
+<div class="tile" id="pf" hidden style="margin-bottom:18px"><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
 <div class="tiles" id="sum"></div>
+<div class="tiles" id="grp"></div><div class="toast" id="ts" role="status" hidden></div>
 <div class="tools">
  <input type="search" id="q" placeholder="Пошук за завданням або предметом">
  <div class="seg" id="seg"><button data-fl="all" class="on">Усі</button><button data-fl="0">Не виконані</button><button data-fl="1">В процесі</button><button data-fl="2">Виконані</button></div>
@@ -154,10 +167,10 @@ const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);ret
 const fh=n=>Math.round(n*10)/10+' год',pc=o=>o.n?Math.round(o.d/o.n*100):0;
 const mt=(o,s)=>`<span>${o.d} з ${o.n} завдань${s&&s.ap!==false&&o.n?`, затверджено ${o.ap}`:''}</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
 const tb=(s,ap)=>`<div class="tb">${s.tasks.length?'<button class="tl" data-act="all">Відмітити все</button><button class="tl" data-act="none">Зняти все</button>':''}<label class="sw"><input type="checkbox" data-f="ap"${ap?' checked':''}>Затвердження</label></div>`;
-const sum=()=>{const o=st(S.flatMap(s=>s.tasks));$('sum').innerHTML=`<div class="tile"><small>Загальний прогрес</small><b>${pc(o)}%</b><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><small>Виконано завдань</small><b>${o.d}</b> <span class="mu">з ${o.n}</span></div><div class="tile"><small>Годин виконано</small><b>${fh(o.dh)}</b></div><div class="tile"><small>Годин залишилось</small><b>${fh(o.h-o.dh)}</b></div>`};
+const sum=()=>{ready&&grp();const o=st(S.flatMap(s=>s.tasks));$('sum').innerHTML=`<div class="tile"><small>Загальний прогрес</small><b>${pc(o)}%</b><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><small>Виконано завдань</small><b>${o.d}</b> <span class="mu">з ${o.n}</span></div><div class="tile"><small>Годин виконано</small><b>${fh(o.dh)}</b></div><div class="tile"><small>Годин залишилось</small><b>${fh(o.h-o.dh)}</b></div>`};
 const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
 const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
-const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false;return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div></section>`};
+const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false;return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
 function render(){S=[...S.filter(s=>s.tasks.length),...S.filter(s=>!s.tasks.length)];sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
 const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o,s);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color)};
 const G=$('grid');
@@ -166,6 +179,7 @@ G.addEventListener('click',e=>{
  const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
  if(a=='st')t.s=(t.s+1)%3;
  else if(a=='ap')t.a=!t.a;
+ else if(a=='tired'){tiredBtn(s);return}
  else if(a=='all')s.tasks.forEach(x=>x.s=2);
  else if(a=='none')s.tasks.forEach(x=>x.s=0);
  else if(a=='note'){OPENN.has(t.id)?OPENN.delete(t.id):OPENN.add(t.id);render();const n=G.querySelector(`[data-tid="${t.id}"] textarea`);n&&n.focus();return}
@@ -240,7 +254,7 @@ $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)
 render();
 /* ===== Синхронізація через Supabase ===== */
 /* 1) Вставте сюди дані свого проєкту (Project URL і publishable/anon key). Секретний service_role ключ сюди НЕ вставляти. */
-const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
+const SB_URL='https://ВАШ-ПРОЄКТ.supabase.co',SB_KEY='ВАШ-PUBLISHABLE-АБО-ANON-КЛЮЧ';
 let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
 const sy=t=>{$('sy').textContent=(acc?acc+' · ':'')+t};
 const showAu=on=>{$('au').hidden=!on};
@@ -248,7 +262,7 @@ function push(){if(!sb||!me)return;dirty=true;clearTimeout(tm);sy('Збереж�
 async function pushNow(n){
  const{data,error}=await sb.from('trackers').upsert({user_id:me,data:S}).select('updated_at').single();
  if(error){if(n<3){tm=setTimeout(()=>pushNow(n+1),4000);sy('Повторюю збереження…')}else sy('Не вдалося зберегти');return}
- stamp=data.updated_at;dirty=false;sy('Збережено')}
+ stamp=data.updated_at;dirty=false;sy('Збережено');pushStats()}
 async function pull(first){
  if(!sb||!me||dirty)return;
  const{data,error}=await sb.from('trackers').select('data,updated_at').maybeSingle();
@@ -256,7 +270,7 @@ async function pull(first){
  if(!data){if(first){dirty=true;await pushNow(0)}return}
  if(data.updated_at!==stamp&&!dirty&&Array.isArray(data.data)){stamp=data.updated_at;S=data.data;lsave();render()}
  sy('Збережено')}
-async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;showAu(false);sy('Завантаження…');await pull(true)}
+async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;showAu(false);sy('Завантаження…');await pull(true);sharedInit()}
 const msg=m=>/invalid login/i.test(m)?'Невірна пошта або пароль':/already|registered/i.test(m)?'Ця пошта вже зареєстрована. Натисніть «Увійти»':/password/i.test(m)?'Пароль має бути від 6 символів':m;
 async function doAuth(up){
  const email=$('ae').value.trim(),password=$('ap').value,er=$('ar');er.textContent='';
@@ -269,8 +283,71 @@ $('si').onclick=()=>doAuth(false);
 $('su').onclick=()=>doAuth(true);
 $('ap').onkeydown=e=>{if(e.key=='Enter')doAuth(false)};
 $('skip').onclick=()=>{showAu(false);sy('Лише цей браузер')};
-$('out').onclick=async()=>{clearTimeout(tm);await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;sy('');render();showAu(true)};
+$('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;sy('');render();showAu(true)};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+/* ===== Спільне: відлік, прогрес групи, кнопка втоми (усе анонімно) ===== */
+const TIRED_LABEL='Я заїбався/лась',RD='2026-12-04',WHO=['людина заїбалась','людини заїбались','людей заїбались'];
+var ready=false;
+let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false;
+const nk=s=>String(s).trim().toLowerCase().replace(/\s+/g,' ');
+const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b==1?f[0]:b>1&&b<5?f[1]:f[2]};
+const toast=t=>{const e=$('ts');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{e.hidden=true},3500)};
+function cd(){
+ const d=cfgS.review_date||RD,t=cfgS.review_title||'Перегляд (вивішування робіт)',a=new Date(d+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);
+ const k=Math.round((a-n)/864e5);if(isNaN(k))return'';
+ return`<div class="tile"><small>До перегляду</small><b>${k>0?k+' '+pl(k,['день','дні','днів']):k==0?'Сьогодні':'Відбувся'}</b><div class="mu">${E(t)}, ${a.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}</div></div>`}
+function gtile(){
+ if(!me)return'';
+ const n=people.length,avg=n?Math.round(people.reduce((x,p)=>x+p.pct,0)/n):0;
+ return`<div class="tile"><small>Прогрес групи</small><b>${avg}%</b> <span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}, анонімно</span><div class="pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12.5px">Вас не враховано. Це можна змінити в «Приватності».</p>'}</div>`}
+function ttile(){
+ if(!me)return'';
+ const m={},all=new Set(),disp={};
+ tiredRows.forEach(r=>{const k=nk(r.subject);if(!m[k]){m[k]=new Set();disp[k]=r.subject}m[k].add(r.user_id);all.add(r.user_id)});
+ const top=Object.keys(m).map(k=>[disp[k],m[k].size]).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ return`<div class="tile"><small>Втома групи</small><b>${all.size}</b> <span class="mu">${pl(all.size,WHO)}</span>${top.length?`<small style="margin-top:10px">За предметами</small>${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}`:'<p class="mu" style="margin:8px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
+function grp(){$('grp').innerHTML=cd()+gtile()+ttile()}
+const trTxt=s=>{const k=nk(s.name),u=new Set(tiredRows.filter(r=>nk(r.subject)==k).map(r=>r.user_id));return u.size+' '+pl(u.size,WHO)};
+function trow(s){return ready&&me?`<div class="tr"><button class="tired" data-act="tired">${TIRED_LABEL}</button><span class="mu">${trTxt(s)}</span></div>`:''}
+function refreshShared(){
+ grp();
+ document.querySelectorAll('.card[data-sid] .tr span').forEach(sp=>{const s=S.find(x=>x.id==sp.closest('.card').dataset.sid);if(s)sp.textContent=trTxt(s)})}
+async function tiredBtn(s){
+ const{data,error}=await sb.from('tired').insert({subject:s.name}).select('id,user_id,subject,created_at').single();
+ if(error){toast(/Забагато/.test(error.message)?'Забагато натискань. Спробуйте через годину':'Не вдалося зберегти');return}
+ if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
+ toast('Записано, ви не самі');refreshShared()}
+async function loadShared(){
+ if(!sb||!me)return;
+ const[a,b,c]=await Promise.all([
+  sb.from('settings').select('key,value'),
+  sb.from('profiles_public').select('user_id,pct').eq('share',true),
+  sb.from('tired').select('id,user_id,subject,created_at').order('created_at',{ascending:false}).limit(2000)]);
+ if(!a.error)cfgS=Object.fromEntries(a.data.map(r=>[r.key,r.value]));
+ if(!b.error)people=b.data;
+ if(!c.error)tiredRows=c.data;
+ refreshShared()}
+const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,500)};
+function pushStats(){
+ if(!sb||!me||!profReady)return;
+ const o=st(S.flatMap(s=>s.tasks)),row={user_id:me,share,pct:share?pc(o):0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0},k=JSON.stringify(row);
+ if(k==lastS)return;lastS=k;sb.from('profiles_public').upsert(row).then(()=>{})}
+const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
+$('pfb').onclick=()=>{$('pf').hidden?openPf():($('pf').hidden=true)};
+$('psv').onclick=()=>{share=$('ps').checked;lastS='';pushStats();$('pf').hidden=true;toast('Збережено');setTimeout(loadShared,900)};
+async function sharedInit(){
+ const{data:p}=await sb.from('profiles_public').select('share').eq('user_id',me).maybeSingle();
+ if(p)share=!!p.share;
+ profReady=true;$('pfb').hidden=false;
+ await loadShared();render();pushStats();
+ ch=sb.channel('shared').on('postgres_changes',{event:'*',schema:'public',table:'profiles_public'},lq).on('postgres_changes',{event:'*',schema:'public',table:'tired'},lq).subscribe();
+ pt=setInterval(loadShared,60000)}
+function sharedOff(){
+ if(ch&&sb)sb.removeChannel(ch);
+ ch=null;clearInterval(pt);people=[];tiredRows=[];share=true;lastS='';profReady=false;
+ $('pfb').hidden=true;$('pf').hidden=true}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadShared()});
+ready=true;grp();
 (async()=>{
  if(!(window.supabase&&/^https:\/\/[\w-]+\.supabase\.co$/.test(SB_URL)&&SB_KEY.length>20)){sy('Лише цей браузер');return}
  sb=supabase.createClient(SB_URL,SB_KEY);
