@@ -117,6 +117,7 @@ li{flex-wrap:wrap}
 .tr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 14px 12px;font-size:12.5px}
 .tired{border:1px solid var(--no);color:var(--no);background:color-mix(in srgb,var(--no) 10%,transparent);border-radius:99px;font:inherit;font-weight:600;padding:4px 12px;cursor:pointer}
 .tired:hover{background:color-mix(in srgb,var(--no) 20%,transparent)}
+.tired.on{background:var(--no);color:var(--bg)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:300;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .toast[hidden]{display:none}
 #pf input[type=text]{display:block;width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px 10px;font:inherit}
@@ -270,7 +271,7 @@ async function pull(first){
  if(!data){if(first){dirty=true;await pushNow(0)}return}
  if(data.updated_at!==stamp&&!dirty&&Array.isArray(data.data)){stamp=data.updated_at;S=data.data;lsave();render()}
  sy('Збережено')}
-async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;showAu(false);sy('Завантаження…');await pull(true);sharedInit()}
+async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;showAu(false);sy('Завантаження…');await pull(true);await sharedInit()}
 const msg=m=>/invalid login/i.test(m)?'Невірна пошта або пароль':/already|registered/i.test(m)?'Ця пошта вже зареєстрована. Натисніть «Увійти»':/password/i.test(m)?'Пароль має бути від 6 символів':m;
 async function doAuth(up){
  const email=$('ae').value.trim(),password=$('ap').value,er=$('ar');er.textContent='';
@@ -284,9 +285,9 @@ $('su').onclick=()=>doAuth(true);
 $('ap').onkeydown=e=>{if(e.key=='Enter')doAuth(false)};
 $('skip').onclick=()=>{showAu(false);sy('Лише цей браузер')};
 $('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;sy('');render();showAu(true)};
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready)loadShared()}});
 /* ===== Спільне: відлік, прогрес групи, кнопка втоми (усе анонімно) ===== */
-const TIRED_LABEL='Я заїбався/лась',RD='2026-12-04',WHO=['людина заїбалась','людини заїбались','людей заїбались'];
+const TIRED_LABEL='Я заїбався/лась',TIRED_UNDO='Скасувати «Я заїбався/лась»',RD='2026-12-04',WHO=['людина заїбалась','людини заїбались','людей заїбались'];
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false;
 const nk=s=>String(s).trim().toLowerCase().replace(/\s+/g,' ');
@@ -307,12 +308,29 @@ function ttile(){
  const top=Object.keys(m).map(k=>[disp[k],m[k].size]).sort((a,b)=>b[1]-a[1]).slice(0,5);
  return`<div class="tile"><small>Втома групи</small><b>${all.size}</b> <span class="mu">${pl(all.size,WHO)}</span>${top.length?`<small style="margin-top:10px">За предметами</small>${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}`:'<p class="mu" style="margin:8px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
 function grp(){$('grp').innerHTML=cd()+gtile()+ttile()}
+const hasMyTired=s=>!!me&&tiredRows.some(r=>r.user_id==me&&nk(r.subject)==nk(s.name));
 const trTxt=s=>{const k=nk(s.name),u=new Set(tiredRows.filter(r=>nk(r.subject)==k).map(r=>r.user_id));return u.size+' '+pl(u.size,WHO)};
-function trow(s){return ready&&me?`<div class="tr"><button class="tired" data-act="tired">${TIRED_LABEL}</button><span class="mu">${trTxt(s)}</span></div>`:''}
+function trow(s){
+ if(!ready||!me)return'';
+ const mine=hasMyTired(s);
+ return`<div class="tr"><button class="tired${mine?' on':''}" data-act="tired" aria-pressed="${mine?'true':'false'}">${mine?TIRED_UNDO:TIRED_LABEL}</button><span class="mu">${trTxt(s)}</span></div>`}
 function refreshShared(){
  grp();
- document.querySelectorAll('.card[data-sid] .tr span').forEach(sp=>{const s=S.find(x=>x.id==sp.closest('.card').dataset.sid);if(s)sp.textContent=trTxt(s)})}
+ document.querySelectorAll('.card[data-sid]').forEach(sc=>{
+  const s=S.find(x=>x.id==sc.dataset.sid);if(!s)return;
+  const sp=sc.querySelector('.tr span');if(sp)sp.textContent=trTxt(s);
+  const btn=sc.querySelector('.tr button[data-act="tired"]');
+  if(btn){const mine=hasMyTired(s);btn.classList.toggle('on',mine);btn.setAttribute('aria-pressed',mine?'true':'false');btn.textContent=mine?TIRED_UNDO:TIRED_LABEL}
+ })}
 async function tiredBtn(s){
+ if(!sb||!me)return;
+ const k=nk(s.name),mineRows=tiredRows.filter(r=>r.user_id==me&&nk(r.subject)==k);
+ if(mineRows.length){
+  const ids=mineRows.map(r=>r.id);
+  const{error}=await sb.from('tired').delete().in('id',ids).eq('user_id',me);
+  if(error){toast('Не вдалося скасувати');return}
+  tiredRows=tiredRows.filter(r=>!ids.includes(r.id));
+  toast('Відмітку скасовано');refreshShared();return}
  const{data,error}=await sb.from('tired').insert({subject:s.name}).select('id,user_id,subject,created_at').single();
  if(error){toast(/Забагато/.test(error.message)?'Забагато натискань. Спробуйте через годину':'Не вдалося зберегти');return}
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
@@ -331,7 +349,8 @@ const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,500)};
 function pushStats(){
  if(!sb||!me||!profReady)return;
  const o=st(S.flatMap(s=>s.tasks)),row={user_id:me,share,pct:share?pc(o):0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0},k=JSON.stringify(row);
- if(k==lastS)return;lastS=k;sb.from('profiles_public').upsert(row).then(()=>{})}
+ if(k==lastS)return;lastS=k;
+ sb.from('profiles_public').upsert(row).then(({error})=>{if(!error)lq()})}
 const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
 $('pfb').onclick=()=>{$('pf').hidden?openPf():($('pf').hidden=true)};
 $('psv').onclick=()=>{share=$('ps').checked;lastS='';pushStats();$('pf').hidden=true;toast('Збережено');setTimeout(loadShared,900)};
@@ -339,7 +358,9 @@ async function sharedInit(){
  const{data:p}=await sb.from('profiles_public').select('share').eq('user_id',me).maybeSingle();
  if(p)share=!!p.share;
  profReady=true;$('pfb').hidden=false;
- await loadShared();render();pushStats();
+ pushStats();
+ await loadShared();
+ render();
  ch=sb.channel('shared').on('postgres_changes',{event:'*',schema:'public',table:'profiles_public'},lq).on('postgres_changes',{event:'*',schema:'public',table:'tired'},lq).subscribe();
  pt=setInterval(loadShared,60000)}
 function sharedOff(){
