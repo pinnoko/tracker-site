@@ -123,7 +123,7 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div class="au" id="au" hidden><div class="tile"><h2>Навчальний трекер</h2><p class="sub" style="margin:0 0 16px">Увійдіть, щоб предмети й завдання синхронізувалися між усіма вашими пристроями.</p><input id="ae" type="email" placeholder="Пошта" autocomplete="email"><input id="ap" type="password" placeholder="Пароль, від 6 символів" autocomplete="current-password"><p class="err" id="ar" role="alert"></p><div class="row"><button class="btn p" id="si">Увійти</button><button class="btn" id="su">Створити акаунт</button></div><button class="lnk" id="skip">Без акаунта, дані лише в цьому браузері</button></div></div>
@@ -254,7 +254,7 @@ $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)
 render();
 /* ===== Синхронізація через Supabase ===== */
 /* 1) Вставте сюди дані свого проєкту (Project URL і publishable/anon key). Секретний service_role ключ сюди НЕ вставляти. */
-const SB_URL='https://ВАШ-ПРОЄКТ.supabase.co',SB_KEY='ВАШ-PUBLISHABLE-АБО-ANON-КЛЮЧ';
+const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
 let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
 const sy=t=>{$('sy').textContent=(acc?acc+' · ':'')+t};
 const showAu=on=>{$('au').hidden=!on};
@@ -349,8 +349,10 @@ function sharedOff(){
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadShared()});
 ready=true;grp();
 (async()=>{
- if(!(window.supabase&&/^https:\/\/[\w-]+\.supabase\.co$/.test(SB_URL)&&SB_KEY.length>20)){sy('Лише цей браузер');return}
- sb=supabase.createClient(SB_URL,SB_KEY);
+ const U=SB_URL.trim().replace(/\/+$/,'').replace(/\/(rest|auth)\/v1$/,''),K=SB_KEY.trim();
+ if(!/^https:\/\/[\w-]+\.supabase\.co$/.test(U)||K.length<20){sy('Лише цей браузер: у index.html не вставлено ключі Supabase');return}
+ if(!window.supabase){sy('Лише цей браузер: не завантажилась бібліотека Supabase');return}
+ sb=supabase.createClient(U,K);
  const{data}=await sb.auth.getSession();
  if(data.session)start(data.session.user);else showAu(true)})();
 </script>
