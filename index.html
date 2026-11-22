@@ -329,8 +329,12 @@ const TIRED_LABEL='Я заїбався/лась',TIRED_UNDO='Скасувати 
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=false;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
-const getMyNick=()=>me?(getNicks()[me]||'').trim():'';
-const setMyNick=v=>{if(!me)return;const m=getNicks(),t=String(v||'').trim().slice(0,28);if(t)m[me]=t;else delete m[me];try{localStorage.setItem(NICK_KEY,JSON.stringify(m))}catch(e){}};
+const getLocalNick=()=>me?(getNicks()[me]||'').trim():'';
+const setLocalNick=v=>{if(!me)return;const m=getNicks(),t=String(v||'').trim().slice(0,28);if(t)m[me]=t;else delete m[me];try{localStorage.setItem(NICK_KEY,JSON.stringify(m))}catch(e){}};
+const getMyNick=()=>{
+ const remote=people.find(p=>p.user_id==me)?.nick;
+ return (remote!=null?String(remote):getLocalNick()).trim();
+};
 const nk=s=>String(s).trim().toLowerCase().replace(/\s+/g,' ');
 const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b==1?f[0]:b>1&&b<5?f[1]:f[2]};
 const toast=t=>{const e=$('ts');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{e.hidden=true},3500)};
@@ -348,8 +352,9 @@ function gtile(){
  const rows=active.map((p,i)=>{
   const v=Math.min(100,Math.max(0,Math.round(Number(p.pct)||0)));
   const isMe=p.user_id==me;
-  const label=isMe?(myNick?`Ви (${myNick})`:'Ви (Анонімний котик)'):'Анонімний котик';
-  return`<div class="grp-row${isMe?' me':''}"><span class="rk">#${i+1}</span><span class="who${!isMe&&!myNick?' anon':''}">${E(label)}</span><span class="bar"><i style="width:${v}%"></i></span><span class="pct">${v}%</span></div>`;
+  const pubNick=String(p.nick||'').trim();
+  const label=isMe?(myNick?`Ви (${myNick})`:'Ви (Анонімний котик)'):(pubNick||'Анонімний котик');
+  return`<div class="grp-row${isMe?' me':''}"><span class="rk">#${i+1}</span><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="bar"><i style="width:${v}%"></i></span><span class="pct">${v}%</span></div>`;
  }).join('');
  return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Рейтинг учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12px">Вас не враховано (див. «Приватність»).</p>'}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників з прогресом більше 0%.</span>'}<div class="nick-bar"><input type="text" id="nick-in" maxlength="28" placeholder="Ваш псевдонім" value="${E(myNick)}"><button type="button" id="nick-save">Зберегти</button></div></div></div>`}
 function ttile(){
@@ -361,6 +366,19 @@ function ttile(){
 function grp(){
  if(!me){$('grp').innerHTML='';return}
  $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div></div>`}
+async function saveNick(){
+ const inp=$('nick-in');
+ const val=String(inp?inp.value:'').trim().slice(0,28);
+ setLocalNick(val);
+ if(sb&&me){
+  const{error}=await sb.from('profiles_public').update({nick:val||null}).eq('user_id',me);
+  if(error){toast('Не вдалося оновити псевдонім у базі');return}
+  lastS='';
+  await loadShared();
+ }
+ toast(val?'Псевдонім збережено для всіх':'Псевдонім прибрано');
+ refreshShared();
+}
 $('grp').addEventListener('click',e=>{
  const b=e.target.closest('#grp-menu-btn');
  if(b){
@@ -370,19 +388,12 @@ $('grp').addEventListener('click',e=>{
   b.setAttribute('aria-expanded',String(grpOpen));
   return;
  }
- if(e.target.closest('#nick-save')){
-  const inp=$('nick-in');
-  setMyNick(inp?inp.value:'');
-  toast(getMyNick()?'Псевдонім збережено':'Псевдонім прибрано');
-  refreshShared();
- }
+ if(e.target.closest('#nick-save'))saveNick();
 });
 $('grp').addEventListener('keydown',e=>{
  if(e.key=='Enter'&&e.target&&e.target.id=='nick-in'){
   e.preventDefault();
-  setMyNick(e.target.value);
-  toast(getMyNick()?'Псевдонім збережено':'Псевдонім прибрано');
-  refreshShared();
+  saveNick();
  }
 });
 const hasMyTired=s=>!!me&&tiredRows.some(r=>r.user_id==me&&nk(r.subject)==nk(s.name));
@@ -416,7 +427,7 @@ async function loadShared(){
  if(!sb||!me)return;
  const[a,b,c]=await Promise.all([
   sb.from('settings').select('key,value'),
-  sb.from('profiles_public').select('user_id,pct').eq('share',true),
+  sb.from('profiles_public').select('user_id,pct,nick').eq('share',true),
   sb.from('tired').select('id,user_id,subject,created_at').order('created_at',{ascending:false}).limit(2000)]);
  if(!a.error)cfgS=Object.fromEntries(a.data.map(r=>[r.key,r.value]));
  if(!b.error)people=b.data;
@@ -425,15 +436,16 @@ async function loadShared(){
 const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,500)};
 function pushStats(){
  if(!sb||!me||!profReady)return;
- const o=st(S.flatMap(s=>s.tasks)),row={user_id:me,share,pct:share?pc(o):0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0},k=JSON.stringify(row);
+ const o=st(S.flatMap(s=>s.tasks)),nick=getLocalNick()||null;
+ const row={user_id:me,share,pct:share?pc(o):0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0,nick},k=JSON.stringify(row);
  if(k==lastS)return;lastS=k;
  sb.from('profiles_public').upsert(row).then(({error})=>{if(!error)lq()})}
 const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
 $('pfb').onclick=e=>{e.stopPropagation();togglePop('pf')&&openPf()};
 $('psv').onclick=()=>{share=$('ps').checked;lastS='';pushStats();$('pf').hidden=true;toast('Збережено');setTimeout(loadShared,900)};
 async function sharedInit(){
- const{data:p}=await sb.from('profiles_public').select('share').eq('user_id',me).maybeSingle();
- if(p)share=!!p.share;
+ const{data:p}=await sb.from('profiles_public').select('share,nick').eq('user_id',me).maybeSingle();
+ if(p){share=!!p.share;if(p.nick)setLocalNick(p.nick)}
  profReady=true;$('pfb').hidden=false;
  pushStats();
  await loadShared();
