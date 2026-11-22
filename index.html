@@ -351,7 +351,7 @@ $('skip').onclick=()=>{showAu(false);sy('Лише цей браузер')};
 $('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;sy('');render();showAu(true)};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready)loadShared()}});
 /* ===== Спільне: відлік, прогрес групи, кнопка втоми (усе анонімно) ===== */
-const TIRED_LABEL='Я заїбався/лась',TIRED_UNDO='Скасувати «Я заїбався/лась»',RD='2026-12-04',WHO=['людина заїбалась','людини заїбались','людей заїбались'];
+const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасувати «Я замахався/лась»',RD='2026-12-04',WHO=['людина замахалась','людини замахались','людей замахались'];
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=false;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
