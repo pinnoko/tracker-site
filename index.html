@@ -195,6 +195,7 @@ const seed=()=>[
  mk('Історія','#4cb85a',[])
 ];
 const PM={'#f0b44c':'#eda53a','#3b78d8':'#4a6cf0','#f2c13a':'#1fb5a3','#22c55e':'#4cb85a','#e58fa5':'#e86aa0','#8e7cc3':'#8a63dc','#f09a4a':'#29a6dc','#e05d5d':'#e5584a'};
+const fixSubName=n=>String(n||'').replace(/нагріній/ig,m=>m[0]==='Н'?'Нагірний':'нагірний');
 function migrate(arr){
  let changed=false;
  if(!Array.isArray(arr))return false;
@@ -202,7 +203,7 @@ function migrate(arr){
   if(!s)return;
   if(PM[s.color]){s.color=PM[s.color];changed=true}
   if(typeof s.name=='string'&&/нагріній/i.test(s.name)){
-   s.name=s.name.replace(/нагріній/ig,m=>m[0]==='Н'?'Нагірний':'нагірний');
+   s.name=fixSubName(s.name);
    changed=true;
   }
   if(typeof s.name=='string'&&s.name.trim().toLowerCase()==='шрифти'&&Array.isArray(s.tasks)){
@@ -360,7 +361,7 @@ const getMyNick=()=>{
  const remote=people.find(p=>p.user_id==me)?.nick;
  return (remote!=null?String(remote):getLocalNick()).trim();
 };
-const nk=s=>String(s).trim().toLowerCase().replace(/\s+/g,' ');
+const nk=s=>fixSubName(String(s)).trim().toLowerCase().replace(/\s+/g,' ');
 const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b==1?f[0]:b>1&&b<5?f[1]:f[2]};
 const toast=t=>{const e=$('ts');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{e.hidden=true},3500)};
 function cd(){
@@ -385,7 +386,7 @@ function gtile(){
 function ttile(){
  if(!me)return'';
  const m={},all=new Set(),disp={};
- tiredRows.forEach(r=>{const k=nk(r.subject);if(!m[k]){m[k]=new Set();disp[k]=r.subject}m[k].add(r.user_id);all.add(r.user_id)});
+ tiredRows.forEach(r=>{const clean=fixSubName(r.subject),k=nk(clean);if(!m[k]){m[k]=new Set();disp[k]=clean}m[k].add(r.user_id);all.add(r.user_id)});
  const top=Object.keys(m).map(k=>[disp[k],m[k].size]).sort((a,b)=>b[1]-a[1]).slice(0,5);
  return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Анонімно</span></div><div class="stat-row"><b>${all.size}</b><span class="mu">${pl(all.size,WHO)}</span></div>${top.length?`<div class="tired-list">${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}</div>`:'<p class="mu" style="margin:10px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
 function grp(){
