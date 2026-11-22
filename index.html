@@ -33,6 +33,12 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .tile-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
 .tile small{color:var(--mu);font-weight:500;display:block}
 .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--grp) 15%,transparent);color:var(--grp);white-space:nowrap}
+.more-btn{border:0;background:none;color:var(--mu);font:700 18px/1 sans-serif;padding:2px 6px;border-radius:8px;cursor:pointer}
+.more-btn:hover{color:var(--tx);background:var(--bg)}
+.grp-list{margin-top:10px;padding-top:8px;border-top:1px solid var(--ln);display:flex;flex-direction:column;gap:5px;max-height:190px;overflow-y:auto}
+.grp-list[hidden]{display:none}
+.grp-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;padding:2px 0}
+.grp-row span{color:var(--mu)}
 .tile b{font-size:28px;letter-spacing:-.025em;line-height:1.15}
 .stat-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .cd-big{display:flex;align-items:baseline;gap:8px;margin-top:2px}
@@ -309,7 +315,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if
 /* ===== Спільне: відлік, прогрес групи, кнопка втоми (усе анонімно) ===== */
 const TIRED_LABEL='Я заїбався/лась',TIRED_UNDO='Скасувати «Я заїбався/лась»',RD='2026-12-04',WHO=['людина заїбалась','людини заїбались','людей заїбались'];
 var ready=false;
-let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false;
+let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=false;
 const nk=s=>String(s).trim().toLowerCase().replace(/\s+/g,' ');
 const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b==1?f[0]:b>1&&b<5?f[1]:f[2]};
 const toast=t=>{const e=$('ts');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{e.hidden=true},3500)};
@@ -322,7 +328,8 @@ function cd(){
 function gtile(){
  if(!me)return'';
  const n=people.length,avg=n?Math.round(people.reduce((x,p)=>x+p.pct,0)/n):0;
- return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><span class="badge">Група · ${n}</span></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12px">Вас не враховано (див. «Приватність»).</p>'}</div>`}
+ const rows=people.map((p,i)=>`<div class="grp-row"><span>Учасник ${i+1}</span><b>${Math.round(p.pct||0)}%</b></div>`).join('');
+ return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Список прогресу учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12px">Вас не враховано (див. «Приватність»).</p>'}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає даних.</span>'}</div></div>`}
 function ttile(){
  if(!me)return'';
  const m={},all=new Set(),disp={};
@@ -332,6 +339,13 @@ function ttile(){
 function grp(){
  if(!me){$('grp').innerHTML='';return}
  $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div></div>`}
+$('grp').addEventListener('click',e=>{
+ const b=e.target.closest('#grp-menu-btn');if(!b)return;
+ grpOpen=!grpOpen;
+ const list=$('grp-list');
+ if(list)list.hidden=!grpOpen;
+ b.setAttribute('aria-expanded',String(grpOpen));
+});
 const hasMyTired=s=>!!me&&tiredRows.some(r=>r.user_id==me&&nk(r.subject)==nk(s.name));
 const trTxt=s=>{const k=nk(s.name),u=new Set(tiredRows.filter(r=>nk(r.subject)==k).map(r=>r.user_id));return u.size+' '+pl(u.size,WHO)};
 function trow(s){
