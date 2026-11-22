@@ -25,6 +25,7 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .grp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 @media (max-width:900px){.grp-grid{grid-template-columns:1fr}}
 .tile{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;box-shadow:var(--sh);display:flex;flex-direction:column}
+.tile .btn{align-self:flex-start}
 .tile.shared{border-color:color-mix(in srgb,var(--grp) 32%,var(--ln));background:color-mix(in srgb,var(--grp) 4%,var(--sf))}
 .tile-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
 .tile small{color:var(--mu);font-weight:500;display:block}
@@ -268,7 +269,6 @@ $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)
  save();render();$('bk').hidden=true}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
 render();
 /* ===== Синхронізація через Supabase ===== */
-/* 1) Вставте сюди дані свого проєкту (Project URL і publishable/anon key). Секретний service_role ключ сюди НЕ вставляти. */
 const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
 let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
 const sy=t=>{$('sy').textContent=(acc?acc+' · ':'')+t};
