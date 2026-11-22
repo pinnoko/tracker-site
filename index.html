@@ -6,9 +6,9 @@
 <title>Навчальний трекер</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f5fa;--sf:#fff;--tx:#151a2d;--mu:#677089;--ln:#e5e8f1;--ac:#4f5bd5;--ok:#1f9d6b;--wip:#e08e2b;--no:#e0485a;--tt:16%;--sh:0 1px 2px rgba(21,26,45,.05),0 8px 20px -10px rgba(21,26,45,.12);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}
+:root{--bg:#f4f5fa;--sf:#fff;--tx:#151a2d;--mu:#677089;--ln:#e5e8f1;--ac:#4f5bd5;--grp:#289b8e;--ok:#1f9d6b;--wip:#e08e2b;--no:#e0485a;--tt:16%;--sh:0 1px 2px rgba(21,26,45,.05),0 8px 20px -10px rgba(21,26,45,.12);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--grp:#4fd1c5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--grp:#4fd1c5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 .w{max-width:1280px;margin:0 auto;padding:28px 20px 56px}
@@ -18,13 +18,27 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .btn{border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:10px;padding:8px 14px;font:inherit;font-weight:500;cursor:pointer}
 .btn:hover{border-color:var(--ac)}
 .btn.p{background:var(--ac);border-color:var(--ac);color:var(--bg)}
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:22px}
-.tile{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;box-shadow:var(--sh)}
-.tile small{color:var(--mu);font-weight:500;display:block;margin-bottom:2px}
-.tile b{font-size:28px;letter-spacing:-.025em}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:18px}
+.grp-wrap{margin-bottom:24px}
+.grp-hd{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--mu);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.grp-hd::after{content:"";flex:1;height:1px;background:var(--ln)}
+.grp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.grp-grid{grid-template-columns:1fr}}
+.tile{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;box-shadow:var(--sh);display:flex;flex-direction:column}
+.tile.shared{border-color:color-mix(in srgb,var(--grp) 32%,var(--ln));background:color-mix(in srgb,var(--grp) 4%,var(--sf))}
+.tile-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.tile small{color:var(--mu);font-weight:500;display:block}
+.badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--grp) 15%,transparent);color:var(--grp);white-space:nowrap}
+.tile b{font-size:28px;letter-spacing:-.025em;line-height:1.15}
+.stat-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cd-big{display:flex;align-items:baseline;gap:8px;margin-top:2px}
+.cd-ev{margin-top:auto;padding-top:10px;border-top:1px solid var(--ln);font-size:12.5px;color:var(--mu);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.cd-ev strong{color:var(--tx);font-weight:600}
+.tired-list{margin-top:10px;padding-top:8px;border-top:1px solid var(--ln);display:flex;flex-direction:column;gap:5px}
 .mu{color:var(--mu)}
 .pb{height:8px;border-radius:99px;background:var(--ln);overflow:hidden}
 .pb i{display:block;height:100%;border-radius:inherit;background:var(--ac);transition:width .3s}
+.pb.grp-pb i{background:var(--grp)}
 .tools{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
 .tools input{flex:1 1 220px;border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:10px;padding:9px 14px;font:inherit}
 .seg{display:flex;background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:3px;gap:2px;overflow-x:auto}
@@ -111,7 +125,7 @@ li{flex-wrap:wrap}
 .ap{border:1px dashed var(--mu);border-radius:99px;background:none;color:var(--mu);font:inherit;font-size:12px;font-weight:500;padding:2px 10px;cursor:pointer}
 .ap:hover{border-color:var(--ac);color:var(--ac)}
 .ap.on{border:1px solid var(--ac);color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);font-weight:600}
-.rw{display:flex;justify-content:space-between;gap:8px;padding:3px 0;font-size:13px}
+.rw{display:flex;justify-content:space-between;gap:8px;padding:2px 0;font-size:13px}
 .tile details{margin-top:8px}
 .tile summary{cursor:pointer;color:var(--mu);font-size:12.5px}
 .tr{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 14px 12px;font-size:12.5px}
@@ -136,7 +150,7 @@ li{flex-wrap:wrap}
 <div class="tile" id="bk" hidden style="margin-bottom:18px"><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
 <div class="tile" id="pf" hidden style="margin-bottom:18px"><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
 <div class="tiles" id="sum"></div>
-<div class="tiles" id="grp"></div><div class="toast" id="ts" role="status" hidden></div>
+<div id="grp"></div><div class="toast" id="ts" role="status" hidden></div>
 <div class="tools">
  <input type="search" id="q" placeholder="Пошук за завданням або предметом">
  <div class="seg" id="seg"><button data-fl="all" class="on">Усі</button><button data-fl="0">Не виконані</button><button data-fl="1">В процесі</button><button data-fl="2">Виконані</button></div>
@@ -168,7 +182,7 @@ const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);ret
 const fh=n=>Math.round(n*10)/10+' год',pc=o=>o.n?Math.round(o.d/o.n*100):0;
 const mt=(o,s)=>`<span>${o.d} з ${o.n} завдань${s&&s.ap!==false&&o.n?`, затверджено ${o.ap}`:''}</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
 const tb=(s,ap)=>`<div class="tb">${s.tasks.length?'<button class="tl" data-act="all">Відмітити все</button><button class="tl" data-act="none">Зняти все</button>':''}<label class="sw"><input type="checkbox" data-f="ap"${ap?' checked':''}>Затвердження</label></div>`;
-const sum=()=>{ready&&grp();const o=st(S.flatMap(s=>s.tasks));$('sum').innerHTML=`<div class="tile"><small>Загальний прогрес</small><b>${pc(o)}%</b><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><small>Виконано завдань</small><b>${o.d}</b> <span class="mu">з ${o.n}</span></div><div class="tile"><small>Годин виконано</small><b>${fh(o.dh)}</b></div><div class="tile"><small>Годин залишилось</small><b>${fh(o.h-o.dh)}</b></div>`};
+const sum=()=>{ready&&grp();const o=st(S.flatMap(s=>s.tasks));$('sum').innerHTML=`<div class="tile"><div class="tile-top"><small>Мій прогрес</small></div><div class="stat-row"><b>${pc(o)}%</b></div><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><div class="tile-top"><small>Виконано завдань</small></div><div class="stat-row"><b>${o.d}</b><span class="mu">з ${o.n}</span></div></div><div class="tile"><div class="tile-top"><small>Годин виконано</small></div><div class="stat-row"><b>${fh(o.dh)}</b></div></div><div class="tile"><div class="tile-top"><small>Годин залишилось</small></div><div class="stat-row"><b>${fh(o.h-o.dh)}</b></div></div>`};
 const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
 const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
 const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false;return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
@@ -296,18 +310,22 @@ const toast=t=>{const e=$('ts');e.textContent=t;e.hidden=false;clearTimeout(toas
 function cd(){
  const d=cfgS.review_date||RD,t=cfgS.review_title||'Перегляд (вивішування робіт)',a=new Date(d+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);
  const k=Math.round((a-n)/864e5);if(isNaN(k))return'';
- return`<div class="tile"><small>До перегляду</small><b>${k>0?k+' '+pl(k,['день','дні','днів']):k==0?'Сьогодні':'Відбувся'}</b><div class="mu">${E(t)}, ${a.toLocaleDateString('uk-UA',{day:'numeric',month:'long'})}</div></div>`}
+ const label=k>0?k+' '+pl(k,['день','дні','днів']):k==0?'Сьогодні':'Відбувся';
+ const dateStr=a.toLocaleDateString('uk-UA',{day:'numeric',month:'long'});
+ return`<div class="tile shared"><div class="tile-top"><small>Відлік до події</small><span class="badge">Дедлайн</span></div><div class="cd-big"><b>${label}</b></div><div class="cd-ev"><span>${E(t)}</span><strong>${dateStr}</strong></div></div>`}
 function gtile(){
  if(!me)return'';
  const n=people.length,avg=n?Math.round(people.reduce((x,p)=>x+p.pct,0)/n):0;
- return`<div class="tile"><small>Прогрес групи</small><b>${avg}%</b> <span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}, анонімно</span><div class="pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12.5px">Вас не враховано. Це можна змінити в «Приватності».</p>'}</div>`}
+ return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><span class="badge">Група · ${n}</span></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12px">Вас не враховано (див. «Приватність»).</p>'}</div>`}
 function ttile(){
  if(!me)return'';
  const m={},all=new Set(),disp={};
  tiredRows.forEach(r=>{const k=nk(r.subject);if(!m[k]){m[k]=new Set();disp[k]=r.subject}m[k].add(r.user_id);all.add(r.user_id)});
  const top=Object.keys(m).map(k=>[disp[k],m[k].size]).sort((a,b)=>b[1]-a[1]).slice(0,5);
- return`<div class="tile"><small>Втома групи</small><b>${all.size}</b> <span class="mu">${pl(all.size,WHO)}</span>${top.length?`<small style="margin-top:10px">За предметами</small>${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}`:'<p class="mu" style="margin:8px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
-function grp(){$('grp').innerHTML=cd()+gtile()+ttile()}
+ return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Анонімно</span></div><div class="stat-row"><b>${all.size}</b><span class="mu">${pl(all.size,WHO)}</span></div>${top.length?`<div class="tired-list">${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}</div>`:'<p class="mu" style="margin:10px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
+function grp(){
+ if(!me){$('grp').innerHTML='';return}
+ $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div></div>`}
 const hasMyTired=s=>!!me&&tiredRows.some(r=>r.user_id==me&&nk(r.subject)==nk(s.name));
 const trTxt=s=>{const k=nk(s.name),u=new Set(tiredRows.filter(r=>nk(r.subject)==k).map(r=>r.user_id));return u.size+' '+pl(u.size,WHO)};
 function trow(s){
