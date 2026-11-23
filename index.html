@@ -25,6 +25,9 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .grp-wrap{margin-bottom:24px}
 .grp-hd{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--mu);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .grp-hd::after{content:"";flex:1;height:1px;background:var(--ln)}
+.grp-strip{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;padding:8px 14px;border-radius:12px;background:var(--sf);border:1px solid var(--ln);font-size:12.5px;color:var(--mu)}
+.grp-strip .pills{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.grp-strip span.tp{background:var(--bg);border:1px solid var(--ln);border-radius:99px;padding:2px 9px;font-weight:600;color:var(--tx)}
 .grp-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 @media (max-width:900px){.grp-grid{grid-template-columns:1fr}}
 .tile{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;box-shadow:var(--sh);display:flex;flex-direction:column}
@@ -58,9 +61,6 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .cd-ev{margin-top:auto;padding-top:10px;border-top:1px solid var(--ln);font-size:12.5px;color:var(--mu);display:flex;justify-content:space-between;gap:8px;align-items:center}
 .cd-ev strong{color:var(--tx);font-weight:600}
 .tired-list{margin-top:10px;padding-top:8px;border-top:1px solid var(--ln);display:flex;flex-direction:column;gap:5px}
-.team-counter{margin-top:10px;padding-top:8px;border-top:1px solid var(--ln);display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--mu)}
-.team-counter .pills{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
-.team-counter span.tp{background:var(--bg);border:1px solid var(--ln);border-radius:99px;padding:2px 8px;font-weight:600;color:var(--tx)}
 .mu{color:var(--mu)}
 .pb{height:8px;border-radius:99px;background:var(--ln);overflow:hidden}
 .pb i{display:block;height:100%;border-radius:inherit;background:var(--ac);transition:width .3s}
@@ -164,7 +164,7 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
-/* ===== Аска: жовті очі, хрестик по куту, перебіг по кутах, вибір під котом ===== */
+/* ===== Аска: жовті очі, хрестик по куту, перебіг по кутах, вибір під котом, виглядання ===== */
 .cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:5px;pointer-events:none;transition:left .38s cubic-bezier(.34,1.56,.64,1),right .38s cubic-bezier(.34,1.56,.64,1)}
 .cat-dock.left{right:auto;left:18px;align-items:flex-start}
 .cat-dock.left .cat-bubble{border-radius:14px 14px 14px 4px}
@@ -172,11 +172,14 @@ li{flex-wrap:wrap}
 .cat-bubble{pointer-events:auto;background:var(--sf);color:var(--tx);border:1px solid var(--ln);box-shadow:var(--sh);border-radius:14px 14px 4px 14px;padding:9px 13px;font-size:12.5px;font-weight:500;max-width:292px;line-height:1.4;opacity:0;transform:translateY(6px) scale(.96);transition:opacity .22s ease,transform .22s ease}
 .cat-bubble.show{opacity:1;transform:translateY(0) scale(1)}
 .cat-bubble b{display:block;font-size:11px;font-weight:700;color:#d4942a;margin-bottom:2px;letter-spacing:.02em}
-.cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.cat-stage{position:relative;display:inline-flex;align-items:center;justify-content:center;pointer-events:none}
+.cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .25s cubic-bezier(.34,1.56,.64,1),opacity .25s ease}
 .cat-wrap:hover{transform:translateY(-3px)}
 .cat-wrap:active{transform:scale(.95)}
 .cat-wrap.hop{animation:catHop .55s cubic-bezier(.34,1.56,.64,1)}
 .cat-wrap.dash{animation:catDash .48s cubic-bezier(.34,1.56,.64,1)}
+.cat-wrap.peek{transform:translateX(38px);opacity:.95}
+.cat-dock.left .cat-wrap.peek{transform:translateX(-38px)}
 @keyframes catHop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-15px) scale(1.04,.96)}65%{transform:translateY(0) scale(.97,1.03)}100%{transform:translateY(0) scale(1)}}
 @keyframes catDash{0%{transform:scale(1)}30%{transform:translateY(-18px) scale(1.12,.88)}70%{transform:translateY(-6px) scale(.94,1.06)}100%{transform:translateY(0) scale(1)}}
 .cat-svg{width:106px;height:106px;display:block;filter:drop-shadow(0 6px 12px rgba(0,0,0,.16))}
@@ -191,17 +194,17 @@ li{flex-wrap:wrap}
 .cat-eye-happy,.cat-blush{opacity:0;transition:opacity .2s}
 .cat-wrap.happy .cat-eye-open{opacity:0}
 .cat-wrap.happy .cat-eye-happy,.cat-wrap.happy .cat-blush{opacity:1}
-.cat-hide{position:absolute;top:2px;right:2px;left:auto;width:20px;height:20px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font:600 11px/1 sans-serif;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .18s,left .2s,right .2s;padding:0}
-.cat-dock.left .cat-hide{right:auto;left:2px}
-.cat-wrap:hover .cat-hide,.cat-hide:focus-visible{opacity:1}
-.cat-hide:hover{color:var(--no);border-color:var(--no)}
+.cat-hide{position:absolute;top:4px;right:4px;left:auto;z-index:10;pointer-events:auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font:700 11px/1 sans-serif;display:grid;place-items:center;cursor:pointer;opacity:.75;transition:opacity .18s,color .18s,border-color .18s,transform .18s;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.cat-dock.left .cat-hide{right:auto;left:4px}
+.cat-stage:hover .cat-hide,.cat-hide:focus-visible{opacity:1}
+.cat-hide:hover{color:var(--no);border-color:var(--no);transform:scale(1.06)}
 .cat-team{pointer-events:auto;display:inline-flex;gap:2px;background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:2px;box-shadow:var(--sh);opacity:.78;transition:opacity .18s}
 .cat-team:hover{opacity:1}
 .cat-team button{border:0;background:none;color:var(--mu);font:600 10.5px/1.2 Inter,system-ui,sans-serif;padding:3px 7px;border-radius:99px;cursor:pointer}
 .cat-team button.on{background:color-mix(in srgb,#d4942a 20%,transparent);color:#c2821c}
 .cat-paw{pointer-events:auto;border:1px solid var(--ln);background:var(--sf);color:var(--tx);box-shadow:var(--sh);border-radius:99px;padding:7px 12px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
 .cat-paw:hover{border-color:var(--ac)}
-.cat-paw[hidden],.cat-wrap[hidden],.cat-team[hidden]{display:none}
+.cat-paw[hidden],.cat-stage[hidden],.cat-team[hidden]{display:none}
 @media (max-width:600px){.cat-svg{width:90px;height:90px}.cat-dock{right:12px;bottom:10px}.cat-dock.left{left:12px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
@@ -228,70 +231,72 @@ li{flex-wrap:wrap}
 <!-- ><(((º> тиха пасхалка в глибині сторінки -->
 <div class="cat-dock" id="cat-dock" aria-live="polite" data-fish="><(((º>">
  <div class="cat-bubble" id="cat-msg"><b>Аска</b><span>Мяу. Я наглядаю, щоб ти не прокрастинувала 👀</span></div>
- <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити Аску" aria-label="Погладити Аску">
+ <div class="cat-stage" id="cat-stage">
   <button type="button" class="cat-hide" id="cat-hide" title="Сховати Аску" aria-label="Сховати Аску">✕</button>
-  <svg class="cat-svg" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
-   <defs>
-    <clipPath id="askaHeadClip">
-     <ellipse cx="42" cy="37" rx="20.5" ry="16.5"/>
-    </clipPath>
-    <clipPath id="askaBodyClip">
-     <path d="M23 71C23 55 29.5 47 42 47C54.5 47 61 55 61 71C61 74 58 76 53 76H31C26 76 23 74 23 71Z"/>
-    </clipPath>
-   </defs>
-   <g class="cat-tail">
-    <path d="M57 62C69 60 76 49 71 41C68 36 61 39 63 46C64 50 60 55 54 56" stroke="#22232b" stroke-width="7.5" stroke-linecap="round"/>
-    <path d="M67 40C71 42 73 46 70 50" stroke="#e48a46" stroke-width="5.5" stroke-linecap="round"/>
-   </g>
-   <g clip-path="url(#askaBodyClip)">
-    <rect x="21" y="45" width="42" height="33" fill="#f9f9fc"/>
-    <ellipse cx="57" cy="54" rx="10" ry="8" fill="#22232b"/>
-    <ellipse cx="53" cy="49" rx="6" ry="4" fill="#e48a46"/>
-    <ellipse cx="26" cy="57" rx="6.5" ry="7" fill="#22232b"/>
-   </g>
-   <g class="cat-ear-l">
-    <path d="M22 33L18 12L35 24Z" fill="#22232b"/>
-    <path d="M23 30L20 16L32 24Z" fill="#e48a46"/>
-    <path d="M24 29L22 19L30 24Z" fill="#f4a8b8"/>
-   </g>
-   <g class="cat-ear-r">
-    <path d="M62 33L66 11L49 24Z" fill="#22232b"/>
-    <path d="M60 29L63 16L52 24Z" fill="#e898aa"/>
-   </g>
-   <g clip-path="url(#askaHeadClip)">
-    <rect x="20" y="19" width="44" height="36" fill="#f9f9fc"/>
-    <path d="M20 20H37L34 32C34 37 29 40 20 39Z" fill="#e48a46"/>
-    <path d="M20 36C25 36 27 39 24 43H20Z" fill="#22232b"/>
-    <path d="M43 19H64V42C57 43 49 41 45 36C42 32 42 25 43 19Z" fill="#22232b"/>
-    <ellipse cx="42" cy="44" rx="14" ry="9" fill="#f9f9fc"/>
-    <circle cx="54" cy="44" r="1.1" fill="#e48a46" opacity=".65"/>
-   </g>
-   <ellipse class="cat-blush" cx="28.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
-   <ellipse class="cat-blush" cx="55.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
-   <g class="cat-eye-open">
-    <circle cx="33.5" cy="35.5" r="4.3" fill="#d4942a"/>
-    <circle cx="50.5" cy="35.5" r="4.3" fill="#d4942a"/>
-    <circle id="cat-p-l" cx="33.5" cy="35.5" r="2.2" fill="#14161f"/>
-    <circle id="cat-p-r" cx="50.5" cy="35.5" r="2.2" fill="#14161f"/>
-    <circle cx="32.5" cy="34.3" r="1" fill="#fff"/>
-    <circle cx="49.5" cy="34.3" r="1" fill="#fff"/>
-   </g>
-   <g class="cat-eye-happy" stroke="#d4942a" stroke-width="2.2" stroke-linecap="round">
-    <path d="M29.8 36.5C31.3 33.7 35.7 33.7 37.2 36.5"/>
-    <path d="M46.8 36.5C48.3 33.7 52.7 33.7 54.2 36.5"/>
-   </g>
-   <ellipse cx="38.2" cy="41.8" rx="2.1" ry="1.3" fill="#e48a46" opacity=".85"/>
-   <path d="M40.1 40.2H43.9L42 42.3Z" fill="#f08ea3"/>
-   <path d="M38.5 43.3C39.8 44.7 41.2 44.3 42 42.6C42.8 44.3 44.2 44.7 45.5 43.3" stroke="#5c6278" stroke-width="1.4" stroke-linecap="round"/>
-   <path d="M24 38.5L13 36.5M24 41.5L13 42.5M60 38.5L71 36.5M60 41.5L71 42.5" stroke="#b9bfd1" stroke-width="1.3" stroke-linecap="round"/>
-   <ellipse cx="34.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc"/>
-   <ellipse cx="49.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc"/>
-  </svg>
+  <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити Аску" aria-label="Погладити Аску">
+   <svg class="cat-svg" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+     <clipPath id="askaHeadClip">
+      <ellipse cx="42" cy="37" rx="20.5" ry="16.5"/>
+     </clipPath>
+     <clipPath id="askaBodyClip">
+      <path d="M23 71C23 55 29.5 47 42 47C54.5 47 61 55 61 71C61 74 58 76 53 76H31C26 76 23 74 23 71Z"/>
+     </clipPath>
+    </defs>
+    <g class="cat-tail">
+     <path d="M57 62C69 60 76 49 71 41C68 36 61 39 63 46C64 50 60 55 54 56" stroke="#22232b" stroke-width="7.5" stroke-linecap="round"/>
+     <path d="M67 40C71 42 73 46 70 50" stroke="#e48a46" stroke-width="5.5" stroke-linecap="round"/>
+    </g>
+    <g clip-path="url(#askaBodyClip)">
+     <rect x="21" y="45" width="42" height="33" fill="#f9f9fc"/>
+     <ellipse cx="57" cy="54" rx="10" ry="8" fill="#22232b"/>
+     <ellipse cx="53" cy="49" rx="6" ry="4" fill="#e48a46"/>
+     <ellipse cx="26" cy="57" rx="6.5" ry="7" fill="#22232b"/>
+    </g>
+    <g class="cat-ear-l">
+     <path d="M22 33L18 12L35 24Z" fill="#22232b"/>
+     <path d="M23 30L20 16L32 24Z" fill="#e48a46"/>
+     <path d="M24 29L22 19L30 24Z" fill="#f4a8b8"/>
+    </g>
+    <g class="cat-ear-r">
+     <path d="M62 33L66 11L49 24Z" fill="#22232b"/>
+     <path d="M60 29L63 16L52 24Z" fill="#e898aa"/>
+    </g>
+    <g clip-path="url(#askaHeadClip)">
+     <rect x="20" y="19" width="44" height="36" fill="#f9f9fc"/>
+     <path d="M20 20H37L34 32C34 37 29 40 20 39Z" fill="#e48a46"/>
+     <path d="M20 36C25 36 27 39 24 43H20Z" fill="#22232b"/>
+     <path d="M43 19H64V42C57 43 49 41 45 36C42 32 42 25 43 19Z" fill="#22232b"/>
+     <ellipse cx="42" cy="44" rx="14" ry="9" fill="#f9f9fc"/>
+     <circle cx="54" cy="44" r="1.1" fill="#e48a46" opacity=".65"/>
+    </g>
+    <ellipse class="cat-blush" cx="28.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
+    <ellipse class="cat-blush" cx="55.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
+    <g class="cat-eye-open">
+     <circle cx="33.5" cy="35.5" r="4.3" fill="#d4942a"/>
+     <circle cx="50.5" cy="35.5" r="4.3" fill="#d4942a"/>
+     <circle id="cat-p-l" cx="33.5" cy="35.5" r="2.2" fill="#14161f"/>
+     <circle id="cat-p-r" cx="50.5" cy="35.5" r="2.2" fill="#14161f"/>
+     <circle cx="32.5" cy="34.3" r="1" fill="#fff"/>
+     <circle cx="49.5" cy="34.3" r="1" fill="#fff"/>
+    </g>
+    <g class="cat-eye-happy" stroke="#d4942a" stroke-width="2.2" stroke-linecap="round">
+     <path d="M29.8 36.5C31.3 33.7 35.7 33.7 37.2 36.5"/>
+     <path d="M46.8 36.5C48.3 33.7 52.7 33.7 54.2 36.5"/>
+    </g>
+    <ellipse cx="38.2" cy="41.8" rx="2.1" ry="1.3" fill="#e48a46" opacity=".85"/>
+    <path d="M40.1 40.2H43.9L42 42.3Z" fill="#f08ea3"/>
+    <path d="M38.5 43.3C39.8 44.7 41.2 44.3 42 42.6C42.8 44.3 44.2 44.7 45.5 43.3" stroke="#5c6278" stroke-width="1.4" stroke-linecap="round"/>
+    <path d="M24 38.5L13 36.5M24 41.5L13 42.5M60 38.5L71 36.5M60 41.5L71 42.5" stroke="#b9bfd1" stroke-width="1.3" stroke-linecap="round"/>
+    <ellipse cx="34.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc"/>
+    <ellipse cx="49.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc"/>
+   </svg>
+  </div>
  </div>
  <div class="cat-team" id="cat-team" title="Команда котосмольронят">
   <button type="button" data-team="smol" title="Команда Смольського">Смоленятко</button>
   <button type="button" data-team="rom" title="Команда Романка">Романятко</button>
-  <button type="button" data-team="both" class="on" title="Нейтрально">Обидва</button>
+  <button type="button" data-team="both" class="on" title="Обидва">Обидва</button>
  </div>
  <button type="button" class="cat-paw" id="cat-show" hidden>🐾 Покликати Аску</button>
 </div>
@@ -487,7 +492,7 @@ $('inb').onclick=()=>showAu(true);
 $('skip').onclick=()=>{showAu(false);$('inb').hidden=false;sy('Лише цей браузер');grp();render()};
 $('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;$('inb').hidden=true;sy('');render();showAu(true)};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready)loadShared()}});
-/* ===== Спільне: відлік, прогрес групи, кнопка втоми та загальний лічильник котосмольронят ===== */
+/* ===== Спільне: відлік, прогрес групи, кнопка втоми та окремий лічильник котосмольронят ===== */
 const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасувати «Я замахався/лась»',RD='2026-12-04',WHO=['людина замахалась','людини замахались','людей замахались'];
 const GUEST_LOCK_MSG='Прогрес інших приховано, і вас не враховано, тому що ви не зареєстровані.';
 var ready=false;
@@ -504,40 +509,40 @@ const nk=s=>fixSubName(String(s)).trim().toLowerCase().replace(/\s+/g,' ');
 const pl=(n,f)=>{const a=Math.abs(n)%100,b=a%10;return a>10&&a<20?f[2]:b==1?f[0]:b>1&&b<5?f[1]:f[2]};
 const toast=t=>{const e=$('ts');e.textContent=t;e.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{e.hidden=true},3500)};
 function parseTeamTag(nick){
- const m=String(nick||'').match(/\[(smol|rom)\]\s*$/i);
+ const m=String(nick||'').match(/\[(smol|rom|both)\]\s*$/i);
  return m?m[1].toLowerCase():null;
 }
 function stripTeamTag(nick){
- return String(nick||'').replace(/\s*\[(smol|rom)\]\s*$/i,'').trim();
+ return String(nick||'').replace(/\s*\[(smol|rom|both)\]\s*$/i,'').trim();
 }
 function formatNickWithTeam(nick,team){
  const clean=stripTeamTag(nick);
- if(team==='smol'||team==='rom'){
+ if(team==='smol'||team==='rom'||team==='both'){
   return (clean?clean+' ':'')+`[${team}]`;
  }
  return clean||null;
 }
 function teamCounts(){
- let smol=0,rom=0;
+ let smol=0,rom=0,both=0;
  people.forEach(p=>{
   const tag=parseTeamTag(p.nick);
   if(tag==='smol')smol++;
   else if(tag==='rom')rom++;
+  else if(tag==='both')both++;
  });
  if(me&&!people.some(p=>p.user_id==me)){
   if(askaTeam==='smol')smol++;
   else if(askaTeam==='rom')rom++;
+  else if(askaTeam==='both')both++;
  }
- return{smol,rom};
+ return{smol,rom,both};
 }
 function cd(){
  const d=cfgS.review_date||RD,t=cfgS.review_title||'Перегляд (вивішування робіт)',a=new Date(d+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);
  const k=Math.round((a-n)/864e5);if(isNaN(k))return'';
  const label=k>0?k+' '+pl(k,['день','дні','днів']):k==0?'Сьогодні':'Відбувся';
  const dateStr=a.toLocaleDateString('uk-UA',{day:'numeric',month:'long'});
- const tc=teamCounts();
- const myLabel=askaTeam==='smol'?'Смоленятко':askaTeam==='rom'?'Романятко':'Обидва';
- return`<div class="tile shared"><div class="tile-top"><small>Відлік до події</small><span class="badge">Дедлайн</span></div><div class="cd-big"><b>${label}</b></div><div class="cd-ev"><span>${E(t)}</span><strong>${dateStr}</strong></div><div class="team-counter"><span>Котосмольронята</span><span class="pills"><span class="tp">Смоленят: ${tc.smol}</span><span class="tp">Романят: ${tc.rom}</span><span class="mu">· ${E(myLabel)}</span></span></div></div>`}
+ return`<div class="tile shared"><div class="tile-top"><small>Відлік до події</small><span class="badge">Дедлайн</span></div><div class="cd-big"><b>${label}</b></div><div class="cd-ev"><span>${E(t)}</span><strong>${dateStr}</strong></div></div>`}
 function gtile(){
  if(!me){
   return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><span class="badge">Приховано</span></div><div class="stat-row"><b>•••</b><span class="mu">дані групи</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:45%;opacity:.35"></i></div><p class="guest-note">${E(GUEST_LOCK_MSG)} <button type="button" class="guest-lnk" data-open-auth="1">Зареєструватися / Увійти</button></p></div>`;
@@ -563,9 +568,13 @@ function ttile(){
  tiredRows.forEach(r=>{const clean=fixSubName(r.subject),k=nk(clean);if(!m[k]){m[k]=new Set();disp[k]=clean}m[k].add(r.user_id);all.add(r.user_id)});
  const top=Object.keys(m).map(k=>[disp[k],m[k].size]).sort((a,b)=>b[1]-a[1]).slice(0,5);
  return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Анонімно</span></div><div class="stat-row"><b>${all.size}</b><span class="mu">${pl(all.size,WHO)}</span></div>${top.length?`<div class="tired-list">${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}</div>`:'<p class="mu" style="margin:10px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
+function teamStrip(){
+ const tc=teamCounts();
+ const myLabel=askaTeam==='smol'?'Смоленятко':askaTeam==='rom'?'Романятко':'Обидва';
+ return`<div class="grp-strip"><span>Котосмольронята · ви: <strong>${E(myLabel)}</strong></span><span class="pills"><span class="tp">Смоленят: ${tc.smol}</span><span class="tp">Романят: ${tc.rom}</span><span class="tp">Обидва: ${tc.both}</span></span></div>`}
 function grp(){
  if(!sb){$('grp').innerHTML='';return}
- $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div></div>`}
+ $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div>${me?teamStrip():''}</div>`}
 async function saveNick(){
  if(!me){showAu(true);return}
  const inp=$('nick-in');
@@ -674,7 +683,7 @@ function sharedOff(){
  $('pfb').hidden=true;$('pf').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&ready)loadShared()});
 
-/* ===== Аска: жовті очі, вибір під котом, хрестик по куту, перебіг по кутах і тонкі пасхалки ===== */
+/* ===== Аска: жовті очі, вибір під котом, хрестик по куту, перебіг по кутах, виглядання й пасхалки ===== */
 //><(((º>
 const whoSmolRom=()=>askaTeam==='smol'?'Смольський':askaTeam==='rom'?'Романко':'Смольський / Романко';
 const ASKA_PHRASES=[
@@ -711,6 +720,11 @@ const ASKA_PHRASES=[
  'Якщо на ОВМ знову спитають, де тон, скажи, що кішка з’їла 🐾',
  'Марта вже подумки поставила тобі лайк, але відповіді не чекай — роби далі 🌸',
  'Нагірний і Косів стежать з Олімпу, а я — з нижнього кута монітора ⚡'
+];
+const ASKA_PEEK_LINES=[
+ 'Я лише одним оком глянула... працюєш? 👀',
+ 'Тсс... я тут ненадовго вилізла перевірити, чи не заснула 🐾',
+ 'Маленький кото-ревізор зазирнув із кутка і знову зникає 😼'
 ];
 const ASKA_RUN_CORNER=[
  'Ну все, дістала! Перебігаю в інший кут, там спокійніше 🐾💨',
@@ -903,10 +917,11 @@ function catSubjectDone(s){
  }
  catPick(ASKA_BLOCK_OTHER,'happy',true);
 }
-let catTm=null,catIdx=0,catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='';
+let catTm=null,catIdx=0,catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='',peekTimer=null,peekEndTimer=null;
 function catSay(text,mood='happy',hop=true,dash=false){
- const w=$('cat-wrap'),b=$('cat-msg');
- if(!w||w.hidden||!b)return;
+ const w=$('cat-wrap'),b=$('cat-msg'),stEl=$('cat-stage');
+ if(!w||!b||!stEl)return;
+ if(stEl.hidden&&!w.classList.contains('peek'))return;
  b.innerHTML=`<b>Аска</b><span>${E(text)}</span>`;
  b.classList.add('show');
  w.classList.remove('happy','sad','hop','dash');
@@ -926,7 +941,7 @@ function catPick(arr,mood='happy',hop=true){
  catSay(t,mood,hop);
 }
 (()=>{
- const dock=$('cat-dock'),w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),teamBar=$('cat-team'),pl=$('cat-p-l'),pr=$('cat-p-r');
+ const dock=$('cat-dock'),stage=$('cat-stage'),w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),teamBar=$('cat-team'),pl=$('cat-p-l'),pr=$('cat-p-r');
  const syncTeamUI=()=>{
   if(!teamBar)return;
   teamBar.querySelectorAll('button[data-team]').forEach(btn=>{
@@ -935,6 +950,49 @@ function catPick(arr,mood='happy',hop=true){
  };
  window.syncAskaTeamUI=syncTeamUI;
  syncTeamUI();
+
+ const stopPeek=()=>{
+  clearTimeout(peekTimer);clearTimeout(peekEndTimer);
+  peekTimer=null;peekEndTimer=null;
+  w.classList.remove('peek');
+ };
+ const schedulePeek=()=>{
+  stopPeek();
+  peekTimer=setTimeout(()=>{
+   let hiddenFlag=false;
+   try{hiddenFlag=localStorage.getItem(CAT_KEY)==='1'}catch(e){}
+   if(!hiddenFlag)return;
+   stage.hidden=false;
+   hideBtn.hidden=true;
+   w.classList.add('peek');
+   catSay(ASKA_PEEK_LINES[mouseIdx++%ASKA_PEEK_LINES.length],'happy',false);
+   peekEndTimer=setTimeout(()=>{
+    w.classList.remove('peek');
+    $('cat-msg').classList.remove('show');
+    stage.hidden=true;
+    hideBtn.hidden=false;
+    schedulePeek();
+   },2800);
+  },24000);
+ };
+ const applyHiddenState=(isHidden)=>{
+  try{if(isHidden)localStorage.setItem(CAT_KEY,'1');else localStorage.removeItem(CAT_KEY)}catch(err){}
+  if(isHidden){
+   stopPeek();
+   stage.hidden=true;
+   teamBar.hidden=true;
+   $('cat-msg').classList.remove('show');
+   showBtn.hidden=false;
+   schedulePeek();
+  }else{
+   stopPeek();
+   hideBtn.hidden=false;
+   showBtn.hidden=true;
+   stage.hidden=false;
+   teamBar.hidden=false;
+  }
+ };
+
  teamBar.addEventListener('click',e=>{
   const btn=e.target.closest('button[data-team]');
   if(!btn)return;
@@ -946,11 +1004,20 @@ function catPick(arr,mood='happy',hop=true){
   if(ready&&sb)refreshShared();
   if(askaTeam==='smol')catSay('Прийнято: тепер по ОВМ кажу виключно про Смольського 😼','happy',false);
   else if(askaTeam==='rom')catSay('Прийнято: тепер по ОВМ кажу виключно про Романка 🐾','happy',false);
-  else catSay('Нейтральний режим увімкнено: знову питаю про обох 👀','happy',false);
+  else catSay('Обрано «Обидва»: знову кажу про обох 👀','happy',false);
  });
- try{if(localStorage.getItem(CAT_KEY)==='1'){w.hidden=true;teamBar.hidden=true;showBtn.hidden=false}}catch(e){}
+
+ let initHidden=false;
+ try{initHidden=localStorage.getItem(CAT_KEY)==='1'}catch(e){}
+ if(initHidden){applyHiddenState(true)}
+
  w.addEventListener('click',e=>{
   if(e.target.closest('#cat-hide'))return;
+  if(w.classList.contains('peek')){
+   applyHiddenState(false);
+   catSay('Помітила, як я виглядаю? Ну добре, я знову з тобою 🐾','happy',true);
+   return;
+  }
   catClicks++;
   if(catClicks%10===0){
    dock.classList.toggle('left');
@@ -972,18 +1039,12 @@ function catPick(arr,mood='happy',hop=true){
  });
  w.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();w.click()}});
  hideBtn.addEventListener('click',e=>{
+  e.preventDefault();
   e.stopPropagation();
-  w.hidden=true;
-  teamBar.hidden=true;
-  $('cat-msg').classList.remove('show');
-  showBtn.hidden=false;
-  try{localStorage.setItem(CAT_KEY,'1')}catch(err){}
+  applyHiddenState(true);
  });
  showBtn.addEventListener('click',()=>{
-  showBtn.hidden=true;
-  w.hidden=false;
-  teamBar.hidden=false;
-  try{localStorage.removeItem(CAT_KEY)}catch(err){}
+  applyHiddenState(false);
   catSay('Знову кликала? Ну я прийшла, але ненадовго — не втрачай темп 🐾','happy',true);
  });
  window.addEventListener('keydown',e=>{
@@ -992,12 +1053,13 @@ function catPick(arr,mood='happy',hop=true){
    secretBuf=(secretBuf+e.key.toLowerCase()).slice(-6);
    if(secretBuf.endsWith('meow')||secretBuf.endsWith('aska')){
     secretBuf='';
+    if(stage.hidden)applyHiddenState(false);
     catSay('Хто покликав мене за кодовим словом? Мяу, я на місці 😼✨','happy',true);
    }
   }
  });
  window.addEventListener('pointermove',e=>{
-  if(w.hidden)return;
+  if(stage.hidden)return;
   const r=w.getBoundingClientRect();
   const cx=r.left+r.width/2,cy=r.top+r.height/2;
   const ang=Math.atan2(e.clientY-cy,e.clientX-cx);
@@ -1039,7 +1101,7 @@ function catPick(arr,mood='happy',hop=true){
 
   clearTimeout(mouseTm);
   mouseTm=setTimeout(()=>{
-   if(!w.hidden&&!idleAlerted&&!catTm){
+   if(!stage.hidden&&!idleAlerted&&!catTm){
     idleAlerted=true;
     catSay(ASKA_MOUSE_IDLE[mouseIdx++%ASKA_MOUSE_IDLE.length],'happy',false);
    }
@@ -1049,7 +1111,7 @@ function catPick(arr,mood='happy',hop=true){
  const greet=(hr>=23||hr<5)
   ?'Ще не спиш? Я теж люблю нічний вайб, але про сон не забувай 🌙'
   :'Мяу. Нагірний і Косів — ваші боги грецькі, тому я наглядаю за тобою 👀';
- setTimeout(()=>{if(!w.hidden)catSay(greet,'happy',false)},1200);
+ setTimeout(()=>{if(!stage.hidden)catSay(greet,'happy',false)},1200);
 })();
 
 ready=true;
