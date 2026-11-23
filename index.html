@@ -11,7 +11,7 @@
 :root[data-theme="dark"]{--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--grp:#4fd1c5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-.w{max-width:1280px;margin:0 auto;padding:28px 20px 56px}
+.w{max-width:1280px;margin:0 auto;padding:28px 20px 84px}
 .top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
 .top-acts{position:relative;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 h1{font-size:28px;letter-spacing:-.025em;margin:0}
@@ -161,6 +161,35 @@ li{flex-wrap:wrap}
 #pf input[type=text]{display:block;width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px 10px;font:inherit}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
+
+/* ===== Інтерактивний котик-компаньйон ===== */
+.cat-dock{position:fixed;right:18px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.cat-bubble{pointer-events:auto;background:var(--sf);color:var(--tx);border:1px solid var(--ln);box-shadow:var(--sh);border-radius:14px 14px 4px 14px;padding:7px 12px;font-size:12.5px;font-weight:500;max-width:220px;line-height:1.35;opacity:0;transform:translateY(6px) scale(.96);transition:opacity .22s ease,transform .22s ease}
+.cat-bubble.show{opacity:1;transform:translateY(0) scale(1)}
+.cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.cat-wrap:hover{transform:translateY(-3px)}
+.cat-wrap:active{transform:scale(.95)}
+.cat-wrap.hop{animation:catHop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes catHop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-14px) scale(1.04,.96)}65%{transform:translateY(0) scale(.97,1.03)}100%{transform:translateY(0) scale(1)}}
+.cat-svg{width:76px;height:76px;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.16))}
+.cat-tail{transform-origin:56px 58px;animation:tailWag 3.2s ease-in-out infinite}
+@keyframes tailWag{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(14deg)}}
+.cat-ear-l{transform-origin:24px 26px;transition:transform .25s ease}
+.cat-ear-r{transform-origin:52px 26px;transition:transform .25s ease}
+.cat-wrap:hover .cat-ear-l{transform:rotate(-8deg)}
+.cat-wrap:hover .cat-ear-r{transform:rotate(8deg)}
+.cat-wrap.sad .cat-ear-l{transform:rotate(-22deg)}
+.cat-wrap.sad .cat-ear-r{transform:rotate(22deg)}
+.cat-eye-happy,.cat-blush{opacity:0;transition:opacity .2s}
+.cat-wrap.happy .cat-eye-open{opacity:0}
+.cat-wrap.happy .cat-eye-happy,.cat-wrap.happy .cat-blush{opacity:1}
+.cat-hide{position:absolute;top:-4px;left:-4px;width:20px;height:20px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font:600 11px/1 sans-serif;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .18s;padding:0}
+.cat-wrap:hover .cat-hide,.cat-hide:focus-visible{opacity:1}
+.cat-hide:hover{color:var(--no);border-color:var(--no)}
+.cat-paw{pointer-events:auto;border:1px solid var(--ln);background:var(--sf);color:var(--tx);box-shadow:var(--sh);border-radius:99px;padding:7px 12px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
+.cat-paw:hover{border-color:var(--ac)}
+.cat-paw[hidden],.cat-wrap[hidden]{display:none}
+@media (max-width:600px){.cat-svg{width:64px;height:64px}.cat-dock{right:12px;bottom:10px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 </head>
@@ -182,8 +211,63 @@ li{flex-wrap:wrap}
 </div>
 <div class="grid" id="grid"></div>
 </div>
+
+<!-- Котик-помічник у кутку -->
+<div class="cat-dock" id="cat-dock" aria-live="polite">
+ <div class="cat-bubble" id="cat-msg">Мурмяу! Готові закривати дедлайни?</div>
+ <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити котика" aria-label="Погладити котика">
+  <button type="button" class="cat-hide" id="cat-hide" title="Сховати котика" aria-label="Сховати котика">✕</button>
+  <svg class="cat-svg" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+   <!-- Хвіст -->
+   <path class="cat-tail" d="M55 60C66 58 72 48 68 41C65 36 59 39 61 45C62 49 58 53 53 54" stroke="#26293a" stroke-width="6.5" stroke-linecap="round"/>
+   <!-- Тіло -->
+   <path d="M23 68C23 53 29 45 40 45C51 45 57 53 57 68C57 71 54 73 50 73H30C26 73 23 71 23 68Z" fill="#26293a"/>
+   <!-- Біла грудка -->
+   <path d="M34 48C34 48 37 58 40 58C43 58 46 48 46 48C44 47 36 47 34 48Z" fill="#f7f8fc"/>
+   <!-- Ліве вухо -->
+   <g class="cat-ear-l">
+    <path d="M21 31L18 13L33 23Z" fill="#26293a" stroke="#26293a" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M22 28L20 17L30 23Z" fill="#f28ca6"/>
+   </g>
+   <!-- Праве вухо -->
+   <g class="cat-ear-r">
+    <path d="M59 31L62 13L47 23Z" fill="#26293a" stroke="#26293a" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M58 28L60 17L50 23Z" fill="#f28ca6"/>
+   </g>
+   <!-- Голова -->
+   <ellipse cx="40" cy="35" rx="20" ry="16" fill="#26293a"/>
+   <!-- Рум'янець -->
+   <ellipse class="cat-blush" cx="27" cy="39" rx="3.2" ry="1.8" fill="#f28ca6" opacity=".75"/>
+   <ellipse class="cat-blush" cx="53" cy="39" rx="3.2" ry="1.8" fill="#f28ca6" opacity=".75"/>
+   <!-- Відкриті очі зі зіницями, що рухаються -->
+   <g class="cat-eye-open">
+    <circle cx="32" cy="34" r="4.2" fill="#ffd166"/>
+    <circle cx="48" cy="34" r="4.2" fill="#ffd166"/>
+    <circle id="cat-p-l" cx="32" cy="34" r="2.1" fill="#151a2d"/>
+    <circle id="cat-p-r" cx="48" cy="34" r="2.1" fill="#151a2d"/>
+    <circle cx="31.2" cy="33" r=".9" fill="#fff"/>
+    <circle cx="47.2" cy="33" r=".9" fill="#fff"/>
+   </g>
+   <!-- Щасливі примружені очі (^ ^) -->
+   <g class="cat-eye-happy" stroke="#ffd166" stroke-width="2.2" stroke-linecap="round">
+    <path d="M28.5 35C30 32.2 34 32.2 35.5 35"/>
+    <path d="M44.5 35C46 32.2 50 32.2 51.5 35"/>
+   </g>
+   <!-- Носик і ротик -->
+   <path d="M38.2 38.2H41.8L40 40.3Z" fill="#f28ca6"/>
+   <path d="M36.5 41.2C37.8 42.6 39.2 42.2 40 40.5C40.8 42.2 42.2 42.6 43.5 41.2" stroke="#e9ecf8" stroke-width="1.5" stroke-linecap="round"/>
+   <!-- Вуса -->
+   <path d="M22 36L14 34.5M22 39.5L14 40.5M58 36L66 34.5M58 39.5L66 40.5" stroke="#8f98b5" stroke-width="1.3" stroke-linecap="round"/>
+   <!-- Передні лапки -->
+   <ellipse cx="33" cy="71" rx="4.5" ry="3" fill="#f7f8fc"/>
+   <ellipse cx="47" cy="71" rx="4.5" ry="3" fill="#f7f8fc"/>
+  </svg>
+ </div>
+ <button type="button" class="cat-paw" id="cat-show" hidden>🐾 Покликати котика</button>
+</div>
+
 <script>
-const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',uid=()=>Math.random().toString(36).slice(2,9);
+const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-cat-hide',uid=()=>Math.random().toString(36).slice(2,9);
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const seed=()=>[
@@ -237,10 +321,17 @@ const G=$('grid');
 G.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b)return;
  const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
- if(a=='st')t.s=(t.s+1)%3;
- else if(a=='ap')t.a=!t.a;
+ if(a=='st'){
+  t.s=(t.s+1)%3;
+  if(t.s==2)catSay('Мур-р-р! Ще одне завдання готове ✨','happy',true);
+  else if(t.s==1)catSay('Мяу! Погнали робити 🐾','happy',false);
+ }
+ else if(a=='ap'){
+  t.a=!t.a;
+  if(t.a)catSay('Затверджено! Мурмяу! 🎉','happy',true);
+ }
  else if(a=='tired'){tiredBtn(s);return}
- else if(a=='all')s.tasks.forEach(x=>x.s=2);
+ else if(a=='all'){s.tasks.forEach(x=>x.s=2);catSay('Ого! Увесь предмет закрито! Мур-р-р! 🏆','happy',true)}
  else if(a=='none')s.tasks.forEach(x=>x.s=0);
  else if(a=='note'){OPENN.has(t.id)?OPENN.delete(t.id):OPENN.add(t.id);render();const n=G.querySelector(`[data-tid="${t.id}"] textarea`);n&&n.focus();return}
  else if(a=='more'){OPEN.has(s.id)?OPEN.delete(s.id):OPEN.add(s.id);render();return}
@@ -250,10 +341,10 @@ G.addEventListener('click',e=>{
   S=S.filter(x=>x!=s);pend=null}
  else if(a=='addt'){
   const i=sc.querySelectorAll('.add input'),v=i[0].value.trim();if(!v){i[0].focus();return}
-  s.tasks.push({id:uid(),t:v,h:+i[1].value||0,s:0});if(s.tasks.length>LIM)OPEN.add(s.id);save();render();G.querySelector(`[data-sid="${s.id}"] .add input`).focus();return}
+  s.tasks.push({id:uid(),t:v,h:+i[1].value||0,s:0});if(s.tasks.length>LIM)OPEN.add(s.id);save();render();catSay('Мяу, записав у план! 📝','happy',false);G.querySelector(`[data-sid="${s.id}"] .add input`).focus();return}
  else if(a=='adds'){
   const i=b.parentElement.querySelectorAll('input'),v=i[0].value.trim();if(!v){i[0].focus();return}
-  S.push({id:uid(),name:v,color:i[1].value,tasks:[]})}
+  S.push({id:uid(),name:v,color:i[1].value,tasks:[]});catSay('Новий предмет! Мурмяу 📚','happy',false)}
  save();render()});
 G.addEventListener('change',e=>{
  const el=e.target,f=el.dataset.f,sc=el.closest('[data-sid]');if(!f||!sc)return;
@@ -463,7 +554,7 @@ async function tiredBtn(s){
  const{data,error}=await sb.from('tired').insert({subject:s.name}).select('id,user_id,subject,created_at').single();
  if(error){toast(/Забагато/.test(error.message)?'Забагато натискань. Спробуйте через годину':'Не вдалося зберегти');return}
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
- toast('Записано, ви не самі');refreshShared()}
+ toast('Записано, ви не самі');catSay('Мяу... тримайся, ти не один(а) 🐾','sad',false);refreshShared()}
 async function loadShared(){
  if(!sb||!me)return;
  const[a,b,c]=await Promise.all([
@@ -498,6 +589,69 @@ function sharedOff(){
  ch=null;clearInterval(pt);pt=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
  $('pfb').hidden=true;$('pf').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&ready)loadShared()});
+
+/* ===== Логіка котика ===== */
+const CAT_PHRASES=[
+ 'Мурмяу! Ти молодець ✨',
+ 'Мур-р-р... погладили котика 🐾',
+ 'Не забудь випити водички 💧',
+ 'Один маленький крок — і дедлайн ближче!',
+ 'Мяу! Шрифти самі себе не напишуть ✒️',
+ 'Перерва на 5 хвилин і далі в бій!',
+ 'Мурмяу~ Усе вийде!'
+];
+let catTm=null,catIdx=0;
+function catSay(text,mood='happy',hop=true){
+ const w=$('cat-wrap'),b=$('cat-msg');
+ if(!w||w.hidden||!b)return;
+ b.textContent=text;
+ b.classList.add('show');
+ w.classList.remove('happy','sad','hop');
+ if(mood)w.classList.add(mood);
+ if(hop){void w.offsetWidth;w.classList.add('hop')}
+ clearTimeout(catTm);
+ catTm=setTimeout(()=>{
+  b.classList.remove('show');
+  w.classList.remove('happy','sad');
+ },3400);
+}
+(()=>{
+ const w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),pl=$('cat-p-l'),pr=$('cat-p-r');
+ try{if(localStorage.getItem(CAT_KEY)==='1'){w.hidden=true;showBtn.hidden=false}}catch(e){}
+ w.addEventListener('click',e=>{
+  if(e.target.closest('#cat-hide'))return;
+  const msg=CAT_PHRASES[catIdx%CAT_PHRASES.length];
+  catIdx++;
+  catSay(msg,'happy',true);
+ });
+ w.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();w.click()}});
+ hideBtn.addEventListener('click',e=>{
+  e.stopPropagation();
+  w.hidden=true;
+  $('cat-msg').classList.remove('show');
+  showBtn.hidden=false;
+  try{localStorage.setItem(CAT_KEY,'1')}catch(err){}
+ });
+ showBtn.addEventListener('click',()=>{
+  showBtn.hidden=true;
+  w.hidden=false;
+  try{localStorage.removeItem(CAT_KEY)}catch(err){}
+  catSay('Мурмяу! Я повернувся 🐾','happy',true);
+ });
+ window.addEventListener('pointermove',e=>{
+  if(w.hidden)return;
+  const r=w.getBoundingClientRect();
+  const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  const ang=Math.atan2(e.clientY-cy,e.clientX-cx);
+  const dx=Math.cos(ang)*1.35,dy=Math.sin(ang)*1.35;
+  pl.setAttribute('cx',(32+dx).toFixed(2));
+  pl.setAttribute('cy',(34+dy).toFixed(2));
+  pr.setAttribute('cx',(48+dx).toFixed(2));
+  pr.setAttribute('cy',(34+dy).toFixed(2));
+ },{passive:true});
+ setTimeout(()=>{if(!w.hidden)catSay('Мурмяу! Готові до роботи? 🐾','happy',false)},1200);
+})();
+
 ready=true;
 (async()=>{
  const U=SB_URL.trim().replace(/\/+$/,'').replace(/\/(rest|auth)\/v1$/,''),K=SB_KEY.trim();
