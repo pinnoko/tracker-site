@@ -164,7 +164,6 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
-/* ===== Аска: жовті очі, хрестик по куту, перебіг по кутах, вибір під котом, виглядання ===== */
 .cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:5px;pointer-events:none;transition:left .38s cubic-bezier(.34,1.56,.64,1),right .38s cubic-bezier(.34,1.56,.64,1)}
 .cat-dock.left{right:auto;left:18px;align-items:flex-start}
 .cat-dock.left .cat-bubble{border-radius:14px 14px 14px 4px}
@@ -178,22 +177,31 @@ li{flex-wrap:wrap}
 .cat-wrap:active{transform:scale(.95)}
 .cat-wrap.hop{animation:catHop .55s cubic-bezier(.34,1.56,.64,1)}
 .cat-wrap.dash{animation:catDash .48s cubic-bezier(.34,1.56,.64,1)}
+.cat-wrap.stretch{animation:catStretch .95s cubic-bezier(.34,1.56,.64,1)}
+.cat-wrap.doze{animation:catDoze 1.4s ease-in-out}
+.cat-wrap.scroll-tilt{transform:translateY(-2px) rotate(-3deg)}
+.cat-dock.left .cat-wrap.scroll-tilt{transform:translateY(-2px) rotate(3deg)}
 .cat-wrap.peek{transform:translateX(38px);opacity:.95}
 .cat-dock.left .cat-wrap.peek{transform:translateX(-38px)}
 @keyframes catHop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-15px) scale(1.04,.96)}65%{transform:translateY(0) scale(.97,1.03)}100%{transform:translateY(0) scale(1)}}
 @keyframes catDash{0%{transform:scale(1)}30%{transform:translateY(-18px) scale(1.12,.88)}70%{transform:translateY(-6px) scale(.94,1.06)}100%{transform:translateY(0) scale(1)}}
+@keyframes catStretch{0%,100%{transform:translateY(0) scale(1,1)}35%{transform:translateY(2px) scale(1.09,.88)}70%{transform:translateY(-6px) scale(.96,1.06)}}
+@keyframes catDoze{0%,100%{transform:translateY(0) rotate(0deg)}45%{transform:translateY(3px) rotate(4deg)}75%{transform:translateY(2px) rotate(2deg)}}
 .cat-svg{width:106px;height:106px;display:block;filter:drop-shadow(0 6px 12px rgba(0,0,0,.16))}
 .cat-tail{transform-origin:57px 62px;animation:tailWag 3.2s ease-in-out infinite}
+.cat-wrap:hover .cat-tail{animation:tailWagFast .9s ease-in-out infinite}
 @keyframes tailWag{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(14deg)}}
+@keyframes tailWagFast{0%,100%{transform:rotate(-16deg)}50%{transform:rotate(22deg)}}
 .cat-ear-l{transform-origin:23px 31px;transition:transform .25s ease}
 .cat-ear-r{transform-origin:61px 31px;transition:transform .25s ease}
 .cat-wrap:hover .cat-ear-l{transform:rotate(-8deg)}
 .cat-wrap:hover .cat-ear-r{transform:rotate(8deg)}
+.cat-wrap.twitch .cat-ear-r{transform:rotate(14deg)}
 .cat-wrap.sad .cat-ear-l{transform:rotate(-22deg)}
 .cat-wrap.sad .cat-ear-r{transform:rotate(22deg)}
 .cat-eye-happy,.cat-blush{opacity:0;transition:opacity .2s}
-.cat-wrap.happy .cat-eye-open{opacity:0}
-.cat-wrap.happy .cat-eye-happy,.cat-wrap.happy .cat-blush{opacity:1}
+.cat-wrap.happy .cat-eye-open,.cat-wrap.doze .cat-eye-open{opacity:0}
+.cat-wrap.happy .cat-eye-happy,.cat-wrap.doze .cat-eye-happy,.cat-wrap.happy .cat-blush{opacity:1}
 .cat-hide{position:absolute;top:4px;right:4px;left:auto;z-index:10;pointer-events:auto;width:22px;height:22px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font:700 11px/1 sans-serif;display:grid;place-items:center;cursor:pointer;opacity:.75;transition:opacity .18s,color .18s,border-color .18s,transform .18s;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.12)}
 .cat-dock.left .cat-hide{right:auto;left:4px}
 .cat-stage:hover .cat-hide,.cat-hide:focus-visible{opacity:1}
@@ -228,8 +236,7 @@ li{flex-wrap:wrap}
 <div class="grid" id="grid"></div>
 </div>
 
-<!-- ><(((º> тиха пасхалка в глибині сторінки -->
-<div class="cat-dock" id="cat-dock" aria-live="polite" data-fish="><(((º>">
+<div class="cat-dock" id="cat-dock" aria-live="polite" data-catch="><(((º>">
  <div class="cat-bubble" id="cat-msg"><b>Аска</b><span>Мяу. Я наглядаю, щоб ти не прокрастинувала 👀</span></div>
  <div class="cat-stage" id="cat-stage">
   <button type="button" class="cat-hide" id="cat-hide" title="Сховати Аску" aria-label="Сховати Аску">✕</button>
@@ -454,7 +461,6 @@ $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)
  migrate(S);
  save();render();$('bk').hidden=true;catSay('Дані імпортовано! Мяу, ніби нічого не загубили ✨','happy',true)}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
 render();
-/* ===== Синхронізація через Supabase ===== */
 const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
 let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
 const sy=t=>{$('sy').textContent=(acc?acc+' · ':'')+t};
@@ -492,7 +498,6 @@ $('inb').onclick=()=>showAu(true);
 $('skip').onclick=()=>{showAu(false);$('inb').hidden=false;sy('Лише цей браузер');grp();render()};
 $('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;$('inb').hidden=true;sy('');render();showAu(true)};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready)loadShared()}});
-/* ===== Спільне: відлік, прогрес групи, кнопка втоми та окремий лічильник котосмольронят ===== */
 const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасувати «Я замахався/лась»',RD='2026-12-04',WHO=['людина замахалась','людини замахались','людей замахались'];
 const GUEST_LOCK_MSG='Прогрес інших приховано, і вас не враховано, тому що ви не зареєстровані.';
 var ready=false;
@@ -681,8 +686,6 @@ function sharedOff(){
  $('pfb').hidden=true;$('pf').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&ready)loadShared()});
 
-/* ===== Аска: жовті очі, вибір під котом, хрестик по куту, перебіг по кутах, виглядання й пасхалки ===== */
-//><(((º>
 const whoSmolRom=()=>askaTeam==='smol'?'Смольський':askaTeam==='rom'?'Романко':'Смольський / Романко';
 const ASKA_PHRASES=[
  'Не чіпай лапи. Клікай по завданнях, а не по мені 😾',
@@ -730,7 +733,7 @@ const ASKA_RUN_CORNER=[
  'Хвіст трубою — я переїжджаю на інший край екрана. Не шукай одразу!',
  'Усе, ліміт погладжувань вичерпано! Перебазовуюсь у новий куток 🐈'
 ];
-const ASKA_FISH_CATCH=[
+const ASKA_CATCH_LINES=[
  'Сьомий тиць — і ти натрапила на мою таємну рибку ><(((º>! Тільки лапами не чіпай 🐟',
  'О, ти таки помітила, що я тут рибку ховаю? Мяу, це наш секрет.'
 ];
@@ -915,15 +918,26 @@ function catSubjectDone(s){
  }
  catPick(ASKA_BLOCK_OTHER,'happy',true);
 }
-let catTm=null,catIdx=0,catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='',peekTimer=null,peekEndTimer=null;
+let catTm=null,catIdx=0,catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='',peekTimer=null,peekEndTimer=null,stretchTimer=null,scrollTm=null;
+function playCatAnim(cls,dur=950){
+ const w=$('cat-wrap');
+ if(!w)return;
+ w.classList.remove('hop','dash','stretch','doze');
+ void w.offsetWidth;
+ w.classList.add(cls);
+ clearTimeout(stretchTimer);
+ stretchTimer=setTimeout(()=>w.classList.remove(cls),dur);
+}
 function catSay(text,mood='happy',hop=true,dash=false){
  const w=$('cat-wrap'),b=$('cat-msg'),stEl=$('cat-stage');
  if(!w||!b||!stEl)return;
  if(stEl.hidden&&!w.classList.contains('peek'))return;
  b.innerHTML=`<b>Аска</b><span>${E(text)}</span>`;
  b.classList.add('show');
- w.classList.remove('happy','sad','hop','dash');
+ w.classList.remove('happy','sad','hop','dash','twitch');
  if(mood)w.classList.add(mood);
+ w.classList.add('twitch');
+ setTimeout(()=>w.classList.remove('twitch'),420);
  if(dash){void w.offsetWidth;w.classList.add('dash')}
  else if(hop){void w.offsetWidth;w.classList.add('hop')}
  clearTimeout(catTm);
@@ -1009,6 +1023,18 @@ function catPick(arr,mood='happy',hop=true){
  try{initHidden=localStorage.getItem(CAT_KEY)==='1'}catch(e){}
  if(initHidden){applyHiddenState(true)}
 
+ setInterval(()=>{
+  if(stage.hidden||w.classList.contains('peek')||catTm)return;
+  playCatAnim('stretch',950);
+ },19000);
+
+ window.addEventListener('scroll',()=>{
+  if(stage.hidden||w.classList.contains('peek'))return;
+  w.classList.add('scroll-tilt');
+  clearTimeout(scrollTm);
+  scrollTm=setTimeout(()=>w.classList.remove('scroll-tilt'),220);
+ },{passive:true});
+
  w.addEventListener('click',e=>{
   if(e.target.closest('#cat-hide'))return;
   if(w.classList.contains('peek')){
@@ -1024,13 +1050,14 @@ function catPick(arr,mood='happy',hop=true){
    return;
   }
   if(catClicks===7){
-   catSay(ASKA_FISH_CATCH[0],'happy',true);
+   catSay(ASKA_CATCH_LINES[0],'happy',true);
    return;
   }
   if(catClicks===17){
-   catSay(ASKA_FISH_CATCH[1],'happy',true);
+   catSay(ASKA_CATCH_LINES[1],'happy',true);
    return;
   }
+  if(catClicks%4===0)playCatAnim('stretch',950);
   const msg=ASKA_PHRASES[catIdx%ASKA_PHRASES.length];
   catIdx++;
   catSay(msg,'happy',true);
@@ -1101,6 +1128,7 @@ function catPick(arr,mood='happy',hop=true){
   mouseTm=setTimeout(()=>{
    if(!stage.hidden&&!idleAlerted&&!catTm){
     idleAlerted=true;
+    playCatAnim('doze',1400);
     catSay(ASKA_MOUSE_IDLE[mouseIdx++%ASKA_MOUSE_IDLE.length],'happy',false);
    }
   },14000);
