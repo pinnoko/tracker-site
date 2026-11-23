@@ -43,12 +43,13 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .grp-list::-webkit-scrollbar-thumb{background:var(--ln);border-radius:99px}
 .grp-row{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.3;padding:3px 6px;border-radius:8px}
 .grp-row.me{background:color-mix(in srgb,var(--grp) 12%,transparent)}
-.grp-row .rk{font-weight:600;color:var(--mu);min-width:22px}
-.grp-row .who{color:var(--tx);flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grp-row .rk{font-weight:600;color:var(--mu);min-width:22px;flex:none}
+.grp-row .who{color:var(--tx);flex:0 0 148px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .grp-row .who.anon{color:var(--mu)}
-.grp-row .bar{flex:1;min-width:28px;height:5px;border-radius:99px;background:var(--ln);overflow:hidden}
+.grp-row .bar{flex:1 1 auto;min-width:56px;height:5px;border-radius:99px;background:var(--ln);overflow:hidden}
 .grp-row .bar i{display:block;height:100%;border-radius:inherit;background:var(--grp)}
-.grp-row .pct{font-size:13px;font-weight:600;color:var(--tx);min-width:36px;text-align:right}
+.grp-row .pct{font-size:13px;font-weight:600;color:var(--tx);min-width:36px;text-align:right;flex:none}
+@media (max-width:600px){.grp-row .who{flex:0 0 112px}}
 .nick-bar{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--ln)}
 .nick-bar input{flex:1;min-width:0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:5px 8px;font:inherit;font-size:12.5px}
 .nick-bar button{border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
