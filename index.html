@@ -51,6 +51,8 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .nick-bar input{flex:1;min-width:0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:5px 8px;font:inherit;font-size:12.5px}
 .nick-bar button{border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
 .nick-bar button:hover{border-color:var(--grp);color:var(--grp)}
+.guest-note{margin:8px 0 0;font-size:12px;color:var(--mu);line-height:1.4}
+.guest-lnk{border:0;background:none;color:var(--ac);font:inherit;font-size:12px;font-weight:600;padding:0;text-decoration:underline;cursor:pointer}
 .tile b{font-size:28px;letter-spacing:-.025em;line-height:1.15}
 .stat-row{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
 .cd-big{display:flex;align-items:baseline;gap:8px;margin-top:2px}
@@ -163,11 +165,11 @@ li{flex-wrap:wrap}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 </head>
 <body>
-<div class="au" id="au" hidden><div class="tile"><h2>Навчальний трекер</h2><p class="sub" style="margin:0 0 16px">Увійдіть, щоб предмети й завдання синхронізувалися між усіма вашими пристроями.</p><input id="ae" type="email" placeholder="Пошта" autocomplete="email"><input id="ap" type="password" placeholder="Пароль, від 6 символів" autocomplete="current-password"><p class="err" id="ar" role="alert"></p><div class="row"><button class="btn p" id="si">Увійти</button><button class="btn" id="su">Створити акаунт</button></div><button class="lnk" id="skip">Без акаунта, дані лише в цьому браузері</button></div></div>
+<div class="au" id="au" hidden><div class="tile"><h2>Навчальний трекер</h2><p class="sub" style="margin:0 0 16px">Увійдіть, щоб предмети й завдання синхронізувалися між усіма вашими пристроями та враховувалися в групі.</p><input id="ae" type="email" placeholder="Пошта" autocomplete="email"><input id="ap" type="password" placeholder="Пароль, від 6 символів" autocomplete="current-password"><p class="err" id="ar" role="alert"></p><div class="row"><button class="btn p" id="si">Увійти</button><button class="btn" id="su">Створити акаунт</button></div><button class="lnk" id="skip">Без акаунта, дані лише в цьому браузері</button></div></div>
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn" id="out" hidden>Вийти</button>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
   <div class="tile pop" id="bk" hidden><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
   <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
@@ -335,7 +337,7 @@ async function pull(first){
   if(changed)push();
  }
  sy('Збережено')}
-async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;showAu(false);sy('Завантаження…');await pull(true);await sharedInit()}
+async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;$('inb').hidden=true;showAu(false);sy('Завантаження…');await pull(true);await sharedInit()}
 const msg=m=>/invalid login/i.test(m)?'Невірна пошта або пароль':/already|registered/i.test(m)?'Ця пошта вже зареєстрована. Натисніть «Увійти»':/password/i.test(m)?'Пароль має бути від 6 символів':m;
 async function doAuth(up){
  const email=$('ae').value.trim(),password=$('ap').value,er=$('ar');er.textContent='';
@@ -347,17 +349,20 @@ async function doAuth(up){
 $('si').onclick=()=>doAuth(false);
 $('su').onclick=()=>doAuth(true);
 $('ap').onkeydown=e=>{if(e.key=='Enter')doAuth(false)};
-$('skip').onclick=()=>{showAu(false);sy('Лише цей браузер')};
-$('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;sy('');render();showAu(true)};
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready)loadShared()}});
+$('inb').onclick=()=>showAu(true);
+$('skip').onclick=async()=>{showAu(false);$('inb').hidden=false;sy('Лише цей браузер');await guestSharedInit()};
+$('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;$('inb').hidden=true;sy('');render();showAu(true)};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(ready)loadShared()}});
 /* ===== Спільне: відлік, прогрес групи, кнопка втоми (усе анонімно) ===== */
 const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасувати «Я замахався/лась»',RD='2026-12-04',WHO=['людина замахалась','людини замахались','людей замахались'];
+const GUEST_GROUP_MSG='Вас не враховано, бо ви в браузері. Зареєструйтесь, якщо хочете брати участь у групі.';
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=false;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
 const getLocalNick=()=>me?(getNicks()[me]||'').trim():'';
 const setLocalNick=v=>{if(!me)return;const m=getNicks(),t=String(v||'').trim().slice(0,28);if(t)m[me]=t;else delete m[me];try{localStorage.setItem(NICK_KEY,JSON.stringify(m))}catch(e){}};
 const getMyNick=()=>{
+ if(!me)return'';
  const remote=people.find(p=>p.user_id==me)?.nick;
  return (remote!=null?String(remote):getLocalNick()).trim();
 };
@@ -371,28 +376,33 @@ function cd(){
  const dateStr=a.toLocaleDateString('uk-UA',{day:'numeric',month:'long'});
  return`<div class="tile shared"><div class="tile-top"><small>Відлік до події</small><span class="badge">Дедлайн</span></div><div class="cd-big"><b>${label}</b></div><div class="cd-ev"><span>${E(t)}</span><strong>${dateStr}</strong></div></div>`}
 function gtile(){
- if(!me)return'';
  const myNick=getMyNick();
  const active=people.filter(p=>Number(p.pct)>0).sort((a,b)=>Number(b.pct)-Number(a.pct));
  const n=active.length,avg=n?Math.round(active.reduce((x,p)=>x+Number(p.pct),0)/n):0;
  const rows=active.map((p,i)=>{
   const v=Math.min(100,Math.max(0,Math.round(Number(p.pct)||0)));
-  const isMe=p.user_id==me;
+  const isMe=!!me&&p.user_id==me;
   const pubNick=String(p.nick||'').trim();
   const label=isMe?(myNick?`Ви (${myNick})`:'Ви (Анонімний котик)'):(pubNick||'Анонімний котик');
   return`<div class="grp-row${isMe?' me':''}"><span class="rk">#${i+1}</span><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="bar"><i style="width:${v}%"></i></span><span class="pct">${v}%</span></div>`;
  }).join('');
- return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Рейтинг учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${share?'':'<p class="mu" style="margin:8px 0 0;font-size:12px">Вас не враховано (див. «Приватність»).</p>'}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників з прогресом більше 0%.</span>'}<div class="nick-bar"><input type="text" id="nick-in" maxlength="28" placeholder="Ваш псевдонім" value="${E(myNick)}"><button type="button" id="nick-save">Зберегти</button></div></div></div>`}
+ const foot=!me
+  ?`<p class="guest-note">${E(GUEST_GROUP_MSG)} <button type="button" class="guest-lnk" data-open-auth="1">Увійти / Зареєструватися</button></p>`
+  :(!share?'<p class="guest-note">Вас не враховано (див. «Приватність»).</p>':'');
+ const nickBox=me
+  ?`<div class="nick-bar"><input type="text" id="nick-in" maxlength="28" placeholder="Ваш псевдонім" value="${E(myNick)}"><button type="button" id="nick-save">Зберегти</button></div>`
+  :`<p class="guest-note" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--ln)">Щоб задати псевдонім і потрапити до рейтингу, <button type="button" class="guest-lnk" data-open-auth="1">зареєструйтесь або увійдіть</button>.</p>`;
+ return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Рейтинг учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${foot}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників з прогресом більше 0%.</span>'}${nickBox}</div></div>`}
 function ttile(){
- if(!me)return'';
  const m={},all=new Set(),disp={};
  tiredRows.forEach(r=>{const clean=fixSubName(r.subject),k=nk(clean);if(!m[k]){m[k]=new Set();disp[k]=clean}m[k].add(r.user_id);all.add(r.user_id)});
  const top=Object.keys(m).map(k=>[disp[k],m[k].size]).sort((a,b)=>b[1]-a[1]).slice(0,5);
- return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Анонімно</span></div><div class="stat-row"><b>${all.size}</b><span class="mu">${pl(all.size,WHO)}</span></div>${top.length?`<div class="tired-list">${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}</div>`:'<p class="mu" style="margin:10px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}</div>`}
+ return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Анонімно</span></div><div class="stat-row"><b>${all.size}</b><span class="mu">${pl(all.size,WHO)}</span></div>${top.length?`<div class="tired-list">${top.map(([n,c])=>`<div class="rw"><span>${E(n)}</span><b>${c}</b></div>`).join('')}</div>`:'<p class="mu" style="margin:10px 0 0;font-size:12.5px">Поки ніхто не натискав.</p>'}${!me?`<p class="guest-note">${E(GUEST_GROUP_MSG)}</p>`:''}</div>`}
 function grp(){
- if(!me){$('grp').innerHTML='';return}
+ if(!sb){$('grp').innerHTML='';return}
  $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div></div>`}
 async function saveNick(){
+ if(!me){showAu(true);return}
  const inp=$('nick-in');
  const val=String(inp?inp.value:'').trim().slice(0,28);
  setLocalNick(val);
@@ -406,6 +416,7 @@ async function saveNick(){
  refreshShared();
 }
 $('grp').addEventListener('click',e=>{
+ if(e.target.closest('[data-open-auth]')){showAu(true);return}
  const b=e.target.closest('#grp-menu-btn');
  if(b){
   grpOpen=!grpOpen;
@@ -425,19 +436,21 @@ $('grp').addEventListener('keydown',e=>{
 const hasMyTired=s=>!!me&&tiredRows.some(r=>r.user_id==me&&nk(r.subject)==nk(s.name));
 const trTxt=s=>{const k=nk(s.name),u=new Set(tiredRows.filter(r=>nk(r.subject)==k).map(r=>r.user_id));return u.size+' '+pl(u.size,WHO)};
 function trow(s){
- if(!ready||!me)return'';
+ if(!ready||!sb)return'';
+ if(!me)return`<div class="tr"><span class="mu" style="font-size:12px">${E(GUEST_GROUP_MSG)}</span><span class="mu">${trTxt(s)}</span></div>`;
  const mine=hasMyTired(s);
  return`<div class="tr"><button class="tired${mine?' on':''}" data-act="tired" aria-pressed="${mine?'true':'false'}">${mine?TIRED_UNDO:TIRED_LABEL}</button><span class="mu">${trTxt(s)}</span></div>`}
 function refreshShared(){
  grp();
  document.querySelectorAll('.card[data-sid]').forEach(sc=>{
   const s=S.find(x=>x.id==sc.dataset.sid);if(!s)return;
-  const sp=sc.querySelector('.tr span');if(sp)sp.textContent=trTxt(s);
+  const sp=sc.querySelector('.tr span:last-child');if(sp)sp.textContent=trTxt(s);
   const btn=sc.querySelector('.tr button[data-act="tired"]');
   if(btn){const mine=hasMyTired(s);btn.classList.toggle('on',mine);btn.setAttribute('aria-pressed',mine?'true':'false');btn.textContent=mine?TIRED_UNDO:TIRED_LABEL}
  })}
 async function tiredBtn(s){
- if(!sb||!me)return;
+ if(!sb)return;
+ if(!me){showAu(true);return}
  const k=nk(s.name),mineRows=tiredRows.filter(r=>r.user_id==me&&nk(r.subject)==k);
  if(mineRows.length){
   const ids=mineRows.map(r=>r.id);
@@ -450,7 +463,7 @@ async function tiredBtn(s){
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
  toast('Записано, ви не самі');refreshShared()}
 async function loadShared(){
- if(!sb||!me)return;
+ if(!sb)return;
  const[a,b,c]=await Promise.all([
   sb.from('settings').select('key,value'),
   sb.from('profiles_public').select('user_id,pct,nick').eq('share',true),
@@ -469,28 +482,34 @@ function pushStats(){
 const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
 $('pfb').onclick=e=>{e.stopPropagation();togglePop('pf')&&openPf()};
 $('psv').onclick=()=>{share=$('ps').checked;lastS='';pushStats();$('pf').hidden=true;toast('Збережено');setTimeout(loadShared,900)};
+async function subSharedFeed(){
+ if(!sb||ch)return;
+ await loadShared();
+ render();
+ ch=sb.channel('shared').on('postgres_changes',{event:'*',schema:'public',table:'profiles_public'},lq).on('postgres_changes',{event:'*',schema:'public',table:'tired'},lq).subscribe();
+ if(!pt)pt=setInterval(loadShared,60000)}
+async function guestSharedInit(){
+ if(!sb)return;
+ await subSharedFeed()}
 async function sharedInit(){
  const{data:p}=await sb.from('profiles_public').select('share,nick').eq('user_id',me).maybeSingle();
  if(p){share=!!p.share;if(p.nick)setLocalNick(p.nick)}
  profReady=true;$('pfb').hidden=false;
  pushStats();
- await loadShared();
- render();
- ch=sb.channel('shared').on('postgres_changes',{event:'*',schema:'public',table:'profiles_public'},lq).on('postgres_changes',{event:'*',schema:'public',table:'tired'},lq).subscribe();
- pt=setInterval(loadShared,60000)}
+ await subSharedFeed()}
 function sharedOff(){
  if(ch&&sb)sb.removeChannel(ch);
- ch=null;clearInterval(pt);people=[];tiredRows=[];share=true;lastS='';profReady=false;
+ ch=null;clearInterval(pt);pt=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
  $('pfb').hidden=true;$('pf').hidden=true}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadShared()});
-ready=true;grp();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ready)loadShared()});
+ready=true;
 (async()=>{
  const U=SB_URL.trim().replace(/\/+$/,'').replace(/\/(rest|auth)\/v1$/,''),K=SB_KEY.trim();
- if(!/^https:\/\/[\w-]+\.supabase\.co$/.test(U)||K.length<20){sy('Лише цей браузер: у index.html не вставлено ключі Supabase');return}
- if(!window.supabase){sy('Лише цей браузер: не завантажилась бібліотека Supabase');return}
+ if(!/^https:\/\/[\w-]+\.supabase\.co$/.test(U)||K.length<20){sy('Лише цей браузер: у index.html не вставлено ключі Supabase');grp();return}
+ if(!window.supabase){sy('Лише цей браузер: не завантажилась бібліотека Supabase');grp();return}
  sb=supabase.createClient(U,K);
  const{data}=await sb.auth.getSession();
- if(data.session)start(data.session.user);else showAu(true)})();
+ if(data.session)start(data.session.user);else{grp();showAu(true)}})();
 </script>
 </body>
 </html>
