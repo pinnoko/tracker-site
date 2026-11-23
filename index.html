@@ -867,11 +867,12 @@ async function loadShared(){
  if(!sb||!me)return;
  const[a,b,c]=await Promise.all([
   sb.from('settings').select('key,value'),
-  sb.from('profiles_public').select('user_id,pct,nick').eq('share',true),
+  sb.from('profiles_public').select('user_id,pct,done,nick').eq('share',true),
   sb.from('tired').select('id,user_id,subject,created_at').order('created_at',{ascending:false}).limit(2000)]);
  if(!a.error)cfgS=Object.fromEntries(a.data.map(r=>[r.key,r.value]));
  if(!b.error)people=b.data;
  if(!c.error)tiredRows=c.data;
+ if(window.ySyncHistory)window.ySyncHistory();
  refreshShared()}
 const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,500)};
 function pushStats(){
@@ -1492,25 +1493,55 @@ function closeM(){if(ov.hidden)return;ov.hidden=true;document.body.style.overflo
 ov.addEventListener('click',e=>{if(e.target===ov||e.target.closest('.y-x'))closeM()});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
-/* ---------- журнал активності (на цьому пристрої) ---------- */
-const LK='y-log';
+/* ---------- журнал активності з урахуванням наявної історії ---------- */
+const LK='y-log',BK_SEED='y-log-seeded-v2';
 const logGet=()=>{try{return JSON.parse(localStorage.getItem(LK))||{}}catch(e){return{}}};
+const logSet=l=>{try{localStorage.setItem(LK,JSON.stringify(l))}catch(e){}};
+function remoteDoneCount(){
+ try{
+  if(typeof people!=='undefined'&&Array.isArray(people)&&typeof me!=='undefined'&&me){
+   const r=people.find(p=>p.user_id==me);
+   if(r&&Number.isFinite(+r.done))return Math.max(0,+r.done);
+  }
+ }catch(e){}
+ return 0;
+}
+function ensureBaseline(l){
+ const today=mid(new Date()),tk=dk(today),o=st(all()),doneNow=Math.max(o.d,remoteDoneCount()),remNow=Math.max(0,o.n-o.d);
+ const totalLoggedDone=Object.values(l).reduce((s,x)=>s+(+(x&&x.d)||0),0);
+ let seeded=false;
+ try{seeded=localStorage.getItem(BK_SEED)==='1'}catch(e){}
+ if((!seeded&&Object.keys(l).length===0)||(totalLoggedDone===0&&doneNow>0)){
+  const prevD=new Date(today);prevD.setDate(prevD.getDate()-6);const pk=dk(prevD);
+  if(!l[pk]){
+   l[pk]={d:0,rem:Math.max(remNow,o.n),n:o.n,p:0,h:0,seed:true};
+  }
+  const cur=l[tk]||{d:0};
+  l[tk]={...cur,d:Math.max(+(cur.d||0),doneNow),rem:remNow,n:o.n,p:pc(o),h:o.dh};
+  try{localStorage.setItem(BK_SEED,'1')}catch(e){}
+  return true;
+ }
+ return false;
+}
 function snap(delta){
- const l=logGet(),k=dk(new Date()),o=st(all()),e=l[k]=l[k]||{d:0};
+ const l=logGet(),changedBase=ensureBaseline(l),k=dk(new Date()),o=st(all()),e=l[k]=l[k]||{d:0};
  if(delta)e.d=Math.max(0,(e.d||0)+delta);
  e.rem=o.n-o.d;e.n=o.n;e.p=pc(o);e.h=o.dh;
  const ks=Object.keys(l).sort();while(ks.length>120)delete l[ks.shift()];
- try{localStorage.setItem(LK,JSON.stringify(l))}catch(e){}
+ if(delta||changedBase||!l[k].rem)logSet(l);
+ else{l[k]=e;logSet(l)}
 }
 function streakN(){const l=logGet();let n=0,d=mid(new Date());if(!((l[dk(d)]||{}).d>0))d.setDate(d.getDate()-1);while((l[dk(d)]||{}).d>0){n++;d.setDate(d.getDate()-1)}return n}
 let lastAct=0,prev=null,deb=null;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now()},true));
-function onSum(){try{const d=all().filter(t=>t.s==2).length;snap(prev!=null&&d!==prev&&Date.now()-lastAct<1500?d-prev:0);prev=d}catch(e){}}
+function onSum(){try{const d=Math.max(all().filter(t=>t.s==2).length,remoteDoneCount());snap(prev!=null&&d!==prev&&Date.now()-lastAct<1500?d-prev:0);prev=d}catch(e){}}
+window.ySyncHistory=onSum;
 const sumEl=$('sum');if(sumEl)new MutationObserver(()=>{clearTimeout(deb);deb=setTimeout(onSum,30)}).observe(sumEl,{childList:true});
 onSum();
 
 /* ---------- 1. графік спалювання ---------- */
 function openBurn(){
+ onSum();
  const l=logGet(),ks=Object.keys(l).sort(),today=mid(new Date());
  const end=mid(parse((typeof cfgS!=='undefined'&&cfgS.review_date)||RD)),start=ks.length?parse(ks[0]):today;
  const o=st(all()),rem=o.n-o.d,rem0=ks.length?(l[ks[0]].rem??rem):rem;
@@ -1636,6 +1667,7 @@ function askaImage(){
  return askaImg;
 }
 function weekData(){
+ onSum();
  const l=logGet(),today=mid(new Date()),days=[];
  for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(d.getDate()-i);days.push({d,v:(l[dk(d)]||{}).d||0})}
  const total=days.reduce((s,x)=>s+x.v,0),best=days.reduce((b,x)=>x.v>b.v?x:b,days[0]),o=st(all()),p=pc(o);
