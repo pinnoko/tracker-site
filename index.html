@@ -11,7 +11,7 @@
 :root[data-theme="dark"]{--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--grp:#4fd1c5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-.w{max-width:1280px;margin:0 auto;padding:28px 20px 88px}
+.w{max-width:1280px;margin:0 auto;padding:28px 20px 104px}
 .top{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:22px}
 .top-acts{position:relative;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 h1{font-size:28px;letter-spacing:-.025em;margin:0}
@@ -38,7 +38,6 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .grp-list{margin-top:12px;padding-top:10px;padding-right:4px;border-top:1px solid var(--ln);display:flex;flex-direction:column;gap:7px;max-height:190px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ln) transparent}
 .grp-list::-webkit-scrollbar{width:4px}
 .grp-list::-webkit-scrollbar-thumb{background:var(--ln);border-radius:99px}
-.grp-list[hidden]{display:none}
 .grp-row{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.3;padding:3px 6px;border-radius:8px}
 .grp-row.me{background:color-mix(in srgb,var(--grp) 12%,transparent)}
 .grp-row .rk{font-weight:600;color:var(--mu);min-width:22px}
@@ -162,9 +161,9 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
-/* ===== Аска (кішка-компаньйон) ===== */
-.cat-dock{position:fixed;right:18px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
-.cat-bubble{pointer-events:auto;background:var(--sf);color:var(--tx);border:1px solid var(--ln);box-shadow:var(--sh);border-radius:14px 14px 4px 14px;padding:8px 12px;font-size:12.5px;font-weight:500;max-width:240px;line-height:1.38;opacity:0;transform:translateY(6px) scale(.96);transition:opacity .22s ease,transform .22s ease}
+/* ===== Аска (кішка-компаньйон без обводки) ===== */
+.cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.cat-bubble{pointer-events:auto;background:var(--sf);color:var(--tx);border:1px solid var(--ln);box-shadow:var(--sh);border-radius:14px 14px 4px 14px;padding:8px 13px;font-size:12.5px;font-weight:500;max-width:265px;line-height:1.4;opacity:0;transform:translateY(6px) scale(.96);transition:opacity .22s ease,transform .22s ease}
 .cat-bubble.show{opacity:1;transform:translateY(0) scale(1)}
 .cat-bubble b{display:block;font-size:11px;font-weight:700;color:#e07a3f;margin-bottom:2px;letter-spacing:.02em}
 .cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
@@ -172,11 +171,11 @@ li{flex-wrap:wrap}
 .cat-wrap:active{transform:scale(.95)}
 .cat-wrap.hop{animation:catHop .55s cubic-bezier(.34,1.56,.64,1)}
 @keyframes catHop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-14px) scale(1.04,.96)}65%{transform:translateY(0) scale(.97,1.03)}100%{transform:translateY(0) scale(1)}}
-.cat-svg{width:81px;height:81px;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.18))}
-.cat-tail{transform-origin:56px 59px;animation:tailWag 3.2s ease-in-out infinite}
+.cat-svg{width:94px;height:94px;display:block;filter:drop-shadow(0 6px 12px rgba(0,0,0,.16))}
+.cat-tail{transform-origin:57px 62px;animation:tailWag 3.2s ease-in-out infinite}
 @keyframes tailWag{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(14deg)}}
-.cat-ear-l{transform-origin:24px 26px;transition:transform .25s ease}
-.cat-ear-r{transform-origin:52px 26px;transition:transform .25s ease}
+.cat-ear-l{transform-origin:23px 31px;transition:transform .25s ease}
+.cat-ear-r{transform-origin:61px 31px;transition:transform .25s ease}
 .cat-wrap:hover .cat-ear-l{transform:rotate(-8deg)}
 .cat-wrap:hover .cat-ear-r{transform:rotate(8deg)}
 .cat-wrap.sad .cat-ear-l{transform:rotate(-22deg)}
@@ -184,13 +183,13 @@ li{flex-wrap:wrap}
 .cat-eye-happy,.cat-blush{opacity:0;transition:opacity .2s}
 .cat-wrap.happy .cat-eye-open{opacity:0}
 .cat-wrap.happy .cat-eye-happy,.cat-wrap.happy .cat-blush{opacity:1}
-.cat-hide{position:absolute;top:-4px;left:-4px;width:20px;height:20px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font:600 11px/1 sans-serif;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .18s;padding:0}
+.cat-hide{position:absolute;top:-2px;left:-2px;width:20px;height:20px;border-radius:50%;border:1px solid var(--ln);background:var(--sf);color:var(--mu);font:600 11px/1 sans-serif;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .18s;padding:0}
 .cat-wrap:hover .cat-hide,.cat-hide:focus-visible{opacity:1}
 .cat-hide:hover{color:var(--no);border-color:var(--no)}
 .cat-paw{pointer-events:auto;border:1px solid var(--ln);background:var(--sf);color:var(--tx);box-shadow:var(--sh);border-radius:99px;padding:7px 12px;font:inherit;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px}
 .cat-paw:hover{border-color:var(--ac)}
 .cat-paw[hidden],.cat-wrap[hidden]{display:none}
-@media (max-width:600px){.cat-svg{width:69px;height:69px}.cat-dock{right:12px;bottom:10px}}
+@media (max-width:600px){.cat-svg{width:80px;height:80px}.cat-dock{right:12px;bottom:10px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
 </head>
@@ -213,10 +212,10 @@ li{flex-wrap:wrap}
 <div class="grid" id="grid"></div>
 </div>
 
-<!-- Кішка Аска (каліко) у правому нижньому кутку -->
+<!-- Кішка Аска (каліко, без обводки) у правому нижньому кутку -->
 <div class="cat-dock" id="cat-dock" aria-live="polite">
  <div class="cat-bubble" id="cat-msg"><b>Аска</b><span>Мяу. Я наглядаю, щоб ти не прокрастинувала 👀</span></div>
- <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити Аску (на свій страх і ризик)" aria-label="Погладити Аску">
+ <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити Аску" aria-label="Погладити Аску">
   <button type="button" class="cat-hide" id="cat-hide" title="Сховати Аску" aria-label="Сховати Аску">✕</button>
   <svg class="cat-svg" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
    <defs>
@@ -232,43 +231,36 @@ li{flex-wrap:wrap}
     <path d="M57 62C69 60 76 49 71 41C68 36 61 39 63 46C64 50 60 55 54 56" stroke="#22232b" stroke-width="7.5" stroke-linecap="round"/>
     <path d="M67 40C71 42 73 46 70 50" stroke="#e48a46" stroke-width="5.5" stroke-linecap="round"/>
    </g>
-   <!-- Пухнасте біле тіло з темними та рудими плямами на спині як на фото -->
+   <!-- Пухнасте біле тіло з темними та рудими плямами -->
    <g clip-path="url(#askaBodyClip)">
-    <rect x="21" y="45" width="42" height="33" fill="#f7f7fa"/>
+    <rect x="21" y="45" width="42" height="33" fill="#f9f9fc"/>
     <ellipse cx="57" cy="54" rx="10" ry="8" fill="#22232b"/>
     <ellipse cx="53" cy="49" rx="6" ry="4" fill="#e48a46"/>
     <ellipse cx="26" cy="57" rx="6.5" ry="7" fill="#22232b"/>
-    <!-- Тінь пухнастої грудки -->
-    <path d="M33 52C36 61 48 61 51 52" stroke="#e4e6ef" stroke-width="2" stroke-linecap="round"/>
    </g>
-   <path d="M23 71C23 55 29.5 47 42 47C54.5 47 61 55 61 71C61 74 58 76 53 76H31C26 76 23 74 23 71Z" stroke="#d8dbe6" stroke-width="1.2"/>
-   <!-- Ліве вухо (з рудим і темним краєм, як зліва на фото) -->
+   <!-- Ліве вухо -->
    <g class="cat-ear-l">
-    <path d="M22 33L18 12L35 24Z" fill="#22232b" stroke="#22232b" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M22 33L18 12L35 24Z" fill="#22232b"/>
     <path d="M23 30L20 16L32 24Z" fill="#e48a46"/>
     <path d="M24 29L22 19L30 24Z" fill="#f4a8b8"/>
    </g>
-   <!-- Праве вухо (темне, як справа на фото) -->
+   <!-- Праве вухо -->
    <g class="cat-ear-r">
-    <path d="M62 33L66 11L49 24Z" fill="#22232b" stroke="#22232b" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M62 33L66 11L49 24Z" fill="#22232b"/>
     <path d="M60 29L63 16L52 24Z" fill="#e898aa"/>
    </g>
-   <!-- Голова Аски: біла мордочка, зліва руда пляма навколо ока, справа велика чорна пляма -->
+   <!-- Голова Аски -->
    <g clip-path="url(#askaHeadClip)">
     <rect x="20" y="19" width="44" height="36" fill="#f9f9fc"/>
-    <!-- Руда пляма зліва (від нас) -->
     <path d="M20 20H37L34 32C34 37 29 40 20 39Z" fill="#e48a46"/>
     <path d="M20 36C25 36 27 39 24 43H20Z" fill="#22232b"/>
-    <!-- Велика чорна пляма справа (від нас), залишає білий трикутник на лобі -->
     <path d="M43 19H64V42C57 43 49 41 45 36C42 32 42 25 43 19Z" fill="#22232b"/>
-    <!-- Пухнасті щічки -->
     <ellipse cx="42" cy="44" rx="14" ry="9" fill="#f9f9fc"/>
    </g>
-   <ellipse cx="42" cy="37" rx="20.5" ry="16.5" stroke="#d8dbe6" stroke-width="1.1"/>
    <!-- Рум'янець -->
    <ellipse class="cat-blush" cx="28.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
    <ellipse class="cat-blush" cx="55.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
-   <!-- Відкриті бурштиново-зелені очі з рухомими зіницями -->
+   <!-- Відкриті очі з рухомими зіницями -->
    <g class="cat-eye-open">
     <circle cx="33.5" cy="35.5" r="4.3" fill="#c98a2c"/>
     <circle cx="50.5" cy="35.5" r="4.3" fill="#9ea34a"/>
@@ -277,12 +269,12 @@ li{flex-wrap:wrap}
     <circle cx="32.5" cy="34.3" r="1" fill="#fff"/>
     <circle cx="49.5" cy="34.3" r="1" fill="#fff"/>
    </g>
-   <!-- Примружені очі, коли Аска в доброму гуморі -->
+   <!-- Примружені очі -->
    <g class="cat-eye-happy" stroke="#c98a2c" stroke-width="2.2" stroke-linecap="round">
     <path d="M29.8 36.5C31.3 33.7 35.7 33.7 37.2 36.5"/>
     <path d="M46.8 36.5C48.3 33.7 52.7 33.7 54.2 36.5"/>
    </g>
-   <!-- Руда цятка біля носика як на фото -->
+   <!-- Руда цятка біля носика -->
    <ellipse cx="38.2" cy="41.8" rx="2.1" ry="1.3" fill="#e48a46" opacity=".85"/>
    <!-- Рожевий носик і мордочка -->
    <path d="M40.1 40.2H43.9L42 42.3Z" fill="#f08ea3"/>
@@ -290,8 +282,8 @@ li{flex-wrap:wrap}
    <!-- Довгі білі вуса -->
    <path d="M24 38.5L13 36.5M24 41.5L13 42.5M60 38.5L71 36.5M60 41.5L71 42.5" stroke="#b9bfd1" stroke-width="1.3" stroke-linecap="round"/>
    <!-- Передні білі лапки -->
-   <ellipse cx="34.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc" stroke="#d8dbe6" stroke-width="1"/>
-   <ellipse cx="49.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc" stroke="#d8dbe6" stroke-width="1"/>
+   <ellipse cx="34.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc"/>
+   <ellipse cx="49.5" cy="74" rx="5.2" ry="3.2" fill="#f9f9fc"/>
   </svg>
  </div>
  <button type="button" class="cat-paw" id="cat-show" hidden>🐾 Покликати Аску</button>
@@ -353,16 +345,19 @@ G.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b)return;
  const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
  if(a=='st'){
+  const prevDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
   t.s=(t.s+1)%3;
-  if(t.s==2)catSay('Неймовірно, ти справді це закрила. Я навіть вухом не поведу... ладно, молодець ✨','happy',true);
-  else if(t.s==1)catSay('О, почала робити? Дивись не засни над планшетом 👀','happy',false);
+  const nowDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
+  if(nowDone&&!prevDone)catSubjectDone(s);
+  else if(t.s==2)catPick(ASKA_DONE,'happy',true);
+  else if(t.s==1)catPick(ASKA_WIP,'happy',false);
  }
  else if(a=='ap'){
   t.a=!t.a;
-  if(t.a)catSay('Затверджено! Можеш тепер почухати мені за вушком (тільки обережно) 🐾','happy',true);
+  if(t.a)catPick(ASKA_AP,'happy',true);
  }
  else if(a=='tired'){tiredBtn(s);return}
- else if(a=='all'){s.tasks.forEach(x=>x.s=2);catSay('Весь предмет закрито?! Ти точно не підмінила мою людину? 🏆','happy',true)}
+ else if(a=='all'){s.tasks.forEach(x=>x.s=2);catSubjectDone(s)}
  else if(a=='none')s.tasks.forEach(x=>x.s=0);
  else if(a=='note'){OPENN.has(t.id)?OPENN.delete(t.id):OPENN.add(t.id);render();const n=G.querySelector(`[data-tid="${t.id}"] textarea`);n&&n.focus();return}
  else if(a=='more'){OPEN.has(s.id)?OPEN.delete(s.id):OPEN.add(s.id);render();return}
@@ -372,7 +367,7 @@ G.addEventListener('click',e=>{
   S=S.filter(x=>x!=s);pend=null}
  else if(a=='addt'){
   const i=sc.querySelectorAll('.add input'),v=i[0].value.trim();if(!v){i[0].focus();return}
-  s.tasks.push({id:uid(),t:v,h:+i[1].value||0,s:0});if(s.tasks.length>LIM)OPEN.add(s.id);save();render();catSay('Ще одне завдання? Ну-ну, подивимось, коли ти його закриєш 😼','happy',false);G.querySelector(`[data-sid="${s.id}"] .add input`).focus();return}
+  s.tasks.push({id:uid(),t:v,h:+i[1].value||0,s:0});if(s.tasks.length>LIM)OPEN.add(s.id);save();render();catPick(ASKA_ADD,'happy',false);G.querySelector(`[data-sid="${s.id}"] .add input`).focus();return}
  else if(a=='adds'){
   const i=b.parentElement.querySelectorAll('input'),v=i[0].value.trim();if(!v){i[0].focus();return}
   S.push({id:uid(),name:v,color:i[1].value,tasks:[]});catSay('Новий предмет у списку. Сподіваюсь, це не завадить моїй вечері 🍽️','happy',false)}
@@ -585,7 +580,7 @@ async function tiredBtn(s){
  const{data,error}=await sb.from('tired').insert({subject:s.name}).select('id,user_id,subject,created_at').single();
  if(error){toast(/Забагато/.test(error.message)?'Забагато натискань. Спробуйте через годину':'Не вдалося зберегти');return}
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
- toast('Записано, ви не самі');catSay('Замахалась? Мені, звісно, байдуже... але ти тримайся там 🐾','sad',false);refreshShared()}
+ toast('Записано, ви не самі');catPick(ASKA_TIRED,'sad',false);refreshShared()}
 async function loadShared(){
  if(!sb||!me)return;
  const[a,b,c]=await Promise.all([
@@ -621,7 +616,7 @@ function sharedOff(){
  $('pfb').hidden=true;$('pf').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&ready)loadShared()});
 
-/* ===== Аска: характер та реакції ===== */
+/* ===== Аска: характер, закриття блоків та реакції на рухи миші ===== */
 const ASKA_PHRASES=[
  'Не чіпай лапи. Клікай по завданнях, а не по мені 😾',
  'Мр-р-р... ладно, ще 3 секунди можеш погладити. Потім — за роботу.',
@@ -629,9 +624,99 @@ const ASKA_PHRASES=[
  'Шрифти самі себе не вималюють. Каліграфія любить дисципліну ✒️',
  'Піди випий водички, бо сидиш як креветка над ноутом 🦐',
  'Якщо закриєш ще два завдання — дозволю посидіти поруч зі мною.',
- 'Мяу. Перегляд близько, а ти виглядаєш так, ніби тобі треба 5 хвилин тиші.'
+ 'Мяу. Перегляд близько, а ти виглядаєш так, ніби тобі треба 5 хвилин тиші.',
+ 'Я триколірна королева цього крісла, а ти ще навіть не дописала конспект 👑',
+ 'Не думай, що примружені очі означають пробачення за прокрастинацію.',
+ 'Уявний наказ: підняти спину, розправити плечі й закрити хоч один пункт.',
+ 'Ти знову відкрила вкладку, щоб подивитися на відсотки замість роботи? 😼',
+ 'Мур... так, добре, там де руда пляма — можна трохи почухати.',
+ 'Навіть мої вуса втомлюються, коли я дивлюся на невиконані завдання.',
+ 'Спершу справа, потім TikTok і смаколики. Так працює порядок у домі.',
+ 'Хто тут у нас головний менеджер дедлайнів? Правильно, точно не ти без плану 🐾',
+ 'Ані хвилини спокою для ледачих списків. Погнали далі!',
+ 'Я бачила, як ти потягнулася. Ще трохи — і буде перемога.',
+ 'Якщо я зараз зістрибну зі стільця, буде гучно. Краще просто працюй.',
+ 'Кожен закритий рядок — це плюс один спокійний вечір перед переглядом.',
+ 'Не бурчи на завдання, воно не вміє читати твої думки.',
+ 'Мяу! Моя думка: ти здатна на більше, ніж здається о третій ночі.',
+ 'Трохи магії, трохи кави й жодного «зроблю завтра».',
+ 'Сьогодні ти сильніша за свій список справ. Ну майже сильніша 😸',
+ 'Заглянула перевірити, чи не забула ти про мене. Не забула? Добре.'
 ];
-let catTm=null,catIdx=0;
+const ASKA_DONE=[
+ 'Неймовірно, ти справді це закрила. Я навіть вухом не поведу... ладно, молодець ✨',
+ 'Мінус одне завдання! Ще трохи — і я дозволю собі пишатися тобою.',
+ 'О, нарешті зелене! Так тримати, не збавляй темп 🌿',
+ 'Зараховано. Можеш зробити вдих-видих і братися за наступне.',
+ 'Мур-р-р, красивий рух! Прогрес повзе вгору 🐾'
+];
+const ASKA_WIP=[
+ 'О, почала робити? Дивись не засни над екраном 👀',
+ 'В процесі — це вже краще, ніж у планах на колись.',
+ 'Рух пішов! Головне не застрягти в деталях на три години.'
+];
+const ASKA_AP=[
+ 'Затверджено! Можеш тепер почухати мені за вушком (тільки обережно) 🐾',
+ 'Печатку поставлено, галочка стоїть — один головний біль менше! 🎉',
+ 'Оце рівень. Я б теж таке затвердила, якби мала лапи з ручкою.'
+];
+const ASKA_ADD=[
+ 'Ще одне завдання? Ну-ну, подивимось, коли ти його закриєш 😼',
+ 'Записали в список. Тепер воно офіційно існує і чекає своєї черги 📝',
+ 'Додали. Не лякайся, воно не кусається... майже.'
+];
+const ASKA_TIRED=[
+ 'Замахалась? Мені, звісно, байдуже... але ти тримайся там 🐾',
+ 'Мяу... бачу, що ресурс на нулі. Зроби паузу й не жени коней.',
+ 'Навіть мені стало трохи шкода твоїх очей. Перепочинь хоч трішки.'
+];
+const ASKA_MOUSE_FAST=[
+ 'Куди так носиш мишею? Я не мотузка і не червона цятка! 😼',
+ 'Гей-гей, плавніше! Мені аж вуха від вітру загинає.',
+ 'Ти думаєш, якщо швидко водити курсором, завдання самі закриються? Мяу.'
+];
+const ASKA_MOUSE_IDLE=[
+ 'Ти зависла на одному місці... чи то я тебе так загіпнотизувала? 👀',
+ 'Курсор стоїть, а час іде. Може, клікнеш по чомусь корисному?',
+ 'Я бачу, де твоя мишка. Прикидаю, чи не стрибнути на неї.'
+];
+const ASKA_MOUSE_TIRED_BTN=[
+ 'Наважуєшся натиснути «Я замахався/лась»? Я все бачу 😿',
+ 'Курсор тремтить над кнопкою втоми... тримайся, ще трохи!'
+];
+const ASKA_MOUSE_CORNER=[
+ 'О, підійшла ближче до мене! План: подивитись на кота й не втекти в сон.',
+ 'Близько до мого кутка! Кажи одразу — погладити чи поскаржитись?'
+];
+const ASKA_BLOCK_OTHER=[
+ 'Весь блок закрито?! Мур-р-р, навіть мені захотілося потягнутися від задоволення 🐾',
+ 'Цілий предмет готовий! Оце вже серйозна заявка на спокійний сон.'
+];
+function catSubjectDone(s){
+ const name=String(s&&s.name||'').toLowerCase();
+ if(name.includes('шрифт')){
+  catSay('Ну все, шрифти добила! З Крукевичем зустрінемось уже в наступному семестрі — мяу, гордо ✒️','happy',true);
+  return;
+ }
+ if(name.includes('овм')){
+  catSay('ОВМ закрито повністю! Тепер Смольський / Романко можуть переводити погляд спокійно — я одобрюю 🎨','happy',true);
+  return;
+ }
+ if(name.includes('здоров')){
+  catSay('Основи здоров’я готові! Марта точно оцінить, що шпалера вижила й ти ще жива 🌸','happy',true);
+  return;
+ }
+ if(name.includes('комп’ютерн')||name.includes('компютерн')||name.includes('графіка')){
+  catSay('Блок закрито! Жодних зайвих шарів і паніки — просто красиво і по ділу 💻🐾','happy',true);
+  return;
+ }
+ if(name.includes('проєктування')||name.includes('проектування')){
+  catSay('ЙОНЧІ ВАМИ ПИШАЄТЬСЯ! Мяу. Навіть я трохи підняла хвіст від поваги — круто вийшло 🏆','happy',true);
+  return;
+ }
+ catPick(ASKA_BLOCK_OTHER,'happy',true);
+}
+let catTm=null,catIdx=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false;
 function catSay(text,mood='happy',hop=true){
  const w=$('cat-wrap'),b=$('cat-msg');
  if(!w||w.hidden||!b)return;
@@ -644,7 +729,12 @@ function catSay(text,mood='happy',hop=true){
  catTm=setTimeout(()=>{
   b.classList.remove('show');
   w.classList.remove('happy','sad');
- },4200);
+ },4400);
+}
+function catPick(arr,mood='happy',hop=true){
+ if(!arr||!arr.length)return;
+ const t=arr[Math.floor(Math.random()*arr.length)];
+ catSay(t,mood,hop);
 }
 (()=>{
  const w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),pl=$('cat-p-l'),pr=$('cat-p-r');
@@ -667,20 +757,61 @@ function catSay(text,mood='happy',hop=true){
   showBtn.hidden=true;
   w.hidden=false;
   try{localStorage.removeItem(CAT_KEY)}catch(err){}
-  catSay('Знову кликала? Ну я прийшла, але ненадовго 🐾','happy',true);
+  catSay('Знову кликала? Ну я прийшла, але ненадовго — не втрачай темп 🐾','happy',true);
  });
  window.addEventListener('pointermove',e=>{
   if(w.hidden)return;
   const r=w.getBoundingClientRect();
   const cx=r.left+r.width/2,cy=r.top+r.height/2;
   const ang=Math.atan2(e.clientY-cy,e.clientX-cx);
-  const dx=Math.cos(ang)*1.4,dy=Math.sin(ang)*1.4;
+  const dx=Math.cos(ang)*1.5,dy=Math.sin(ang)*1.5;
   pl.setAttribute('cx',(33.5+dx).toFixed(2));
   pl.setAttribute('cy',(35.5+dy).toFixed(2));
   pr.setAttribute('cx',(50.5+dx).toFixed(2));
   pr.setAttribute('cy',(35.5+dy).toFixed(2));
+
+  const now=performance.now();
+  if(lastPx!=null&&lastPy!=null){
+   const dist=Math.hypot(e.clientX-lastPx,e.clientY-lastPy);
+   const dt=Math.max(16,now-lastMouseAt);
+   const speed=dist/dt;
+   if(speed>3.4&&dist>140&&now-lastMouseAt>0&&!catTm){
+    catSay(ASKA_MOUSE_FAST[mouseIdx++%ASKA_MOUSE_FAST.length],'happy',false);
+    lastMouseAt=now;
+   }
+  }
+  lastPx=e.clientX;lastPy=e.clientY;lastMouseAt=now;
+  idleAlerted=false;
+
+  const overTired=e.target&&e.target.closest&&e.target.closest('.tired');
+  if(overTired&&!hoverTiredWarned&&!catTm){
+   hoverTiredWarned=true;
+   catSay(ASKA_MOUSE_TIRED_BTN[mouseIdx++%ASKA_MOUSE_TIRED_BTN.length],'sad',false);
+  }else if(!overTired){
+   hoverTiredWarned=false;
+  }
+
+  const nearDock=Math.hypot(e.clientX-cx,e.clientY-cy)<135;
+  if(nearDock&&!w.dataset.near&&!catTm){
+   w.dataset.near='1';
+   catSay(ASKA_MOUSE_CORNER[mouseIdx++%ASKA_MOUSE_CORNER.length],'happy',false);
+  }else if(!nearDock){
+   delete w.dataset.near;
+  }
+
+  clearTimeout(mouseTm);
+  mouseTm=setTimeout(()=>{
+   if(!w.hidden&&!idleAlerted&&!catTm){
+    idleAlerted=true;
+    catSay(ASKA_MOUSE_IDLE[mouseIdx++%ASKA_MOUSE_IDLE.length],'happy',false);
+   }
+  },14000);
  },{passive:true});
- setTimeout(()=>{if(!w.hidden)catSay('Мяу. Я наглядаю, щоб ти не прокрастинувала 👀','happy',false)},1200);
+ const hr=new Date().getHours();
+ const greet=(hr>=23||hr<5)
+  ?'Ще не спиш? Я теж люблю нічний вайб, але про сон не забувай 🌙'
+  :'Мяу. Я наглядаю, щоб ти не прокрастинувала 👀';
+ setTimeout(()=>{if(!w.hidden)catSay(greet,'happy',false)},1200);
 })();
 
 ready=true;
