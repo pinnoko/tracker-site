@@ -72,8 +72,11 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .seg button{border:0;background:none;color:var(--mu);padding:6px 12px;border-radius:8px;font:inherit;font-weight:500;cursor:pointer;white-space:nowrap}
 .seg .on{background:var(--ac);color:var(--bg)}
 .grid{columns:330px;column-gap:16px}
-.card{display:inline-block;width:100%;margin:0 0 16px;break-inside:avoid;background:var(--sf);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--sh);overflow:hidden;--c:var(--ac)}
+.card{display:inline-block;width:100%;margin:0 0 16px;break-inside:avoid;background:var(--sf);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--sh);overflow:hidden;--c:var(--ac);transition:border-color .25s ease}
 .card::before{content:"";display:block;height:4px;background:var(--c)}
+.card.x-done{border-color:color-mix(in srgb,var(--ok) 55%,var(--ln))}
+.card.x-done .ch::after{content:"✓ Готово";order:1;font-size:11px;font-weight:700;color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent);padding:2px 8px;border-radius:99px;white-space:nowrap}
+.card.x-done .ch .ib{order:2}
 .ch{display:flex;align-items:center;gap:8px;padding:10px 10px 10px 14px;background:color-mix(in srgb,var(--c) var(--tt),var(--sf))}
 .clr{width:24px;height:24px;border:0;padding:0;background:none;border-radius:50%;cursor:pointer;flex:none}
 .clr::-webkit-color-swatch-wrapper{padding:0}
@@ -87,6 +90,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-off
 .card .pb i{background:var(--c)}
 ul{list-style:none;margin:0;padding:0 10px}
 li{display:flex;align-items:center;gap:8px;padding:6px 4px;border-top:1px solid var(--ln)}
+li.x-flash{animation:xFlash 1.4s ease}
+@keyframes xFlash{0%,100%{background:transparent}25%{background:color-mix(in srgb,var(--grp) 24%,transparent)}}
 .st{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid var(--no);background:none;cursor:pointer;position:relative;padding:0}
 .s1 .st{border-color:var(--wip);background:linear-gradient(90deg,var(--wip) 50%,transparent 50%)}
 .s2 .st{border-color:var(--ok);background:var(--ok)}
@@ -165,7 +170,32 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
-/* Аска — оновлений виразний дизайн і режим підглядування головою */
+/* Панель дня: «Далі за планом», фокус-таймер, серія днів */
+.x-day{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin:0 0 18px;padding:14px 18px;background:var(--sf);border:1px solid var(--ln);border-left:4px solid var(--grp);border-radius:14px;box-shadow:var(--sh)}
+.x-next{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.x-next small{color:var(--mu);font-weight:500}
+.x-next b{font-size:17px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.x-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.x-b{border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:10px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer}
+.x-b:hover{border-color:var(--ac)}
+.x-b.p{background:var(--ac);border-color:var(--ac);color:var(--bg)}
+.x-ring{position:relative;width:64px;height:64px;flex:none}
+.x-ring svg{width:64px;height:64px;transform:rotate(-90deg);fill:none;stroke-width:4}
+.x-ring circle{stroke:var(--ln)}
+.x-ring circle#x-rg{stroke:var(--grp);stroke-linecap:round;transition:stroke-dashoffset .5s linear}
+.x-ring span{position:absolute;inset:0;display:grid;place-items:center;font:700 13px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.x-stats{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.x-stat{display:flex;flex-direction:column;line-height:1.25}
+.x-stat small{color:var(--mu);font-weight:500}
+.x-stat b{font-size:22px;letter-spacing:-.02em}
+.x-bars{display:flex;align-items:flex-end;gap:4px;height:34px}
+.x-bars i{width:10px;border-radius:3px;background:var(--ln);transition:height .25s ease}
+.x-bars i.on{background:var(--ac)}
+.x-bars i.today{background:var(--grp)}
+.x-hint{flex:1 0 100%;font-size:12px;color:var(--mu)}
+.x-cv{position:fixed;inset:0;pointer-events:none;z-index:250}
+
+/* Аска */
 .cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none;transition:left .38s cubic-bezier(.34,1.56,.64,1),right .38s cubic-bezier(.34,1.56,.64,1)}
 .cat-dock.left{right:auto;left:18px;align-items:flex-start}
 .cat-dock.left .cat-bubble{border-radius:16px 16px 16px 4px}
@@ -174,7 +204,7 @@ li{flex-wrap:wrap}
 .cat-bubble.show{opacity:1;transform:translateY(0) scale(1)}
 .cat-bubble b{display:block;font-size:11px;font-weight:700;color:#d4942a;margin-bottom:2px;letter-spacing:.02em}
 .cat-stage{position:relative;display:inline-flex;align-items:center;justify-content:center;pointer-events:none}
-.cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .42s cubic-bezier(.34,1.56,.64,1),opacity .25s ease}
+.cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .48s cubic-bezier(.34,1.56,.64,1),opacity .25s ease}
 .cat-wrap:hover{transform:translateY(-3px)}
 .cat-wrap:active{transform:scale(.96)}
 .cat-wrap.hop{animation:catHop .55s cubic-bezier(.34,1.56,.64,1)}
@@ -184,14 +214,18 @@ li{flex-wrap:wrap}
 .cat-wrap.scroll-tilt{transform:translateY(-2px) rotate(-3deg)}
 .cat-dock.left .cat-wrap.scroll-tilt{transform:translateY(-2px) rotate(3deg)}
 
-/* Режим підглядування: видно лише голову та лапку з-за краю */
-.cat-wrap.peek{transform:translate(56px,26px) rotate(-13deg)}
-.cat-wrap.peek:hover{transform:translate(46px,20px) rotate(-9deg)}
-.cat-dock.left .cat-wrap.peek{transform:translate(-56px,26px) rotate(13deg)}
-.cat-dock.left .cat-wrap.peek:hover{transform:translate(-46px,20px) rotate(9deg)}
-.cat-wrap.peek .cat-body,.cat-wrap.peek .cat-tail,.cat-wrap.peek .cat-shadow{opacity:0;pointer-events:none;transition:opacity .22s ease}
-.cat-peek-paw{opacity:0;transform:translateY(8px);transition:opacity .25s ease,transform .3s cubic-bezier(.34,1.56,.64,1)}
-.cat-wrap.peek .cat-peek-paw{opacity:1;transform:translateY(0)}
+/* Режим підглядування: видно ТІЛЬКИ вуха й очі по саму лінію краю екрана */
+.cat-wrap.peek{clip-path:inset(-40% -40% 51% -40%);transform:translateY(var(--hy,180px))!important}
+.cat-wrap.peek.peeking{transform:translateY(var(--py,60px))!important}
+.cat-wrap.peek.peeking:hover{transform:translateY(calc(var(--py,60px) - 5px))!important}
+.cat-wrap.peek:not(.peeking){pointer-events:none}
+.x-paws{opacity:0;transition:opacity .2s}
+.cat-wrap.peek .x-paws{opacity:1}
+#cat-p-l,#cat-p-r{transition:transform .45s ease}
+.cat-dock:has(.cat-wrap.peek) .cat-stage{margin-right:46px}
+.cat-dock.left:has(.cat-wrap.peek) .cat-stage{margin-right:0;margin-left:46px}
+.cat-dock:has(.cat-wrap.peek) .cat-bubble{position:relative;top:var(--py,0px)}
+#cat-show{width:38px;height:38px;padding:0;justify-content:center;font-size:17px}
 
 @keyframes catHop{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-15px) scale(1.04,.96)}65%{transform:translateY(0) scale(.97,1.03)}100%{transform:translateY(0) scale(1)}}
 @keyframes catDash{0%{transform:scale(1)}30%{transform:translateY(-18px) scale(1.12,.88)}70%{transform:translateY(-6px) scale(.94,1.06)}100%{transform:translateY(0) scale(1)}}
@@ -227,8 +261,6 @@ li{flex-wrap:wrap}
  .cat-svg{width:100px;height:100px}
  .cat-dock{right:12px;bottom:10px}
  .cat-dock.left{left:12px}
- .cat-wrap.peek{transform:translate(46px,22px) rotate(-13deg)}
- .cat-dock.left .cat-wrap.peek{transform:translate(-46px,22px) rotate(13deg)}
 }
 
 .cat-body{transform-origin:50px 88px;animation:catBreath 3.8s ease-in-out infinite;transition:opacity .22s ease}
@@ -257,6 +289,7 @@ li{flex-wrap:wrap}
   <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
 </div>
+<div class="x-day" id="x-day"></div>
 <div class="tiles" id="sum"></div>
 <div id="grp"></div><div class="toast" id="ts" role="status" hidden></div>
 <div class="tools">
@@ -269,7 +302,7 @@ li{flex-wrap:wrap}
 <div class="cat-dock" id="cat-dock" data-catch="><(((º>">
  <div class="cat-bubble" id="cat-msg" aria-live="polite"><b>Аска</b><span>Мяу. Я наглядаю, щоб ти не прокрастинувала 👀</span></div>
  <div class="cat-stage" id="cat-stage">
-  <button type="button" class="cat-hide" id="cat-hide" title="Згорнути Аску (буде підглядати)" aria-label="Згорнути Аску">✕</button>
+  <button type="button" class="cat-hide" id="cat-hide" title="Згорнути Аску (підглядатиме вушками й очима)" aria-label="Згорнути Аску">✕</button>
   <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити Аску" aria-label="Погладити Аску">
    <svg class="cat-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -295,17 +328,14 @@ li{flex-wrap:wrap}
      </linearGradient>
     </defs>
 
-    <!-- Тінь під кішкою -->
     <ellipse class="cat-shadow" cx="50" cy="92.5" rx="25" ry="3.8" fill="#121626" opacity=".13"/>
 
-    <!-- Хвіст -->
     <g class="cat-tail">
      <path d="M67 75C81 73 89 60 83 50C79 44 71 48 74 56C76 61 71 67 64 68" stroke="#222430" stroke-width="8.5" stroke-linecap="round"/>
      <path d="M78 49C83 51 85 56 81.5 61" stroke="#e68942" stroke-width="6.5" stroke-linecap="round"/>
      <path d="M75 63.5C77.5 65.5 79 67.5 77 70" stroke="#f7f8fc" stroke-width="4" stroke-linecap="round"/>
     </g>
 
-    <!-- Тулуб -->
     <g class="cat-body">
      <g clip-path="url(#askaBodyClip)">
       <rect x="25" y="54" width="50" height="38" fill="#fafafe"/>
@@ -315,15 +345,12 @@ li{flex-wrap:wrap}
       <ellipse cx="44" cy="76" rx="5.5" ry="3.6" fill="#e68942" opacity=".9"/>
       <rect x="25" y="54" width="50" height="38" fill="url(#askaFurShade)"/>
      </g>
-     <!-- Пухнастий комірець на грудях -->
      <path d="M40 60C42.5 66 47.5 67.5 50 64.5C52.5 67.5 57.5 66 60 60" stroke="#dde1ee" stroke-width="1.5" stroke-linecap="round"/>
-     <!-- Лапки -->
      <ellipse cx="41" cy="88.5" rx="6.4" ry="3.8" fill="#fafafe" stroke="#d5d9e8" stroke-width="1"/>
      <ellipse cx="59" cy="88.5" rx="6.4" ry="3.8" fill="#fafafe" stroke="#d5d9e8" stroke-width="1"/>
      <path d="M38.8 87.5v2.3M41 87.5v2.7M43.2 87.5v2.3M56.8 87.5v2.3M59 87.5v2.7M61.2 87.5v2.3" stroke="#c5cadb" stroke-width="1" stroke-linecap="round"/>
     </g>
 
-    <!-- Вушка -->
     <g class="cat-ear-l">
      <path d="M25 36L20 12L42 25Z" fill="#222430"/>
      <path d="M26.5 33L22.5 16.5L38 25.5Z" fill="#e68942"/>
@@ -334,36 +361,27 @@ li{flex-wrap:wrap}
      <path d="M73 32.5L76.5 16.5L62 25.5Z" fill="#ee96aa"/>
     </g>
 
-    <!-- Олівець за правим вухом -->
     <g transform="rotate(6 77 24)">
      <path d="M76 28L87 8" stroke="#f4c44e" stroke-width="3.2" stroke-linecap="round"/>
      <path d="M85.3 11L87 8" stroke="#222430" stroke-width="3.2" stroke-linecap="round"/>
      <path d="M76 28L74.5 30.8" stroke="#f08ea3" stroke-width="3" stroke-linecap="round"/>
     </g>
 
-    <!-- Голова (округла, плавна, без трикутничків по боках) -->
     <g class="cat-head">
      <g clip-path="url(#askaHeadClip)">
       <rect x="21" y="18" width="58" height="44" fill="#fafafe"/>
-      <!-- Руда каліко-пляма зліва -->
       <path d="M21 19H43L39.5 34C39 40.5 33 44.5 21 43.5Z" fill="#e68942"/>
       <path d="M21 40.5C27.5 40.5 30 44.5 26.5 49.5H21Z" fill="#222430"/>
-      <!-- Темна каліко-пляма справа -->
       <path d="M51 18H79V47C70 48.5 60 46 54.5 39.5C50.5 34.5 50.5 25.5 51 18Z" fill="#222430"/>
-      <!-- Біла зона мордочки -->
       <ellipse cx="50" cy="49.5" rx="17" ry="11" fill="#fafafe"/>
-      <!-- Веснянка -->
       <circle cx="64.5" cy="49.5" r="1.3" fill="#e68942" opacity=".7"/>
       <rect x="21" y="18" width="58" height="44" fill="url(#askaFurShade)"/>
      </g>
-     <!-- М'який контур голови -->
      <path d="M23 41C23 26.5 34.5 19 50 19C65.5 19 77 26.5 77 41C77 53.5 65.5 59.5 50 59.5C34.5 59.5 23 53.5 23 41Z" stroke="#222430" stroke-opacity=".14" stroke-width="1.2"/>
 
-     <!-- Рум'янець -->
      <ellipse class="cat-blush" cx="33.5" cy="47.5" rx="3.8" ry="2" fill="#f489a6"/>
      <ellipse class="cat-blush" cx="66.5" cy="47.5" rx="3.8" ry="2" fill="#f489a6"/>
 
-     <!-- Відкриті очі -->
      <g class="cat-eye-open">
       <circle cx="39.5" cy="40.5" r="5.6" fill="url(#askaIris)"/>
       <circle cx="60.5" cy="40.5" r="5.6" fill="url(#askaIris)"/>
@@ -375,18 +393,15 @@ li{flex-wrap:wrap}
       <circle cx="62.2" cy="42.3" r=".7" fill="#fff" opacity=".85"/>
      </g>
 
-     <!-- Щасливі примружені очі -->
      <g class="cat-eye-happy" stroke="#7d4e0d" stroke-width="2.5" stroke-linecap="round">
       <path d="M35 41.5C36.8 38.2 42.2 38.2 44 41.5"/>
       <path d="M56 41.5C57.8 38.2 63.2 38.2 65 41.5"/>
      </g>
 
-     <!-- Носик, руда плямка біля вусів та усмішка -->
      <ellipse cx="45.2" cy="48.2" rx="2.5" ry="1.5" fill="#e68942" opacity=".85"/>
      <path d="M47.6 46.4H52.4L50 49Z" fill="#f28aa2"/>
      <path d="M45.6 50.2C47.2 51.9 49 51.4 50 49.4C51 51.4 52.8 51.9 54.4 50.2" stroke="#535970" stroke-width="1.6" stroke-linecap="round"/>
 
-     <!-- Вуса (прямо з щік, без трикутничків) -->
      <g stroke="#adb4c9" stroke-width="1.35" stroke-linecap="round">
       <path d="M29 44.5L14 41.5"/>
       <path d="M29 48.2L13.5 49.5"/>
@@ -394,26 +409,22 @@ li{flex-wrap:wrap}
       <path d="M71 48.2L86.5 49.5"/>
      </g>
 
-     <!-- Берет художниці -->
      <g class="cat-beret">
       <ellipse cx="51.5" cy="20.5" rx="16.5" ry="6.4" transform="rotate(-9 51.5 20.5)" fill="url(#askaBeretGrad)"/>
       <path d="M36.5 24C43 28 59.5 28 66.5 23.2" stroke="#7c1c2b" stroke-width="1.5" stroke-linecap="round" opacity=".75"/>
       <circle cx="58.2" cy="14.4" r="2" fill="#7c1c2b"/>
      </g>
 
-     <!-- Крапелька хвилювання та іскри -->
      <path class="cat-sweat" d="M78 27C78 27 74.2 31.8 74.2 34.4A3.8 3.8 0 0081.8 34.4C81.8 31.8 78 27 78 27Z" fill="#8fd3ff" stroke="#5ab4ea" stroke-width=".9"/>
      <g class="cat-spark"><path d="M14 17L15.6 20.8L19.4 22.4L15.6 24L14 27.8L12.4 24L8.6 22.4L12.4 20.8Z" fill="#ffd45a"/></g>
      <g class="cat-spark" style="animation-delay:.45s"><path d="M87 26L88.2 28.9L91.1 30.1L88.2 31.3L87 34.2L85.8 31.3L82.9 30.1L85.8 28.9Z" fill="#ffd45a"/></g>
     </g>
 
-    <!-- Лапка, якою Аска тримається за край у режимі підглядування -->
-    <g class="cat-peek-paw">
-     <ellipse cx="32" cy="61" rx="7.2" ry="5.2" transform="rotate(-14 32 61)" fill="#fafafe" stroke="#cfd4e4" stroke-width="1.1"/>
-     <circle cx="32" cy="62" r="2.1" fill="#f5a6b8"/>
-     <circle cx="29.2" cy="59.4" r="1.1" fill="#f5a6b8"/>
-     <circle cx="32" cy="58.6" r="1.1" fill="#f5a6b8"/>
-     <circle cx="34.8" cy="59.4" r="1.1" fill="#f5a6b8"/>
+    <!-- Дві лапки на краю екрана, коли Аска підглядає вушками й очима -->
+    <g class="x-paws">
+     <ellipse cx="30" cy="48.5" rx="6.6" ry="4" fill="#fafafe" stroke="#cfd4e4" stroke-width="1"/>
+     <ellipse cx="70" cy="48.5" rx="6.6" ry="4" fill="#fafafe" stroke="#cfd4e4" stroke-width="1"/>
+     <path d="M27 46.8v1.7M30 46.3v1.9M33 46.8v1.7M67 46.8v1.7M70 46.3v1.9M73 46.8v1.7" stroke="#c5cadb" stroke-width="1" stroke-linecap="round"/>
     </g>
    </svg>
   </div>
@@ -423,7 +434,7 @@ li{flex-wrap:wrap}
   <button type="button" data-team="rom" title="Команда Романка">Романятко</button>
   <button type="button" data-team="both" class="on" title="Обидва">Обидва</button>
  </div>
- <button type="button" class="cat-paw" id="cat-show" hidden>🐾 Покликати Аску</button>
+ <button type="button" class="cat-paw" id="cat-show" title="Покликати Аску" aria-label="Покликати Аску" hidden>🐾</button>
 </div>
 
 <script>
@@ -472,9 +483,9 @@ const tb=(s,ap)=>`<div class="tb">${s.tasks.length?'<button class="tl" data-act=
 const sum=()=>{ready&&grp();const o=st(S.flatMap(s=>s.tasks));lastPctSeen=pc(o);$('sum').innerHTML=`<div class="tile"><div class="tile-top"><small>Мій прогрес</small></div><div class="stat-row"><b>${pc(o)}%</b></div><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><div class="tile-top"><small>Виконано завдань</small></div><div class="stat-row"><b>${o.d}</b><span class="mu">з ${o.n}</span></div></div><div class="tile"><div class="tile-top"><small>Годин виконано</small></div><div class="stat-row"><b>${fh(o.dh)}</b></div></div><div class="tile"><div class="tile-top"><small>Годин залишилось</small></div><div class="stat-row"><b>${fh(o.h-o.dh)}</b></div></div>`};
 const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
 const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
-const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false;return`<section class="card" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
+const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false,done=s.tasks.length>0&&s.tasks.every(t=>t.s==2);return`<section class="card${done?' x-done':''}" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
 function render(){S=[...S.filter(s=>s.tasks.length),...S.filter(s=>!s.tasks.length)];sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
-const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o,s);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color)};
+const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o,s);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color);sc.classList.toggle('x-done',!!(s.tasks.length&&s.tasks.every(t=>t.s==2)))};
 const G=$('grid');
 G.addEventListener('click',e=>{
  const b=e.target.closest('[data-act]');if(!b)return;
@@ -800,6 +811,23 @@ function sharedOff(){
  $('pfb').hidden=true;$('pf').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready)loadShared()}});
 
+/* ---------- Конфеті ---------- */
+let cv=null;
+function burst(n=80){
+ if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+ if(!cv){cv=document.createElement('canvas');cv.className='x-cv';document.body.appendChild(cv)}
+ const c=cv.getContext('2d');if(!c)return;
+ const W=cv.width=innerWidth,H=cv.height=innerHeight,col=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
+ const ps=Array.from({length:n},()=>({x:W/2+(Math.random()-.5)*W*.35,y:H*.75,vx:(Math.random()-.5)*14,vy:-(8+Math.random()*12),g:.32+Math.random()*.12,s:5+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:col[Math.random()*8|0]}));
+ let f=0;
+ (function step(){
+  c.clearRect(0,0,W,H);
+  ps.forEach(p=>{p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.vx*=.992;p.r+=p.vr;c.save();c.translate(p.x,p.y);c.rotate(p.r);c.fillStyle=p.c;c.globalAlpha=Math.max(0,1-f/110);c.fillRect(-p.s/2,-p.s/3,p.s,p.s*.6);c.restore()});
+  if(++f<110)requestAnimationFrame(step);else c.clearRect(0,0,W,H);
+ })();
+}
+
+/* ---------- Репліки й поведінка Аски ---------- */
 const whoSmolRom=()=>askaTeam==='smol'?'Смольський':askaTeam==='rom'?'Романко':'Смольський чи Романко';
 var lastPctSeen;
 const ASKA_PHRASES=[
@@ -832,10 +860,11 @@ const ASKA_PHRASES=[
  'Тут тихо, тільки дедлайни тікають. Тік-так 🕰️'
 ];
 const ASKA_PEEK_LINES=[
- 'Я згорнулась, але все бачу одним вухом і двома очима 👀',
- 'Тсс... я тихенько підглядаю з кутка, чи ти не зависла в стрічці 🐾',
- 'Маленький кото-ревізор на посту. Натисни на голову, якщо треба обійми 😼',
- 'Лише голова стирчить, зате контроль 100% 👑'
+ 'Тсс... це лише вуха й очі. Як там дедлайни? 👀',
+ 'Зазирнула на хвилинку: рухається? Гарно, не зупиняйся 🐾',
+ 'Вухо вгору — перевірка прогресу. Усе під контролем? 😼',
+ 'Якщо нічого не закривається, я просто тихо підглядатиму раз на хвилину 👀',
+ 'Пш-ш-ш... мене тут немає. Працюйте 🤫'
 ];
 const ASKA_RUN_CORNER=[
  'Ну все, дістали! Перебігаю в інший кут, там спокійніше 🐾💨',
@@ -970,7 +999,9 @@ const ASKA_BLOCK_OTHER=[
  'Блок закрито повністю — мінус один великий шматок списку! 🎉'
 ];
 function catSubjectDone(s){
- if(catMilestone())return;
+ const hadMs=catMilestone();
+ if(!hadMs)burst(110);
+ if(hadMs)return;
  const name=String(s&&s.name||'').toLowerCase();
  if(name.includes('шрифт')){catPick(['Шрифти добито! З Крукевичем зустрінемось уже в наступному семестрі — мяу, гордо ✒️','Усі шрифти закриті! Тепер на літери можна дивитися без здригання 🐾'],'happy',true);return}
  if(name.includes('нагірн')||name.includes('комунікац')){catPick(['Блок закрито! Чи прийде Нагірний на наступну пару — хтозна, а завдання вже готові 😉','Нагірний і Косів кивають з Олімпу. Цей блок винесено красиво ⚡'],'happy',true);return}
@@ -997,9 +1028,10 @@ function catMilestone(){
  const p=pc(st(S.flatMap(s=>s.tasks))),prev=lastPctSeen;lastPctSeen=p;
  if(prev==null)return false;
  const M=[[100,'СТО ВІДСОТКІВ! Усе виконано. Я не плачу, це вуса пітніють 🏆'],[75,'Три чверті шляху! Далі вже спуск з гори 🏔️'],[50,'Рівно половина! Звідси список виглядає не так страшно ✨'],[25,'Чверть готова. Початок покладено, коти схвалюють 🐾']];
- for(const[m,t]of M)if(prev<m&&p>=m){catSay(t,'happy',true,true);return true}
+ for(const[m,t]of M)if(prev<m&&p>=m){burst(m>=100?220:95);catSay(t,'happy',true,true);return true}
  return false}
-let catTm=null,catIdx=Math.floor(Math.random()*30),catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='',peekChatterTimer=null,stretchTimer=null,scrollTm=null;
+
+let catTm=null,catIdx=Math.floor(Math.random()*30),catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='',stretchTimer=null,scrollTm=null,peekTimer=null,peekSched=null;
 function playCatAnim(cls,dur=950){
  const w=$('cat-wrap');
  if(!w||w.classList.contains('peek'))return;
@@ -1013,6 +1045,7 @@ function catSay(text,mood='happy',hop=true,dash=false){
  const w=$('cat-wrap'),b=$('cat-msg'),stEl=$('cat-stage');
  if(!w||!b||!stEl||stEl.hidden)return;
  const isPeek=w.classList.contains('peek');
+ if(isPeek&&window.askaPeekNow)window.askaPeekNow(5600);
  b.innerHTML=`<b>Аска</b><span>${E(text)}</span>`;
  b.classList.add('show');
  w.classList.remove('happy','sad','hop','dash','twitch');
@@ -1035,8 +1068,14 @@ function catPick(arr,mood='happy',hop=true){
  const t=arr[Math.floor(Math.random()*arr.length)];
  catSay(t,mood,hop);
 }
+
 (()=>{
  const dock=$('cat-dock'),stage=$('cat-stage'),w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),teamBar=$('cat-team'),eyeL=$('cat-p-l'),eyeR=$('cat-p-r');
+ const rand=(a,b)=>a+Math.random()*(b-a);
+ const H=.49;
+ const isPk=()=>w.classList.contains('peek');
+ const pupils=()=>[eyeL,eyeR].filter(Boolean);
+
  const syncTeamUI=()=>{
   if(!teamBar)return;
   teamBar.querySelectorAll('button[data-team]').forEach(btn=>{
@@ -1046,34 +1085,78 @@ function catPick(arr,mood='happy',hop=true){
  window.syncAskaTeamUI=syncTeamUI;
  syncTeamUI();
 
- const stopPeekChatter=()=>{
-  clearInterval(peekChatterTimer);
-  peekChatterTimer=null;
- };
- const startPeekChatter=()=>{
-  stopPeekChatter();
-  peekChatterTimer=setInterval(()=>{
-   if(!w.classList.contains('peek')||catTm)return;
-   catSay(ASKA_PEEK_LINES[mouseIdx++%ASKA_PEEK_LINES.length],'happy',false);
-  },26000);
- };
+ function measurePeek(){
+  const r=stage.getBoundingClientRect();
+  const py=innerHeight-(r.top+H*r.height);
+  dock.style.setProperty('--py',py+'px');
+  dock.style.setProperty('--hy',(py+H*r.height+18)+'px');
+ }
+
+ function glance(){
+  [[-2.2,0],[2.2,.4],[0,-1.2],[-1.5,.6],[0,0]].forEach((v,i)=>setTimeout(()=>{
+   if(w.classList.contains('peeking'))pupils().forEach(p=>{p.style.transform=`translate(${v[0]}px,${v[1]}px)`});
+  },700+i*900));
+ }
+
+ function retreat(){
+  if(w.matches(':hover')){peekTimer=setTimeout(retreat,1800);return}
+  w.classList.remove('peeking');
+  pupils().forEach(p=>{p.style.transform=''});
+ }
+
+ function peekNow(stay){
+  if(!isPk()||w.classList.contains('peeking'))return;
+  if(Math.random()<.5)dock.classList.toggle('left');
+  measurePeek();
+  requestAnimationFrame(()=>{
+   w.classList.add('peeking');
+   glance();
+  });
+  if(Math.random()<.4)setTimeout(()=>{
+   if(w.classList.contains('peeking')&&!catTm){
+    const line=ASKA_PEEK_LINES[Math.random()*ASKA_PEEK_LINES.length|0];
+    const b=$('cat-msg');
+    b.innerHTML=`<b>Аска</b><span>${E(line)}</span>`;
+    b.classList.add('show');
+    clearTimeout(catTm);
+    catTm=setTimeout(()=>{b.classList.remove('show');catTm=null},4200);
+   }
+  },950);
+  clearTimeout(peekTimer);
+  peekTimer=setTimeout(retreat,stay||rand(6500,9000));
+ }
+ window.askaPeekNow=peekNow;
+
+ function planPeek(first){
+  clearTimeout(peekSched);
+  peekSched=setTimeout(()=>{
+   if(isPk()&&!document.hidden&&!catTm)peekNow();
+   planPeek(false);
+  },first?rand(7000,12000):rand(52000,72000));
+ }
 
  const applyHiddenState=(isHidden,silent=false)=>{
   try{if(isHidden)localStorage.setItem(CAT_KEY,'1');else localStorage.removeItem(CAT_KEY)}catch(err){}
   if(isHidden){
    stage.hidden=false;
-   w.classList.remove('hop','dash','stretch','doze','scroll-tilt');
+   w.classList.remove('hop','dash','stretch','doze','scroll-tilt','peeking');
    w.classList.add('peek');
-   w.title='Розгорнути Аску';
-   w.setAttribute('aria-label','Розгорнути Аску');
+   w.title='Повернути Аску повністю';
+   w.setAttribute('aria-label','Повернути Аску повністю');
    hideBtn.hidden=true;
    teamBar.hidden=true;
    showBtn.hidden=false;
-   startPeekChatter();
-   if(!silent)catSay('Я тихенько підглядатиму з-за краю 👀','happy',false);
+   $('cat-msg').classList.remove('show');
+   measurePeek();
+   planPeek(true);
+   if(!silent){
+    toast('Аска сховалась — підглядатиме вушками й очима раз на хвилину 👀');
+   }
   }else{
-   stopPeekChatter();
-   w.classList.remove('peek');
+   clearTimeout(peekSched);
+   clearTimeout(peekTimer);
+   w.classList.remove('peek','peeking');
+   pupils().forEach(p=>{p.style.transform=''});
    w.title='Погладити Аску';
    w.setAttribute('aria-label','Погладити Аску');
    hideBtn.hidden=false;
@@ -1082,6 +1165,8 @@ function catPick(arr,mood='happy',hop=true){
    teamBar.hidden=false;
   }
  };
+
+ window.addEventListener('resize',()=>{if(isPk())measurePeek()});
 
  teamBar.addEventListener('click',e=>{
   const btn=e.target.closest('button[data-team]');
@@ -1102,12 +1187,12 @@ function catPick(arr,mood='happy',hop=true){
  if(initHidden){applyHiddenState(true,true)}
 
  setInterval(()=>{
-  if(stage.hidden||w.classList.contains('peek')||catTm)return;
+  if(stage.hidden||isPk()||catTm)return;
   playCatAnim('stretch',950);
  },19000);
 
  window.addEventListener('scroll',()=>{
-  if(stage.hidden||w.classList.contains('peek'))return;
+  if(stage.hidden||isPk())return;
   w.classList.add('scroll-tilt');
   clearTimeout(scrollTm);
   scrollTm=setTimeout(()=>w.classList.remove('scroll-tilt'),220);
@@ -1115,7 +1200,7 @@ function catPick(arr,mood='happy',hop=true){
 
  w.addEventListener('click',e=>{
   if(e.target.closest('#cat-hide'))return;
-  if(w.classList.contains('peek')){
+  if(isPk()){
    applyHiddenState(false);
    catSay('Спіймала на підгляданні! Добре, виходжу повністю 🐾','happy',true);
    return;
@@ -1156,7 +1241,7 @@ function catPick(arr,mood='happy',hop=true){
    secretBuf=(secretBuf+e.key.toLowerCase()).slice(-6);
    if(secretBuf.endsWith('meow')||secretBuf.endsWith('aska')){
     secretBuf='';
-    if(w.classList.contains('peek'))applyHiddenState(false);
+    if(isPk())applyHiddenState(false);
     catSay('Хто покликав мене за кодовим словом? Мяу, я на місці 😼✨','happy',true);
    }
   }
@@ -1165,20 +1250,22 @@ function catPick(arr,mood='happy',hop=true){
   if(stage.hidden)return;
   const r=w.getBoundingClientRect();
   const cx=r.left+r.width/2,cy=r.top+r.height/2;
-  const ang=Math.atan2(e.clientY-cy,e.clientX-cx);
-  const dx=Math.cos(ang)*1.8,dy=Math.sin(ang)*1.8;
-  const flip=dock.classList.contains('left')?-1:1;
-  eyeL.setAttribute('cx',(39.5+dx*flip).toFixed(2));
-  eyeL.setAttribute('cy',(40.5+dy).toFixed(2));
-  eyeR.setAttribute('cx',(60.5+dx*flip).toFixed(2));
-  eyeR.setAttribute('cy',(40.5+dy).toFixed(2));
+  if(!isPk()){
+   const ang=Math.atan2(e.clientY-cy,e.clientX-cx);
+   const dx=Math.cos(ang)*1.8,dy=Math.sin(ang)*1.8;
+   const flip=dock.classList.contains('left')?-1:1;
+   eyeL.setAttribute('cx',(39.5+dx*flip).toFixed(2));
+   eyeL.setAttribute('cy',(40.5+dy).toFixed(2));
+   eyeR.setAttribute('cx',(60.5+dx*flip).toFixed(2));
+   eyeR.setAttribute('cy',(40.5+dy).toFixed(2));
+  }
 
   const now=performance.now();
   if(lastPx!=null&&lastPy!=null){
    const dist=Math.hypot(e.clientX-lastPx,e.clientY-lastPy);
    const dt=Math.max(16,now-lastMouseAt);
    const speed=dist/dt;
-   if(speed>3.4&&dist>140&&!catTm){
+   if(speed>3.4&&dist>140&&!catTm&&!isPk()){
     catSay(ASKA_MOUSE_FAST[mouseIdx++%ASKA_MOUSE_FAST.length],'happy',false);
     lastMouseAt=now;
    }
@@ -1187,7 +1274,7 @@ function catPick(arr,mood='happy',hop=true){
   idleAlerted=false;
 
   const overTired=e.target&&e.target.closest&&e.target.closest('.tired');
-  if(overTired&&!hoverTiredWarned&&!catTm){
+  if(overTired&&!hoverTiredWarned&&!catTm&&!isPk()){
    hoverTiredWarned=true;
    catSay(ASKA_MOUSE_TIRED_BTN[mouseIdx++%ASKA_MOUSE_TIRED_BTN.length],'sad',false);
   }else if(!overTired){
@@ -1195,7 +1282,7 @@ function catPick(arr,mood='happy',hop=true){
   }
 
   const nearDock=Math.hypot(e.clientX-cx,e.clientY-cy)<145;
-  if(nearDock&&!w.dataset.near&&!catTm){
+  if(nearDock&&!w.dataset.near&&!catTm&&!isPk()){
    w.dataset.near='1';
    catSay(ASKA_MOUSE_CORNER[mouseIdx++%ASKA_MOUSE_CORNER.length],'happy',false);
   }else if(!nearDock){
@@ -1204,7 +1291,7 @@ function catPick(arr,mood='happy',hop=true){
 
   clearTimeout(mouseTm);
   mouseTm=setTimeout(()=>{
-   if(!stage.hidden&&!idleAlerted&&!catTm){
+   if(!stage.hidden&&!idleAlerted&&!catTm&&!isPk()){
     idleAlerted=true;
     playCatAnim('doze',1400);
     catSay(ASKA_MOUSE_IDLE[mouseIdx++%ASKA_MOUSE_IDLE.length],'happy',false);
@@ -1213,7 +1300,132 @@ function catPick(arr,mood='happy',hop=true){
  },{passive:true});
  const hr=new Date().getHours();
  const greet=(hr>=23||hr<5)?'Ще не спиш? Нічний вайб — це класно, але сон теж частина плану 🌙':catStatusLine();
- setTimeout(()=>{if(!stage.hidden)catSay(greet,'happy',false)},1200);
+ setTimeout(()=>{if(!stage.hidden&&!isPk())catSay(greet,'happy',false)},1200);
+})();
+
+/* ---------- «Далі за планом», фокус-таймер, серія днів, живий фавікон ---------- */
+(()=>{
+ const AK='x-activity',FK='x-focus-dur',DURS=[15,25,45,60];
+ const dk=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+ const lget=()=>{try{return JSON.parse(localStorage.getItem(AK))||{}}catch(e){return{}}};
+ function addAct(k,v){
+  const a=lget(),d=dk(new Date());a[d]=a[d]||{d:0,m:0};a[d][k]=Math.max(0,(a[d][k]||0)+v);
+  const keys=Object.keys(a).sort();while(keys.length>60)delete a[keys.shift()];
+  try{localStorage.setItem(AK,JSON.stringify(a))}catch(e){}
+ }
+ function streak(){
+  const a=lget(),on=x=>x&&(x.d>0||x.m>=10);
+  let n=0,d=new Date();
+  if(!on(a[dk(d)]))d.setDate(d.getDate()-1);
+  while(on(a[dk(d)])){n++;d.setDate(d.getDate()-1)}
+  return n;
+ }
+ const T={on:false,run:false,dur:25,left:1500,total:1500,end:0,iv:null,label:'',sub:'',sid:'',tid:''};
+ try{const d=+localStorage.getItem(FK);if(DURS.includes(d)){T.dur=d;T.left=T.total=d*60}}catch(e){}
+ let skip=0;
+ const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+ const cands=()=>{const a=[],b=[];S.forEach(s=>s.tasks.forEach(t=>{if(t.s==1)a.push({s,t});else if(t.s==0)b.push({s,t})}));return a.concat(b)};
+ const box=$('x-day');
+
+ function title(){document.title=T.on?`${T.run?'🍅':'⏸'} ${fmt(T.left)} · Навчальний трекер`:'Навчальний трекер'}
+ function paint(){const t=$('x-t'),g=$('x-rg');if(t)t.textContent=fmt(T.left);if(g)g.style.strokeDashoffset=125.66*(1-(T.total-T.left)/T.total);title()}
+
+ function renderDay(){
+  if(!box)return;
+  const c=cands(),n=c.length,cur=n?c[skip%n]:null,a=lget(),today=a[dk(new Date())]||{d:0,m:0},sk=streak();
+  const bars=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return{x:a[dk(d)]||{d:0,m:0},t:i==6}}),mx=Math.max(1,...bars.map(b=>b.x.d));
+  const btns=T.on
+   ?`<button class="x-b p" data-x="pause">${T.run?'Пауза':'Продовжити'}</button><button class="x-b" data-x="stop">Стоп</button>`
+   :`<button class="x-b p" data-x="go">▶ Фокус ${T.dur} хв</button><button class="x-b" data-x="dur" title="Змінити тривалість">${T.dur} хв</button>${cur?'<button class="x-b" data-x="jump" title="Перейти до завдання">↗</button>':''}${n>1?'<button class="x-b" data-x="skip" title="Інше завдання">↻</button>':''}`;
+  const off=125.66*(1-(T.total-T.left)/T.total);
+  box.innerHTML=`<div class="x-next"><small>${T.on?(T.run?'Фокус триває':'Фокус на паузі'):'Далі за планом'}</small><b>${E(T.on?T.label:cur?cur.t.t:'Усе виконано')}</b><span class="mu">${E(T.on?T.sub:cur?cur.s.name+(cur.t.h?' · '+cur.t.h+' год':''):'Можна відпочивати')}</span><div class="x-row">${btns}</div></div>`
+   +(T.on?`<div class="x-ring"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><circle id="x-rg" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="${off}"/></svg><span id="x-t">${fmt(T.left)}</span></div>`:'')
+   +`<div class="x-stats"><div class="x-stat"><small>Сьогодні</small><b>${today.d}</b><span class="mu">${today.m} хв фокусу</span></div><div class="x-stat"><small>Серія</small><b>${sk}${sk?' 🔥':''}</b><span class="mu">${pl(sk,['день','дні','днів'])} поспіль</span></div><div class="x-bars" title="Закриті завдання за 7 днів">${bars.map(b=>`<i class="${b.t?'today':b.x.d?'on':''}" style="height:${Math.max(4,Math.round(b.x.d/mx*32))}px" title="${b.x.d} завд., ${b.x.m} хв"></i>`).join('')}</div></div>`
+   +`<div class="x-hint">Швидкі клавіші: / пошук · F фокус · T тема. Серія й фокус зберігаються на цьому пристрої.</div>`;
+ }
+
+ function jumpToCur(){
+  const c=cands(),n=c.length,cur=n?c[skip%n]:null;
+  if(!cur)return;
+  OPEN.add(cur.s.id);
+  if(q||fl!='all'){q='';fl='all';$('q').value='';[...$('seg').children].forEach(x=>x.classList.toggle('on',x.dataset.fl=='all'))}
+  render();
+  const li=G.querySelector(`[data-tid="${cur.t.id}"]`);
+  if(li){li.scrollIntoView({behavior:'smooth',block:'center'});li.classList.remove('x-flash');void li.offsetWidth;li.classList.add('x-flash')}
+ }
+
+ function loop(){clearInterval(T.iv);T.iv=setInterval(()=>{T.left=Math.max(0,Math.round((T.end-Date.now())/1000));paint();if(T.left<=0)finish()},500)}
+ function tStart(){
+  const c=cands(),cur=c.length?c[skip%c.length]:null;
+  T.on=T.run=true;T.total=T.left=T.dur*60;T.end=Date.now()+T.left*1000;
+  T.label=cur?cur.t.t:'Вільний фокус';T.sub=cur?cur.s.name:'без завдання';
+  T.sid=cur?cur.s.id:'';T.tid=cur?cur.t.id:'';
+  if(cur&&cur.t.s==0){cur.t.s=1;save();render()}
+  loop();renderDay();title();
+  catSay(`Фокус ${T.dur} хв на «${T.label}». Телефон мовчить, я пильную 👀`,'happy',false);
+ }
+ function tPause(){
+  if(T.run){T.run=false;clearInterval(T.iv);T.left=Math.max(0,Math.round((T.end-Date.now())/1000))}
+  else{T.run=true;T.end=Date.now()+T.left*1000;loop()}
+  renderDay();title();
+ }
+ function tStop(){
+  clearInterval(T.iv);const el=Math.floor((T.total-T.left)/60);if(T.on&&el>=5)addAct('m',el);
+  T.on=T.run=false;T.left=T.total=T.dur*60;renderDay();title();
+ }
+ function chime(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),t=a.currentTime;[660,880,1100].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.18);g.gain.linearRampToValueAtTime(.12,t+i*.18+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.18+.5);o.connect(g);g.connect(a.destination);o.start(t+i*.18);o.stop(t+i*.18+.55)})}catch(e){}}
+ function finish(){
+  clearInterval(T.iv);const m=T.dur;addAct('m',m);T.on=T.run=false;T.left=T.total=T.dur*60;
+  chime();burst(70);renderDay();title();
+  catSay(`Готово: ${m} хв фокусу! Перерва п’ять хвилин: вода, вікно, потягнутися 🐾`,'happy',true);
+ }
+ if(box)box.addEventListener('click',e=>{
+  const b=e.target.closest('[data-x]');if(!b)return;
+  const x=b.dataset.x;
+  if(x=='go')tStart();else if(x=='pause')tPause();else if(x=='stop')tStop();
+  else if(x=='skip'){skip++;renderDay()}
+  else if(x=='jump')jumpToCur();
+  else if(x=='dur'){T.dur=DURS[(DURS.indexOf(T.dur)+1)%DURS.length];T.left=T.total=T.dur*60;try{localStorage.setItem(FK,T.dur)}catch(err){}renderDay()}
+ });
+
+ function fav(){
+  try{
+   const p=pc(st(S.flatMap(s=>s.tasks))),c=document.createElement('canvas');c.width=c.height=64;
+   const x=c.getContext('2d');if(!x)return;
+   x.lineWidth=10;x.lineCap='round';x.strokeStyle='#d5d9e8';x.beginPath();x.arc(32,32,24,0,7);x.stroke();
+   if(p>0){x.strokeStyle=p>=100?'#46c995':'#4f5bd5';x.beginPath();x.arc(32,32,24,-Math.PI/2,-Math.PI/2+Math.PI*2*p/100);x.stroke()}
+   let l=document.querySelector('link[rel~=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}
+   l.href=c.toDataURL();
+  }catch(e){}
+ }
+
+ let lastAct=0,prev=null;
+ ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now()},true));
+ function onSum(){
+  try{
+   const done=S.flatMap(s=>s.tasks).filter(t=>t.s==2).length;
+   if(prev!=null&&done!==prev&&Date.now()-lastAct<1500){
+    const before=(lget()[dk(new Date())]||{d:0}).d;
+    addAct('d',done-prev);
+    if(done>prev&&before===0){const sk=streak();if(sk>=2)catSay(`Серія: ${sk} ${pl(sk,['день','дні','днів'])} поспіль! 🔥 Так тримати.`,'happy',true)}
+   }
+   prev=done;
+  }catch(e){}
+  fav();renderDay();
+ }
+ let deb=null;
+ const later=()=>{clearTimeout(deb);deb=setTimeout(onSum,30)};
+ const sumEl=$('sum');if(sumEl)new MutationObserver(later).observe(sumEl,{childList:true});
+ onSum();
+
+ addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey)return;
+  const t=e.target;if(t&&(/INPUT|TEXTAREA|SELECT/.test(t.tagName)||t.isContentEditable))return;
+  const k=e.key.toLowerCase();
+  if(e.key==='/'){e.preventDefault();const qEl=$('q');if(qEl)qEl.focus()}
+  else if(k==='t'||k==='е'){const b=$('th');if(b)b.click()}
+  else if(k==='f'||k==='а'){T.on?tPause():tStart()}
+ });
 })();
 
 ready=true;
