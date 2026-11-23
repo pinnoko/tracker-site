@@ -161,14 +161,18 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
-/* ===== Аска (кішка-компаньйон, без обводки, вміє перебігати в інший кут) ===== */
-.cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none;transition:left .38s cubic-bezier(.34,1.56,.64,1),right .38s cubic-bezier(.34,1.56,.64,1)}
+/* ===== Аска (жовті очі, без обводки, перебігає в інший кут, команда котосмольронят) ===== */
+.cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:5px;pointer-events:none;transition:left .38s cubic-bezier(.34,1.56,.64,1),right .38s cubic-bezier(.34,1.56,.64,1)}
 .cat-dock.left{right:auto;left:18px;align-items:flex-start}
 .cat-dock.left .cat-bubble{border-radius:14px 14px 14px 4px}
 .cat-dock.left .cat-svg{transform:scaleX(-1)}
-.cat-bubble{pointer-events:auto;background:var(--sf);color:var(--tx);border:1px solid var(--ln);box-shadow:var(--sh);border-radius:14px 14px 4px 14px;padding:9px 13px;font-size:12.5px;font-weight:500;max-width:290px;line-height:1.4;opacity:0;transform:translateY(6px) scale(.96);transition:opacity .22s ease,transform .22s ease}
+.cat-bubble{pointer-events:auto;background:var(--sf);color:var(--tx);border:1px solid var(--ln);box-shadow:var(--sh);border-radius:14px 14px 4px 14px;padding:9px 13px;font-size:12.5px;font-weight:500;max-width:292px;line-height:1.4;opacity:0;transform:translateY(6px) scale(.96);transition:opacity .22s ease,transform .22s ease}
 .cat-bubble.show{opacity:1;transform:translateY(0) scale(1)}
-.cat-bubble b{display:block;font-size:11px;font-weight:700;color:#e07a3f;margin-bottom:2px;letter-spacing:.02em}
+.cat-bubble b{display:block;font-size:11px;font-weight:700;color:#d4942a;margin-bottom:2px;letter-spacing:.02em}
+.cat-team{pointer-events:auto;display:inline-flex;gap:2px;background:var(--sf);border:1px solid var(--ln);border-radius:99px;padding:2px;box-shadow:var(--sh);opacity:.72;transition:opacity .18s}
+.cat-team:hover{opacity:1}
+.cat-team button{border:0;background:none;color:var(--mu);font:600 10.5px/1.2 Inter,system-ui,sans-serif;padding:3px 7px;border-radius:99px;cursor:pointer}
+.cat-team button.on{background:color-mix(in srgb,#d4942a 20%,transparent);color:#c2821c}
 .cat-wrap{position:relative;pointer-events:auto;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
 .cat-wrap:hover{transform:translateY(-3px)}
 .cat-wrap:active{transform:scale(.95)}
@@ -218,9 +222,14 @@ li{flex-wrap:wrap}
 <div class="grid" id="grid"></div>
 </div>
 
-<!-- Кішка Аска (каліко, без обводки) -->
-<div class="cat-dock" id="cat-dock" aria-live="polite">
+<!-- ><(((º> тиха пасхалка в глибині сторінки -->
+<div class="cat-dock" id="cat-dock" aria-live="polite" data-fish="><(((º>">
  <div class="cat-bubble" id="cat-msg"><b>Аска</b><span>Мяу. Я наглядаю, щоб ти не прокрастинувала 👀</span></div>
+ <div class="cat-team" id="cat-team" title="Команда котосмольронят">
+  <button type="button" data-team="smol" title="Команда Смольського">Смоленятко</button>
+  <button type="button" data-team="rom" title="Команда Романка">Романятко</button>
+  <button type="button" data-team="both" class="on" title="Нейтрально">Обидва</button>
+ </div>
  <div class="cat-wrap" id="cat-wrap" role="button" tabindex="0" title="Погладити Аску" aria-label="Погладити Аску">
   <button type="button" class="cat-hide" id="cat-hide" title="Сховати Аску" aria-label="Сховати Аску">✕</button>
   <svg class="cat-svg" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -257,18 +266,20 @@ li{flex-wrap:wrap}
     <path d="M20 36C25 36 27 39 24 43H20Z" fill="#22232b"/>
     <path d="M43 19H64V42C57 43 49 41 45 36C42 32 42 25 43 19Z" fill="#22232b"/>
     <ellipse cx="42" cy="44" rx="14" ry="9" fill="#f9f9fc"/>
+    <!-- тонка мікро-цятка для уважних -->
+    <circle cx="54" cy="44" r="1.1" fill="#e48a46" opacity=".65"/>
    </g>
    <ellipse class="cat-blush" cx="28.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
    <ellipse class="cat-blush" cx="55.5" cy="41.5" rx="3" ry="1.7" fill="#f28ca6"/>
    <g class="cat-eye-open">
-    <circle cx="33.5" cy="35.5" r="4.3" fill="#c98a2c"/>
-    <circle cx="50.5" cy="35.5" r="4.3" fill="#9ea34a"/>
+    <circle cx="33.5" cy="35.5" r="4.3" fill="#d4942a"/>
+    <circle cx="50.5" cy="35.5" r="4.3" fill="#d4942a"/>
     <circle id="cat-p-l" cx="33.5" cy="35.5" r="2.2" fill="#14161f"/>
     <circle id="cat-p-r" cx="50.5" cy="35.5" r="2.2" fill="#14161f"/>
     <circle cx="32.5" cy="34.3" r="1" fill="#fff"/>
     <circle cx="49.5" cy="34.3" r="1" fill="#fff"/>
    </g>
-   <g class="cat-eye-happy" stroke="#c98a2c" stroke-width="2.2" stroke-linecap="round">
+   <g class="cat-eye-happy" stroke="#d4942a" stroke-width="2.2" stroke-linecap="round">
     <path d="M29.8 36.5C31.3 33.7 35.7 33.7 37.2 36.5"/>
     <path d="M46.8 36.5C48.3 33.7 52.7 33.7 54.2 36.5"/>
    </g>
@@ -284,7 +295,7 @@ li{flex-wrap:wrap}
 </div>
 
 <script>
-const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',uid=()=>Math.random().toString(36).slice(2,9);
+const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',uid=()=>Math.random().toString(36).slice(2,9);
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const seed=()=>[
@@ -318,7 +329,8 @@ function migrate(arr){
  });
  return changed;
 }
-let S,q='',fl='all',pend=null;
+let S,q='',fl='all',pend=null,askaTeam='both';
+try{const t=localStorage.getItem(TEAM_KEY);if(t==='smol'||t==='rom'||t==='both')askaTeam=t}catch(e){}
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!Array.isArray(S))S=seed();
 const lsave=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},save=()=>{lsave();push()};
@@ -417,7 +429,14 @@ G.addEventListener('pointerdown',e=>{
  document.body.append(g);el.classList.add('dragging');document.body.classList.add('dn');
  D={k:h.dataset.drag,el,g,dx:e.clientX-r.left,dy:e.clientY-r.top};
  addEventListener('pointermove',mv);addEventListener('pointerup',up);addEventListener('pointercancel',cx);tick()});
-$('q').oninput=e=>{q=e.target.value;render();if(q.length%4===1)catSay('Шукаєш щось конкретне чи просто перевіряєш, скільки ще болю? 😼','happy',false)};
+$('q').oninput=e=>{
+ q=e.target.value;render();
+ const ql=q.trim().toLowerCase();
+ if(ql==='рибка'||ql==='fish'){catSay('Тсс... ти знайшла рибку ><(((º> в пошуку. Нікому не кажи 🐟','happy',true);return}
+ if(ql==='смольський'){catSay('Смольський зачувся... чи то лише мені здалося? 😼','happy',false);return}
+ if(ql==='романко'){catSay('Романко вже тримає олівець напоготові ✏️','happy',false);return}
+ if(q.length%5===1)catSay('Шукаєш щось конкретне чи просто перевіряєш, скільки ще болю? 😼','happy',false);
+};
 $('seg').onclick=e=>{const b=e.target.closest('[data-fl]');if(!b)return;fl=b.dataset.fl;[...$('seg').children].forEach(x=>x.classList.toggle('on',x==b));render();catSay('Фільтр перемкнула. Аби тільки очі не розбігалися від списку 👀','happy',false)};
 $('th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark';catSay(d?'Увімкнули світло — мені й у темряві добре видно ☀️':'Темна тема — як мій улюблений куток під столом 🌙','happy',false)};
 const togglePop=id=>{const el=$(id),open=el.hidden;$('bk').hidden=$('pf').hidden=true;if(open)el.hidden=false;return open};
@@ -612,15 +631,15 @@ function sharedOff(){
  $('pfb').hidden=true;$('pf').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me&&ready)loadShared()});
 
-/* ===== Аска: максимальний запас реплік, жарти про викладачів і втеча по кутах ===== */
+/* ===== Аска: жовті очі, команда котосмольронят, втеча по кутах і тонкі пасхалки ===== */
+//><(((º>
+const whoSmolRom=()=>askaTeam==='smol'?'Смольський':askaTeam==='rom'?'Романко':'Смольський / Романко';
 const ASKA_PHRASES=[
  'Не чіпай лапи. Клікай по завданнях, а не по мені 😾',
  'Ти сподіваєшся, що Нагірний прийде на наступну пару? Сподівайся.',
  'Нагірний і Косів — ваші боги грецькі, тому не розслабляйтесь ⚡',
  'Ти Смоленятко чи Романятко? Визначайся, бо я вже вуса нашорошила 😼',
  'Плутаєш ОВМ і ОНС? Може вже відпочинеш? 🐾',
- 'Смольський би зараз глянув на твій екран і сказав щось таке сухе, що ти б ще тиждень думала 🎨',
- 'У Смольського сарказм тонший за мій вус, а ти тут кота тицяєш замість роботи!',
  'Марта завжди похвалить, але ніколи не відповість — стабільність, якій я заздрю 🌿',
  'Нагірний на пару може й не прийти, а дедлайни приходять завжди без попередження 👀',
  'Мр-р-р... ладно, ще 3 секунди можеш погладити. Потім — за діло.',
@@ -641,23 +660,24 @@ const ASKA_PHRASES=[
  'Я бачила, як ти потягнулася. Ще трохи — і буде перемога.',
  'Якщо я зараз зістрибну зі стільця, буде гучно. Краще просто працюй.',
  'Кожен закритий рядок — це плюс один спокійний вечір перед переглядом.',
- 'Смольський сказав би: «Ну, принаймні ти старалася... напевно». Мяу 😼',
  'Йончі мав би бачити, як ти тут тренуєш терпіння з дедлайнами 📐',
  'Не бурчи на завдання, воно не вміє читати твої думки.',
  'Мяу! Моя думка: ти здатна на більше, ніж здається вночі.',
  'Трохи магії, трохи кави й жодного «зроблю завтра».',
  'Сьогодні ти сильніша за свій список справ. Ну майже сильніша 😸',
- 'Смольський і Романко вже нагострили погляди, а ти мені вуха мнеш!',
  'Якщо на ОВМ знову спитають, де тон, скажи, що кішка з’їла 🐾',
  'Марта вже подумки поставила тобі лайк, але відповіді не чекай — роби далі 🌸',
- 'Нагірний і Косів стежать з Олімпу, а я — з нижнього кута монітора ⚡',
- 'Ще один тиць по мені — і я почну рахувати до десяти 😾'
+ 'Нагірний і Косів стежать з Олімпу, а я — з нижнього кута монітора ⚡'
 ];
 const ASKA_RUN_CORNER=[
  'Ну все, дістала! Перебігаю в інший кут, там спокійніше 🐾💨',
  'Десять разів?! Я тобі не кнопка «Оновити»! Тікаю в протилежний кут 😾',
  'Хвіст трубою — я переїжджаю на інший край екрана. Не шукай одразу!',
  'Усе, ліміт погладжувань вичерпано! Перебазовуюсь у новий куток 🐈'
+];
+const ASKA_FISH_CATCH=[
+ 'Сьомий тиць — і ти натрапила на мою таємну рибку ><(((º>! Тільки лапами не чіпай 🐟',
+ 'О, ти таки помітила, що я тут рибку ховаю? Мяу, це наш секрет.'
 ];
 const ASKA_TASK_DONE_GENERIC=[
  'Неймовірно, ти справді це закрила. Я навіть вухом не поведу... ладно, молодець ✨',
@@ -666,51 +686,47 @@ const ASKA_TASK_DONE_GENERIC=[
  'Зараховано. Можеш зробити вдих-видих і братися за наступне.',
  'Мур-р-р, красивий рух! Прогрес повзе вгору 🐾',
  'Ще один пункт пішов у небуття. Котики таке схвалюють.',
- 'Оце вже ближче до спокійного життя. Не зупиняйся!',
- 'Тиць — і готово! Навіть мої вуса задоволено ворухнулися.',
- 'Плюс один пункт у скарбничку. Не збавляй обертів!'
+ 'Оце вже ближче до спокійного життя. Не зупиняйся!'
 ];
+function ovmTaskDoneLines(){
+ const w=whoSmolRom();
+ if(askaTeam==='smol'){
+  return[
+   `Плюс один пункт по ОВМ. Смольський би оцінив штрих і мазок 🎨`,
+   `Смольський би навіть не підколов за цей рядок... хоча ні, підколов би, але по-доброму 😼`,
+   `ОВМ рухається! Не дай фарбам і олівцю засумувати перед Смольським.`
+  ];
+ }
+ if(askaTeam==='rom'){
+  return[
+   `Плюс один пункт по ОВМ. Романко б оцінив штрих і мазок 🎨`,
+   `Романко вже придивляється до твого ОВМ — гарний хід 🐾`,
+   `ОВМ рухається! Не дай фарбам і олівцю засумувати перед Романком.`
+  ];
+ }
+ return[
+  `Плюс один пункт по ОВМ. Ти Смоленятко чи Романятко? ${w} б оцінили штрих 🎨`,
+  `${w} би глянули на твій екран і підкололи по-доброму 😼`,
+  `ОВМ рухається! Не дай фарбам і олівцю засумувати.`
+ ];
+}
 function catTaskDone(s,t){
  const name=String(s&&s.name||'').toLowerCase();
  const pool=[...ASKA_TASK_DONE_GENERIC];
  if(name.includes('шрифт')){
-  pool.push(
-   'Ще одна літера або стилізація позаду. Крукевич би кивнув ✒️',
-   'Шрифти потроху підкорюються. Ще трішки — і буде чисто.',
-   'Перо не здригнулося! Мінус один шрифтовий пункт 🐾'
-  );
+  pool.push('Ще одна літера або стилізація позаду. Крукевич би кивнув ✒️','Шрифти потроху підкорюються. Ще трішки — і буде чисто.');
  }else if(name.includes('нагірн')||name.includes('комунікац')){
-  pool.push(
-   'Пункт у Нагірного закрито! Але чи прийде він на наступну пару — хтозна 😼',
-   'Нагірний і Косів — ваші боги грецькі, тому не розслабляйтесь навіть після плюсика ⚡',
-   'Комунікація пішла в плюс. Мяу, гарний хід.'
-  );
+  pool.push('Пункт у Нагірного закрито! Але чи прийде він на наступну пару — хтозна 😼','Нагірний і Косів — ваші боги грецькі, тому не розслабляйтесь навіть після плюсика ⚡');
  }else if(name.includes('овм')){
-  pool.push(
-   'Плюс один пункт по ОВМ. Ти Смоленятко чи Романятко? Обидва б оцінили штрих 🎨',
-   'Смольський би навіть не підколов за цей пункт... хоча ні, підколов би, але по-доброму 😼',
-   'ОВМ рухається! Не дай фарбам і олівцю засумувати.'
-  );
+  pool.push(...ovmTaskDoneLines());
  }else if(name.includes('онс')){
-  pool.push(
-   'Плутаєш ОВМ і ОНС? Головне, що пункт закрито, а там розберемось 🐾',
-   'ОНС у плюсі! Можеш тепер спокійно видихнути.'
-  );
+  pool.push('Плутаєш ОВМ і ОНС? Головне, що пункт закрито, а там розберемось 🐾');
  }else if(name.includes('здоров')){
-  pool.push(
-   'Пункт з основ здоров’я закрито. Марта точно подумки похвалила б (хоч і не відповіла) 🌿',
-   'І здоров’я підтягнула — молодець, тільки сама не забувай про перерву.'
-  );
+  pool.push('Пункт з основ здоров’я закрито. Марта точно подумки похвалила б (хоч і не відповіла) 🌿');
  }else if(name.includes('проєктування')||name.includes('проектування')){
-  pool.push(
-   'Ще крок у проєктуванні! Йончі точно помітив би прогрес 📐',
-   'Проєктування потроху складається докупи. Продовжуй!'
-  );
+  pool.push('Ще крок у проєктуванні! Йончі точно помітив би прогрес 📐');
  }else if(name.includes('комп’ютерн')||name.includes('компютерн')||name.includes('графіка')){
-  pool.push(
-   'Ще один пункт по графіці готовий. Менше вкладок, більше діла 💻',
-   'Графіка посунулась. Мяу, ніби нічого й не зависло.'
-  );
+  pool.push('Ще один пункт по графіці готовий. Менше вкладок, більше діла 💻');
  }
  catPick(pool,'happy',true);
 }
@@ -718,8 +734,7 @@ const ASKA_WIP=[
  'О, почала робити? Дивись не засни над екраном 👀',
  'В процесі — це вже краще, ніж у планах на колись.',
  'Рух пішов! Головне не застрягти в деталях на три години.',
- 'Взялася за діло. Я поглядаю одним оком 😸',
- 'Жовтий статус — уже пів справи. Дотискай!'
+ 'Взялася за діло. Я поглядаю одним оком 😸'
 ];
 const ASKA_RESET=[
  'Зняла галочку? Передумала чи просто перевіряєш нерви кота? 😼',
@@ -732,8 +747,7 @@ const ASKA_DEL=[
 ];
 const ASKA_AP=[
  'Затверджено! Можеш тепер почухати мені за вушком (тільки обережно) 🐾',
- 'Печатку поставлено, галочка стоїть — один головний біль менше! 🎉',
- 'Оце рівень. Я б теж таке затвердила, якби мала лапи з ручкою.'
+ 'Печатку поставлено, галочка стоїть — один головний біль менше! 🎉'
 ];
 const ASKA_ADD_GENERIC=[
  'Ще одне завдання? Ну-ну, подивимось, коли ти його закриєш 😼',
@@ -745,35 +759,25 @@ function catTaskAdded(s,taskTitle){
  const name=String(s&&s.name||'').toLowerCase();
  const pool=[...ASKA_ADD_GENERIC];
  if(name.includes('шрифт')){
-  pool.push(
-   `Дописала «${taskTitle}» у шрифти? Крукевич ще не встиг зрадіти, а ти вже навантажила ✒️`,
-   `Нове завдання по шрифтах: «${taskTitle}». Погнали малювати!`
-  );
+  pool.push(`Дописала «${taskTitle}» у шрифти? Крукевич ще не встиг зрадіти, а ти вже навантажила ✒️`);
  }else if(name.includes('нагірн')||name.includes('комунікац')){
-  pool.push(
-   `Ще один пункт у Нагірного? Ти сподіваєшся, що Нагірний прийде на наступну пару? Сподівайся.`,
-   `Нагірний і Косів — ваші боги грецькі, тому записуємо «${taskTitle}» і не розслабляємось ⚡`
-  );
+  pool.push(`Ще один пункт у Нагірного? Ти сподіваєшся, що Нагірний прийде на наступну пару? Сподівайся.`,
+   `Нагірний і Косів — ваші боги грецькі, тому записуємо «${taskTitle}» і не розслабляємось ⚡`);
  }else if(name.includes('овм')){
-  pool.push(
-   `Новий рядок в ОВМ: «${taskTitle}». Ти Смоленятко чи Романятко — вирішиш уже в процесі 🎨`,
-   `Додала в ОВМ. Тільки не плутай ОВМ і ОНС, бо пора відпочити 😼`
-  );
+  if(askaTeam==='smol'){
+   pool.push(`Новий рядок в ОВМ: «${taskTitle}». Смольський уже дивиться 🎨`);
+  }else if(askaTeam==='rom'){
+   pool.push(`Новий рядок в ОВМ: «${taskTitle}». Романко уже дивиться 🎨`);
+  }else{
+   pool.push(`Новий рядок в ОВМ: «${taskTitle}». Ти Смоленятко чи Романятко — вирішиш уже в процесі 🎨`);
+  }
+  pool.push(`Додала в ОВМ. Тільки не плутай ОВМ і ОНС, бо пора відпочити 😼`);
  }else if(name.includes('здоров')){
-  pool.push(
-   `Додала «${taskTitle}» в основи здоров’я. Марта точно похвалить (і традиційно не відповість) 🌿`,
-   `Нове завдання по здоров’ю. Мяу, корисна штука.`
-  );
+  pool.push(`Додала «${taskTitle}» в основи здоров’я. Марта точно похвалить (і традиційно не відповість) 🌿`);
  }else if(name.includes('проєктування')||name.includes('проектування')){
-  pool.push(
-   `Нове завдання у проєктуванні: «${taskTitle}». Йончі ще буде пишатися 📐`,
-   `Додала пункт у проєктування. Потроху збираємо проєкт.`
-  );
+  pool.push(`Нове завдання у проєктуванні: «${taskTitle}». Йончі ще буде пишатися 📐`);
  }else if(name.includes('комп’ютерн')||name.includes('компютерн')||name.includes('графіка')){
-  pool.push(
-   `Ще одне завдання по графіці: «${taskTitle}». Комп’ютер готовий терпіти далі 💻`,
-   `Додала пункт у графіку. Не забудь зберігатись!`
-  );
+  pool.push(`Ще одне завдання по графіці: «${taskTitle}». Комп’ютер готовий терпіти далі 💻`);
  }
  catPick(pool,'happy',false);
 }
@@ -785,20 +789,17 @@ const ASKA_ADD_SUB=[
 const ASKA_TIRED=[
  'Замахалась? Мені, звісно, байдуже... але ти тримайся там 🐾',
  'Мяу... бачу, що ресурс на нулі. Зроби паузу й не жени коней.',
- 'Навіть мені стало трохи шкода твоїх очей. Перепочинь хоч трішки.',
  'Плутаєш ОВМ і ОНС? От і я кажу — пора перевести дух 😿'
 ];
 const ASKA_MOUSE_FAST=[
  'Куди так носиш мишею? Я не мотузка і не червона цятка! 😼',
  'Гей-гей, плавніше! Мені аж вуха від вітру загинає.',
- 'Ти думаєш, якщо швидко водити курсором, завдання самі закриються? Мяу.',
- 'Хтось тут дуже нервово водить мишею. Видихни, я нікуди не тікаю.'
+ 'Ти думаєш, якщо швидко водити курсором, завдання самі закриються? Мяу.'
 ];
 const ASKA_MOUSE_IDLE=[
  'Ти зависла на одному місці... чи то я тебе так загіпнотизувала? 👀',
  'Курсор стоїть, а час іде. Може, клікнеш по чомусь корисному?',
- 'Я бачу, де твоя мишка. Прикидаю, чи не стрибнути на неї.',
- 'Тиша... аж чути, як у когось не закривається завдання 🐾'
+ 'Я бачу, де твоя мишка. Прикидаю, чи не стрибнути на неї.'
 ];
 const ASKA_MOUSE_TIRED_BTN=[
  'Наважуєшся натиснути «Я замахався/лась»? Я все бачу 😿',
@@ -806,8 +807,7 @@ const ASKA_MOUSE_TIRED_BTN=[
 ];
 const ASKA_MOUSE_CORNER=[
  'О, підійшла ближче до мене! План: подивитись на кота й не втекти в сон.',
- 'Близько до мого кутка! Кажи одразу — погладити чи поскаржитись?',
- 'Мяу, бачу курсор у моїй зоні. Поводься чемно.'
+ 'Близько до мого кутка! Кажи одразу — погладити чи поскаржитись?'
 ];
 const ASKA_BLOCK_OTHER=[
  'Весь блок закрито?! Мур-р-р, навіть мені захотілося потягнутися від задоволення 🐾',
@@ -831,36 +831,36 @@ function catSubjectDone(s){
   return;
  }
  if(name.includes('овм')){
-  catPick([
-   'ОВМ закрито повністю! Тепер Смольський / Романко можуть переводити погляд спокійно — я одобрюю 🎨',
-   'Весь ОВМ готовий! І для Смоленят, і для Романят — тепер можна хоч трохи видихнути 🐾'
-  ],'happy',true);
+  if(askaTeam==='smol'){
+   catPick(['ОВМ закрито повністю! Смольський може переводити погляд спокійно — я одобрюю 🎨'],'happy',true);
+  }else if(askaTeam==='rom'){
+   catPick(['ОВМ закрито повністю! Романко може переводити погляд спокійно — я одобрюю 🎨'],'happy',true);
+  }else{
+   catPick(['ОВМ закрито повністю! Тепер Смольський / Романко можуть переводити погляд спокійно — я одобрюю 🎨'],'happy',true);
+  }
   return;
  }
  if(name.includes('здоров')){
   catPick([
-   'Основи здоров’я готові! Марта точно оцінить і похвалить (відповіді не чекай, ти ж знаєш) 🌸',
-   'Блок закрито! Тепер бережи ще й власне здоров’я, мяу 🐾'
+   'Основи здоров’я готові! Марта точно оцінить і похвалить (відповіді не чекай, ти ж знаєш) 🌸'
   ],'happy',true);
   return;
  }
  if(name.includes('комп’ютерн')||name.includes('компютерн')||name.includes('графіка')){
   catPick([
-   'Блок закрито! Жодних зайвих шарів і паніки — просто красиво і по ділу 💻🐾',
-   'Усе по графіці готове! Мяу, це було сильно.'
+   'Блок закрито! Жодних зайвих шарів і паніки — просто красиво і по ділу 💻🐾'
   ],'happy',true);
   return;
  }
  if(name.includes('проєктування')||name.includes('проектування')){
   catPick([
-   'ЙОНЧІ ВАМИ ПИШАЄТЬСЯ! Мяу. Навіть я трохи підняла хвіст від поваги — круто вийшло 🏆',
-   'Проєктування закрито! Йончі точно сказав би, що це солідний результат 🐾'
+   'ЙОНЧІ ВАМИ ПИШАЄТЬСЯ! Мяу. Навіть я трохи підняла хвіст від поваги — круто вийшло 🏆'
   ],'happy',true);
   return;
  }
  catPick(ASKA_BLOCK_OTHER,'happy',true);
 }
-let catTm=null,catIdx=0,catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false;
+let catTm=null,catIdx=0,catClicks=0,mouseTm=null,lastMouseAt=0,lastPx=null,lastPy=null,mouseIdx=0,idleAlerted=false,hoverTiredWarned=false,secretBuf='';
 function catSay(text,mood='happy',hop=true,dash=false){
  const w=$('cat-wrap'),b=$('cat-msg');
  if(!w||w.hidden||!b)return;
@@ -883,7 +883,24 @@ function catPick(arr,mood='happy',hop=true){
  catSay(t,mood,hop);
 }
 (()=>{
- const dock=$('cat-dock'),w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),pl=$('cat-p-l'),pr=$('cat-p-r');
+ const dock=$('cat-dock'),w=$('cat-wrap'),hideBtn=$('cat-hide'),showBtn=$('cat-show'),teamBar=$('cat-team'),pl=$('cat-p-l'),pr=$('cat-p-r');
+ const syncTeamUI=()=>{
+  if(!teamBar)return;
+  teamBar.querySelectorAll('button[data-team]').forEach(btn=>{
+   btn.classList.toggle('on',btn.dataset.team===askaTeam);
+  });
+ };
+ syncTeamUI();
+ teamBar.addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-team]');
+  if(!btn)return;
+  askaTeam=btn.dataset.team;
+  try{localStorage.setItem(TEAM_KEY,askaTeam)}catch(err){}
+  syncTeamUI();
+  if(askaTeam==='smol')catSay('Прийнято: тепер по ОВМ кажу виключно про Смольського 😼','happy',false);
+  else if(askaTeam==='rom')catSay('Прийнято: тепер по ОВМ кажу виключно про Романка 🐾','happy',false);
+  else catSay('Нейтральний режим увімкнено: знову питаю про обох 👀','happy',false);
+ });
  try{if(localStorage.getItem(CAT_KEY)==='1'){w.hidden=true;showBtn.hidden=false}}catch(e){}
  w.addEventListener('click',e=>{
   if(e.target.closest('#cat-hide'))return;
@@ -892,6 +909,14 @@ function catPick(arr,mood='happy',hop=true){
    dock.classList.toggle('left');
    const msg=ASKA_RUN_CORNER[Math.floor(catClicks/10-1)%ASKA_RUN_CORNER.length];
    catSay(msg,'sad',false,true);
+   return;
+  }
+  if(catClicks===7){
+   catSay(ASKA_FISH_CATCH[0],'happy',true);
+   return;
+  }
+  if(catClicks===17){
+   catSay(ASKA_FISH_CATCH[1],'happy',true);
    return;
   }
   const msg=ASKA_PHRASES[catIdx%ASKA_PHRASES.length];
@@ -911,6 +936,16 @@ function catPick(arr,mood='happy',hop=true){
   w.hidden=false;
   try{localStorage.removeItem(CAT_KEY)}catch(err){}
   catSay('Знову кликала? Ну я прийшла, але ненадовго — не втрачай темп 🐾','happy',true);
+ });
+ window.addEventListener('keydown',e=>{
+  if(e.target&&/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+  if(e.key.length===1){
+   secretBuf=(secretBuf+e.key.toLowerCase()).slice(-6);
+   if(secretBuf.endsWith('meow')||secretBuf.endsWith('aska')){
+    secretBuf='';
+    catSay('Хто покликав мене за кодовим словом? Мяу, я на місці 😼✨','happy',true);
+   }
+  }
  });
  window.addEventListener('pointermove',e=>{
   if(w.hidden)return;
