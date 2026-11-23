@@ -10,15 +10,15 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--grp:#4fd1c5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#0d1020;--sf:#161b2f;--tx:#e9ecf8;--mu:#8f98b5;--ln:#262d47;--ac:#8d97f5;--grp:#4fd1c5;--ok:#46c995;--wip:#f2b04e;--no:#f2707f;--tt:24%;--sh:none;color-scheme:dark}
 
-/* Тимчасова зимова тема (вмикається/вимикається кнопкою «Зима») */
-html.winter-mode{--ac:#3b82f6;--grp:#0ea5e9}
-html.winter-mode:not([data-theme="dark"]){--bg:#eef5fc;--sf:#fbfdff;--ln:#d6e4f2;--sh:0 1px 2px rgba(15,35,65,.05),0 8px 22px -12px rgba(30,75,130,.14)}
-html.winter-mode[data-theme="dark"],html.winter-mode:not([data-theme="light"]){--ac:#60a5fa;--grp:#38bdf8}
-@media (prefers-color-scheme:dark){html.winter-mode:not([data-theme="light"]){--bg:#09111e;--sf:#101c2e;--ln:#1e324d}}
-html.winter-mode[data-theme="dark"]{--bg:#09111e;--sf:#101c2e;--ln:#1e324d}
-.snow-cv{position:fixed;inset:0;pointer-events:none;z-index:140;display:none}
+/* Легкий зимовий акцент */
+html.winter-mode{--ac:#4776c2;--grp:#2c8ca8}
+html.winter-mode:not([data-theme="dark"]){--bg:#f1f5fa;--sf:#fcfdff;--ln:#dde6f0}
+html.winter-mode[data-theme="dark"],html.winter-mode:not([data-theme="light"]){--ac:#7ca3e8;--grp:#48a8c4}
+@media (prefers-color-scheme:dark){html.winter-mode:not([data-theme="light"]){--bg:#0b1220;--sf:#121b2d;--ln:#1f2d45}}
+html.winter-mode[data-theme="dark"]{--bg:#0b1220;--sf:#121b2d;--ln:#1f2d45}
+.snow-cv{position:fixed;inset:0;pointer-events:none;z-index:140;display:none;opacity:.72}
 html.winter-mode .snow-cv{display:block}
-.btn.winter-on{border-color:color-mix(in srgb,var(--grp) 65%,var(--ln));background:color-mix(in srgb,var(--grp) 14%,var(--sf))}
+.btn.winter-on{border-color:color-mix(in srgb,var(--grp) 55%,var(--ln));background:color-mix(in srgb,var(--grp) 11%,var(--sf))}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;transition:background-color .25s ease,color .2s ease}
@@ -101,7 +101,8 @@ input:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-off
 .card .pb{margin:0 16px 8px;height:6px}
 .card .pb i{background:var(--c)}
 ul{list-style:none;margin:0;padding:0 10px}
-li{display:flex;align-items:center;gap:8px;padding:6px 4px;border-top:1px solid var(--ln)}
+li{display:flex;align-items:center;gap:8px;padding:6px 4px;border-top:1px solid var(--ln);border-radius:6px}
+li.x-focus-now{background:color-mix(in srgb,var(--ac) 11%,transparent);box-shadow:inset 3px 0 0 var(--ac)}
 li.x-flash{animation:xFlash 1.4s ease}
 @keyframes xFlash{0%,100%{background:transparent}25%{background:color-mix(in srgb,var(--grp) 24%,transparent)}}
 .st{width:22px;height:22px;flex:none;border-radius:50%;border:2px solid var(--no);background:none;cursor:pointer;position:relative;padding:0;transition:transform .14s ease}
@@ -183,20 +184,23 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
-/* Панель дня: «Далі за планом», фокус-таймер, серія днів */
+/* Панель дня: «Далі за планом», згорнутий таймер, серія днів */
 .x-day{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin:0 0 18px;padding:14px 18px;background:var(--sf);border:1px solid var(--ln);border-left:4px solid var(--grp);border-radius:14px;box-shadow:var(--sh)}
 .x-next{flex:1 1 260px;min-width:0;display:flex;flex-direction:column;gap:2px}
 .x-next small{color:var(--mu);font-weight:500}
 .x-next b{font-size:17px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .x-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
-.x-b{border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:10px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer}
+.x-b{border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:10px;padding:6px 12px;font:inherit;font-weight:600;cursor:pointer;transition:border-color .16s ease,background-color .16s ease}
 .x-b:hover{border-color:var(--ac)}
 .x-b.p{background:var(--ac);border-color:var(--ac);color:var(--bg)}
-.x-ring{position:relative;width:64px;height:64px;flex:none}
-.x-ring svg{width:64px;height:64px;transform:rotate(-90deg);fill:none;stroke-width:4}
+.x-tmr-box{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--ln)}
+.x-tmr-meta{display:flex;flex-direction:column;gap:4px}
+.x-tmr-meta small{color:var(--mu);font-size:11.5px;font-weight:500}
+.x-ring{position:relative;width:58px;height:58px;flex:none}
+.x-ring svg{width:58px;height:58px;transform:rotate(-90deg);fill:none;stroke-width:4}
 .x-ring circle{stroke:var(--ln)}
 .x-ring circle#x-rg{stroke:var(--grp);stroke-linecap:round;transition:stroke-dashoffset .5s linear}
-.x-ring span{position:absolute;inset:0;display:grid;place-items:center;font:700 13px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.x-ring span{position:absolute;inset:0;display:grid;place-items:center;font:700 12.5px Inter,system-ui,sans-serif;font-variant-numeric:tabular-nums}
 .x-stats{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
 .x-stat{display:flex;flex-direction:column;line-height:1.25}
 .x-stat small{color:var(--mu);font-weight:500}
@@ -207,6 +211,9 @@ li{flex-wrap:wrap}
 .x-bars i.today{background:var(--grp)}
 .x-hint{flex:1 0 100%;font-size:12px;color:var(--mu)}
 .x-cv{position:fixed;inset:0;pointer-events:none;z-index:250}
+.x-top-btn{position:fixed;left:18px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:165;border:1px solid var(--ln);background:var(--sf);color:var(--tx);box-shadow:var(--sh);border-radius:99px;padding:7px 13px;font:600 12.5px Inter,system-ui,sans-serif;cursor:pointer;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .2s ease,transform .2s ease,border-color .18s ease}
+.x-top-btn.show{opacity:.9;transform:translateY(0);pointer-events:auto}
+.x-top-btn:hover{opacity:1;border-color:var(--ac)}
 
 /* Аска */
 .cat-dock{position:fixed;right:18px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:180;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none;transition:left .38s cubic-bezier(.34,1.56,.64,1),right .38s cubic-bezier(.34,1.56,.64,1)}
@@ -299,7 +306,7 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="wnt" title="Тимчасова зимова тема зі снігом">❄️ Зима</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
   <div class="tile pop" id="bk" hidden><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
   <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
@@ -313,6 +320,7 @@ li{flex-wrap:wrap}
 </div>
 <div class="grid" id="grid"></div>
 </div>
+<button type="button" class="x-top-btn" id="x-top-btn" title="На початок сторінки">↑ Вгору</button>
 
 <div class="cat-dock" id="cat-dock" data-catch="><(((º>">
  <div class="cat-bubble" id="cat-msg" aria-live="polite"><b>Аска</b><span>Мяу. Я наглядаю, щоб ти не прокрастинувала 👀</span></div>
@@ -452,7 +460,7 @@ li{flex-wrap:wrap}
 </div>
 
 <script>
-const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter',uid=()=>Math.random().toString(36).slice(2,9);
+const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter-v2',uid=()=>Math.random().toString(36).slice(2,9);
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const seed=()=>[
@@ -496,7 +504,7 @@ function getCtx(){
   return audioCtx;
  }catch(e){return null}
 }
-function playTone(freq,dur=.24,type='sine',vol=.07,delay=0){
+function playTone(freq,dur=.24,type='sine',vol=.06,delay=0){
  const c=getCtx();if(!c)return;
  const t=c.currentTime+delay,o=c.createOscillator(),g=c.createGain();
  o.type=type;o.frequency.setValueAtTime(freq,t);
@@ -507,14 +515,10 @@ function playTone(freq,dur=.24,type='sine',vol=.07,delay=0){
  o.start(t);o.stop(t+dur+.02);
 }
 const sfx={
- done:()=>{playTone(587.33,.22,'sine',.075,0);playTone(880,.3,'triangle',.06,0.08)},
- wip:()=>playTone(440,.16,'sine',.045,0),
- reset:()=>playTone(330,.16,'sine',.04,0),
- purr:()=>{playTone(523.25,.18,'sine',.05,0);playTone(659.25,.24,'sine',.045,0.07)},
- jingle:()=>{
-  const notes=[[659.25,0],[659.25,.14],[659.25,.28],[783.99,.46],[523.25,.62],[587.33,.76],[659.25,.92]];
-  notes.forEach(([f,d])=>playTone(f,.26,'triangle',.055,d));
- }
+ done:()=>{playTone(587.33,.22,'sine',.065,0);playTone(880,.3,'triangle',.05,0.08)},
+ wip:()=>playTone(440,.16,'sine',.04,0),
+ reset:()=>playTone(330,.16,'sine',.035,0),
+ purr:()=>{playTone(523.25,.18,'sine',.045,0);playTone(659.25,.24,'sine',.04,0.07)}
 };
 function syncSoundBtn(){
  const b=$('snd');if(!b)return;
@@ -522,22 +526,22 @@ function syncSoundBtn(){
  b.classList.toggle('winter-on',soundOn);
 }
 
-/* ---------- Тимчасова зимова тема зі снігом ---------- */
-let winterOn=false;
-try{winterOn=localStorage.getItem(WNT_KEY)==='1'}catch(e){}
+/* ---------- Делікатний сніг за замовчуванням для всіх ---------- */
+let winterOn=true;
+try{const savedW=localStorage.getItem(WNT_KEY);if(savedW==='0')winterOn=false}catch(e){}
 const snowCv=$('snow-cv'),snowCtx=snowCv?snowCv.getContext('2d'):null;
 let flakes=[],snowRaf=null;
 function initFlakes(){
- const n=Math.min(75,Math.max(28,Math.floor(innerWidth/22)));
+ const n=Math.min(34,Math.max(16,Math.floor(innerWidth/48)));
  flakes=Array.from({length:n},()=>({
   x:Math.random()*innerWidth,
   y:Math.random()*innerHeight,
-  r:1.4+Math.random()*2.6,
-  vy:.65+Math.random()*1.15,
-  vx:(Math.random()-.5)*.55,
+  r:.9+Math.random()*1.4,
+  vy:.32+Math.random()*.52,
+  vx:(Math.random()-.5)*.32,
   sw:Math.random()*Math.PI*2,
-  sp:.012+Math.random()*.02,
-  a:.35+Math.random()*.55
+  sp:.008+Math.random()*.012,
+  a:.16+Math.random()*.24
  }));
 }
 function startSnow(){
@@ -553,27 +557,26 @@ function startSnow(){
   for(const f of flakes){
    f.sw+=f.sp;
    f.y+=f.vy;
-   f.x+=f.vx+Math.sin(f.sw)*.35;
-   if(f.y>snowCv.height+8){f.y=-8;f.x=Math.random()*snowCv.width}
-   if(f.x<-10)f.x=snowCv.width+10;
-   if(f.x>snowCv.width+10)f.x=-10;
+   f.x+=f.vx+Math.sin(f.sw)*.22;
+   if(f.y>snowCv.height+6){f.y=-6;f.x=Math.random()*snowCv.width}
+   if(f.x<-8)f.x=snowCv.width+8;
+   if(f.x>snowCv.width+8)f.x=-8;
    snowCtx.beginPath();
    snowCtx.arc(f.x,f.y,f.r,0,Math.PI*2);
-   snowCtx.fillStyle=dark?`rgba(219,239,255,${f.a})`:`rgba(255,255,255,${Math.min(.92,f.a+.25)})`;
+   snowCtx.fillStyle=dark?`rgba(215,235,255,${f.a})`:`rgba(130,165,205,${Math.min(.38,f.a+.1)})`;
    snowCtx.fill();
   }
   snowRaf=requestAnimationFrame(draw);
  })();
 }
-function applyWinter(on,withTune=false){
+function applyWinter(on){
  winterOn=!!on;
  document.documentElement.classList.toggle('winter-mode',winterOn);
- try{if(winterOn)localStorage.setItem(WNT_KEY,'1');else localStorage.removeItem(WNT_KEY)}catch(e){}
+ try{localStorage.setItem(WNT_KEY,winterOn?'1':'0')}catch(e){}
  const b=$('wnt');
- if(b){b.classList.toggle('winter-on',winterOn);b.textContent=winterOn?'❄️ Зима: увімк.':'❄️ Зима'}
+ if(b){b.classList.toggle('winter-on',winterOn);b.textContent=winterOn?'❄️ Сніг: увімк.':'❄️ Сніг'}
  if(winterOn){
   startSnow();
-  if(withTune)sfx.jingle();
  }else{
   cancelAnimationFrame(snowRaf);
   if(snowCtx&&snowCv)snowCtx.clearRect(0,0,snowCv.width,snowCv.height);
@@ -581,7 +584,7 @@ function applyWinter(on,withTune=false){
 }
 addEventListener('resize',()=>{if(winterOn&&snowCv){snowCv.width=innerWidth;snowCv.height=innerHeight;initFlakes()}},{passive:true});
 
-let S,q='',fl='all',pend=null,askaTeam='both';
+let S,q='',fl='all',pend=null,askaTeam='both',activeFocusTid='';
 try{const t=localStorage.getItem(TEAM_KEY);if(t==='smol'||t==='rom'||t==='both')askaTeam=t}catch(e){}
 try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!Array.isArray(S))S=seed();
@@ -595,7 +598,7 @@ const tb=(s,ap)=>`<div class="tb">${s.tasks.length?'<button class="tl" data-act=
 const sum=()=>{ready&&grp();const o=st(S.flatMap(s=>s.tasks));lastPctSeen=pc(o);$('sum').innerHTML=`<div class="tile"><div class="tile-top"><small>Мій прогрес</small></div><div class="stat-row"><b>${pc(o)}%</b></div><div class="pb" style="margin-top:10px"><i style="width:${pc(o)}%"></i></div></div><div class="tile"><div class="tile-top"><small>Виконано завдань</small></div><div class="stat-row"><b>${o.d}</b><span class="mu">з ${o.n}</span></div></div><div class="tile"><div class="tile-top"><small>Годин виконано</small></div><div class="stat-row"><b>${fh(o.dh)}</b></div></div><div class="tile"><div class="tile-top"><small>Годин залишилось</small></div><div class="stat-row"><b>${fh(o.h-o.dh)}</b></div></div>`};
 const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
 const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
-const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false,done=s.tasks.length>0&&s.tasks.every(t=>t.s==2);return`<section class="card${done?' x-done':''}" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
+const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false,done=s.tasks.length>0&&s.tasks.every(t=>t.s==2);return`<section class="card${done?' x-done':''}" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}${activeFocusTid&&t.id===activeFocusTid?' x-focus-now':''}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
 function render(){S=[...S.filter(s=>s.tasks.length),...S.filter(s=>!s.tasks.length)];sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
 const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o,s);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color);sc.classList.toggle('x-done',!!(s.tasks.length&&s.tasks.every(t=>t.s==2)))};
 const G=$('grid');
@@ -692,9 +695,15 @@ $('q').oninput=e=>{
 $('seg').onclick=e=>{const b=e.target.closest('[data-fl]');if(!b)return;fl=b.dataset.fl;[...$('seg').children].forEach(x=>x.classList.toggle('on',x==b));render();catSay('Фільтр змінено. Аби очі не розбігалися від списку 👀','happy',false)};
 $('th').onclick=()=>{const r=document.documentElement,d=r.dataset.theme?r.dataset.theme=='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=d?'light':'dark';if(winterOn)startSnow();catSay(d?'Увімкнули світло — мені й у темряві добре видно ☀️':'Темна тема — як мій улюблений куток під столом 🌙','happy',false)};
 $('snd').onclick=()=>{soundOn=!soundOn;try{localStorage.setItem(SND_KEY,soundOn?'1':'0')}catch(e){}syncSoundBtn();if(soundOn)sfx.purr();toast(soundOn?'Звуки увімкнено 🔊':'Звуки вимкнено 🔇')};
-$('wnt').onclick=()=>{const next=!winterOn;applyWinter(next,next);if(next)catSay('Джингл белс! За вікном сніжок, а дедлайни ніхто не скасовував ❄️🐾','happy',true);else toast('Зимову тему вимкнено')};
+$('wnt').onclick=()=>{const next=!winterOn;applyWinter(next);if(next){sfx.purr();catSay('Легкий сніжок увімкнено — тихо й затишно ❄️🐾','happy',false)}else toast('Сніг вимкнено')};
 syncSoundBtn();
-if(winterOn)applyWinter(true,false);
+applyWinter(winterOn);
+
+const topBtn=$('x-top-btn');
+if(topBtn){
+ topBtn.onclick=()=>scrollTo({top:0,behavior:'smooth'});
+ addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>360),{passive:true});
+}
 
 const togglePop=id=>{const el=$(id),open=el.hidden;$('bk').hidden=$('pf').hidden=true;if(open)el.hidden=false;return open};
 document.addEventListener('click',e=>{if(!e.target.closest('.top-acts'))$('bk').hidden=$('pf').hidden=true});
@@ -1429,9 +1438,9 @@ function catPick(arr,mood='happy',hop=true){
  setTimeout(()=>{if(!stage.hidden&&!isPk())catSay(greet,'happy',false)},1200);
 })();
 
-/* ---------- «Далі за планом», фокус-таймер, серія днів, живий фавікон ---------- */
+/* ---------- «Далі за планом», згорнутий таймер (без ручного змінення часу), серія днів ---------- */
 (()=>{
- const AK='x-activity',FK='x-focus-dur',DURS=[15,25,45,60];
+ const AK='x-activity',FIXED_MIN=25;
  const dk=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
  const lget=()=>{try{return JSON.parse(localStorage.getItem(AK))||{}}catch(e){return{}}};
  function addAct(k,v){
@@ -1446,28 +1455,36 @@ function catPick(arr,mood='happy',hop=true){
   while(on(a[dk(d)])){n++;d.setDate(d.getDate()-1)}
   return n;
  }
- const T={on:false,run:false,dur:25,left:1500,total:1500,end:0,iv:null,label:'',sub:'',sid:'',tid:''};
- try{const d=+localStorage.getItem(FK);if(DURS.includes(d)){T.dur=d;T.left=T.total=d*60}}catch(e){}
+ const T={expanded:false,run:false,left:FIXED_MIN*60,total:FIXED_MIN*60,end:0,iv:null,label:'',sub:''};
  let skip=0;
  const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
  const cands=()=>{const a=[],b=[];S.forEach(s=>s.tasks.forEach(t=>{if(t.s==1)a.push({s,t});else if(t.s==0)b.push({s,t})}));return a.concat(b)};
  const box=$('x-day');
 
- function title(){document.title=T.on?`${T.run?'🍅':'⏸'} ${fmt(T.left)} · Навчальний трекер`:'Навчальний трекер'}
+ function title(){document.title=T.run?`⏱ ${fmt(T.left)} · Навчальний трекер`:'Навчальний трекер'}
  function paint(){const t=$('x-t'),g=$('x-rg');if(t)t.textContent=fmt(T.left);if(g)g.style.strokeDashoffset=125.66*(1-(T.total-T.left)/T.total);title()}
 
  function renderDay(){
   if(!box)return;
   const c=cands(),n=c.length,cur=n?c[skip%n]:null,a=lget(),today=a[dk(new Date())]||{d:0,m:0},sk=streak();
+  const wipCount=S.reduce((acc,s)=>acc+s.tasks.filter(t=>t.s==1).length,0);
   const bars=[...Array(7)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(6-i));return{x:a[dk(d)]||{d:0,m:0},t:i==6}}),mx=Math.max(1,...bars.map(b=>b.x.d));
-  const btns=T.on
-   ?`<button class="x-b p" data-x="pause">${T.run?'Пауза':'Продовжити'}</button><button class="x-b" data-x="stop">Стоп</button>`
-   :`<button class="x-b p" data-x="go">▶ Фокус ${T.dur} хв</button><button class="x-b" data-x="dur" title="Змінити тривалість">${T.dur} хв</button>${cur?'<button class="x-b" data-x="jump" title="Перейти до завдання">↗</button>':''}${n>1?'<button class="x-b" data-x="skip" title="Інше завдання">↻</button>':''}`;
+  const navBtns=`${cur?'<button class="x-b" data-x="jump" title="Перейти до завдання">↗ До завдання</button>':''}${n>1?'<button class="x-b" data-x="skip" title="Інше завдання">↻ Інше</button>':''}`;
   const off=125.66*(1-(T.total-T.left)/T.total);
-  box.innerHTML=`<div class="x-next"><small>${T.on?(T.run?'Фокус триває':'Фокус на паузі'):'Далі за планом'}</small><b>${E(T.on?T.label:cur?cur.t.t:'Усе виконано')}</b><span class="mu">${E(T.on?T.sub:cur?cur.s.name+(cur.t.h?' · '+cur.t.h+' год':''):'Можна відпочивати')}</span><div class="x-row">${btns}</div></div>`
-   +(T.on?`<div class="x-ring"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><circle id="x-rg" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="${off}"/></svg><span id="x-t">${fmt(T.left)}</span></div>`:'')
-   +`<div class="x-stats"><div class="x-stat"><small>Сьогодні</small><b>${today.d}</b><span class="mu">${today.m} хв фокусу</span></div><div class="x-stat"><small>Серія</small><b>${sk}${sk?' 🔥':''}</b><span class="mu">${pl(sk,['день','дні','днів'])} поспіль</span></div><div class="x-bars" title="Закриті завдання за 7 днів">${bars.map(b=>`<i class="${b.t?'today':b.x.d?'on':''}" style="height:${Math.max(4,Math.round(b.x.d/mx*32))}px" title="${b.x.d} завд., ${b.x.m} хв"></i>`).join('')}</div></div>`
-   +`<div class="x-hint">Швидкі клавіші: / пошук · F фокус · T тема · S звук. Серія й фокус зберігаються на цьому пристрої.</div>`;
+  const tmrPart=!T.expanded
+   ?`<button class="x-b" data-x="open-tmr">⏱ Таймер (${FIXED_MIN} хв)</button>`
+   :`<div class="x-tmr-box"><div class="x-ring"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="20"/><circle id="x-rg" cx="24" cy="24" r="20" stroke-dasharray="125.66" stroke-dashoffset="${off}"/></svg><span id="x-t">${fmt(T.left)}</span></div><div class="x-tmr-meta"><small>Фіксований цикл · ${FIXED_MIN} хв</small><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="x-b p" data-x="toggle-run">${T.run?'Пауза':(T.left<T.total?'Продовжити':'Старт')}</button><button class="x-b" data-x="reset-tmr">Скинути</button><button class="x-b" data-x="hide-tmr" title="Згорнути таймер">Згорнути</button></div></div></div>`;
+
+  box.innerHTML=`<div class="x-next"><small>${T.run?'Зараз у фокусі':'Далі за планом'}</small><b>${E(T.run&&T.label?T.label:cur?cur.t.t:'Усе виконано')}</b><span class="mu">${E(T.run&&T.sub?T.sub:cur?cur.s.name+(cur.t.h?' · '+cur.t.h+' год':''):'Можна відпочивати')}</span><div class="x-row">${navBtns}${tmrPart}</div></div>`
+   +`<div class="x-stats"><div class="x-stat"><small>В процесі</small><b>${wipCount}</b><span class="mu">${pl(wipCount,['завдання','завдання','завдань'])}</span></div><div class="x-stat"><small>Сьогодні</small><b>${today.d}</b><span class="mu">${today.m} хв фокусу</span></div><div class="x-stat"><small>Серія</small><b>${sk}${sk?' 🔥':''}</b><span class="mu">${pl(sk,['день','дні','днів'])} поспіль</span></div><div class="x-bars" title="Закриті завдання за 7 днів">${bars.map(b=>`<i class="${b.t?'today':b.x.d?'on':''}" style="height:${Math.max(4,Math.round(b.x.d/mx*32))}px" title="${b.x.d} завд., ${b.x.m} хв"></i>`).join('')}</div></div>`
+   +`<div class="x-hint">Швидкі клавіші: / пошук · F таймер · T тема · S звук. Час таймера фіксований (${FIXED_MIN} хв).</div>`;
+ }
+
+ function syncFocusHighlight(){
+  activeFocusTid=T.run?activeFocusTid:'';
+  document.querySelectorAll('#grid li[data-tid]').forEach(li=>{
+   li.classList.toggle('x-focus-now',!!(T.run&&activeFocusTid&&li.dataset.tid===activeFocusTid));
+  });
  }
 
  function jumpToCur(){
@@ -1475,48 +1492,59 @@ function catPick(arr,mood='happy',hop=true){
   if(!cur)return;
   OPEN.add(cur.s.id);
   if(q||fl!='all'){q='';fl='all';$('q').value='';[...$('seg').children].forEach(x=>x.classList.toggle('on',x.dataset.fl=='all'))}
-  render();
+  render();syncFocusHighlight();
   const li=G.querySelector(`[data-tid="${cur.t.id}"]`);
   if(li){li.scrollIntoView({behavior:'smooth',block:'center'});li.classList.remove('x-flash');void li.offsetWidth;li.classList.add('x-flash')}
  }
 
  function loop(){clearInterval(T.iv);T.iv=setInterval(()=>{T.left=Math.max(0,Math.round((T.end-Date.now())/1000));paint();if(T.left<=0)finish()},500)}
- function tStart(){
+ function startRun(){
   const c=cands(),cur=c.length?c[skip%c.length]:null;
-  T.on=T.run=true;T.total=T.left=T.dur*60;T.end=Date.now()+T.left*1000;
+  if(T.left<=0)T.left=T.total=FIXED_MIN*60;
+  T.expanded=true;T.run=true;T.end=Date.now()+T.left*1000;
   T.label=cur?cur.t.t:'Вільний фокус';T.sub=cur?cur.s.name:'без завдання';
-  T.sid=cur?cur.s.id:'';T.tid=cur?cur.t.id:'';
+  activeFocusTid=cur?cur.t.id:'';
   if(cur&&cur.t.s==0){cur.t.s=1;save();render()}
+  syncFocusHighlight();
   sfx.wip();
   loop();renderDay();title();
-  catSay(`Фокус ${T.dur} хв на «${T.label}». Телефон мовчить, я пильную 👀`,'happy',false);
+  catSay(`Фокус ${FIXED_MIN} хв запущено на «${T.label}». Я пильную 👀`,'happy',false);
  }
- function tPause(){
-  if(T.run){T.run=false;clearInterval(T.iv);T.left=Math.max(0,Math.round((T.end-Date.now())/1000))}
-  else{T.run=true;T.end=Date.now()+T.left*1000;loop()}
+ function pauseRun(){
+  T.run=false;clearInterval(T.iv);
+  T.left=Math.max(0,Math.round((T.end-Date.now())/1000));
+  syncFocusHighlight();
   sfx.wip();
   renderDay();title();
  }
- function tStop(){
-  clearInterval(T.iv);const el=Math.floor((T.total-T.left)/60);if(T.on&&el>=5)addAct('m',el);
-  T.on=T.run=false;T.left=T.total=T.dur*60;renderDay();title();
+ function resetTimer(){
+  clearInterval(T.iv);
+  const el=Math.floor((T.total-T.left)/60);
+  if(el>=5)addAct('m',el);
+  T.run=false;T.left=T.total=FIXED_MIN*60;activeFocusTid='';
+  syncFocusHighlight();
+  renderDay();title();
  }
  function chime(){
   if(!soundOn)return;
-  try{const a=new(window.AudioContext||window.webkitAudioContext)(),t=a.currentTime;[660,880,1100].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.18);g.gain.linearRampToValueAtTime(.11,t+i*.18+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.18+.5);o.connect(g);g.connect(a.destination);o.start(t+i*.18);o.stop(t+i*.18+.55)})}catch(e){}
+  try{const a=new(window.AudioContext||window.webkitAudioContext)(),t=a.currentTime;[660,880,1100].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=f;g.gain.setValueAtTime(0,t+i*.18);g.gain.linearRampToValueAtTime(.1,t+i*.18+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.18+.5);o.connect(g);g.connect(a.destination);o.start(t+i*.18);o.stop(t+i*.18+.55)})}catch(e){}
  }
  function finish(){
-  clearInterval(T.iv);const m=T.dur;addAct('m',m);T.on=T.run=false;T.left=T.total=T.dur*60;
+  clearInterval(T.iv);addAct('m',FIXED_MIN);
+  T.run=false;T.left=T.total=FIXED_MIN*60;activeFocusTid='';
+  syncFocusHighlight();
   chime();burst(70);renderDay();title();
-  catSay(`Готово: ${m} хв фокусу! Перерва п’ять хвилин: вода, вікно, потягнутися 🐾`,'happy',true);
+  catSay(`Цикл ${FIXED_MIN} хв завершено! Зроби перерву — вода, вікно, потягнутися 🐾`,'happy',true);
  }
  if(box)box.addEventListener('click',e=>{
   const b=e.target.closest('[data-x]');if(!b)return;
   const x=b.dataset.x;
-  if(x=='go')tStart();else if(x=='pause')tPause();else if(x=='stop')tStop();
+  if(x=='open-tmr'){T.expanded=true;sfx.wip();renderDay()}
+  else if(x=='hide-tmr'){T.expanded=false;renderDay()}
+  else if(x=='toggle-run'){if(T.run)pauseRun();else startRun()}
+  else if(x=='reset-tmr'){resetTimer()}
   else if(x=='skip'){skip++;renderDay()}
   else if(x=='jump')jumpToCur();
-  else if(x=='dur'){T.dur=DURS[(DURS.indexOf(T.dur)+1)%DURS.length];T.left=T.total=T.dur*60;try{localStorage.setItem(FK,T.dur)}catch(err){}renderDay()}
  });
 
  function fav(){
@@ -1524,7 +1552,7 @@ function catPick(arr,mood='happy',hop=true){
    const p=pc(st(S.flatMap(s=>s.tasks))),c=document.createElement('canvas');c.width=c.height=64;
    const x=c.getContext('2d');if(!x)return;
    x.lineWidth=10;x.lineCap='round';x.strokeStyle='#d5d9e8';x.beginPath();x.arc(32,32,24,0,7);x.stroke();
-   if(p>0){x.strokeStyle=p>=100?'#46c995':winterOn?'#38bdf8':'#4f5bd5';x.beginPath();x.arc(32,32,24,-Math.PI/2,-Math.PI/2+Math.PI*2*p/100);x.stroke()}
+   if(p>0){x.strokeStyle=p>=100?'#46c995':winterOn?'#48a8c4':'#4f5bd5';x.beginPath();x.arc(32,32,24,-Math.PI/2,-Math.PI/2+Math.PI*2*p/100);x.stroke()}
    let l=document.querySelector('link[rel~=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}
    l.href=c.toDataURL();
   }catch(e){}
@@ -1542,7 +1570,7 @@ function catPick(arr,mood='happy',hop=true){
    }
    prev=done;
   }catch(e){}
-  fav();renderDay();
+  fav();renderDay();syncFocusHighlight();
  }
  let deb=null;
  const later=()=>{clearTimeout(deb);deb=setTimeout(onSum,30)};
@@ -1556,7 +1584,11 @@ function catPick(arr,mood='happy',hop=true){
   if(e.key==='/'){e.preventDefault();const qEl=$('q');if(qEl)qEl.focus()}
   else if(k==='t'||k==='е'){const b=$('th');if(b)b.click()}
   else if(k==='s'||k==='і'){const b=$('snd');if(b)b.click()}
-  else if(k==='f'||k==='а'){T.on?tPause():tStart()}
+  else if(k==='f'||k==='а'){
+   if(!T.expanded){T.expanded=true;renderDay();startRun()}
+   else if(T.run)pauseRun();
+   else startRun();
+  }
  });
 })();
 
