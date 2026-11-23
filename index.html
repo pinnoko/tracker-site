@@ -517,10 +517,8 @@ function stripTeamTag(nick){
 }
 function formatNickWithTeam(nick,team){
  const clean=stripTeamTag(nick);
- if(team==='smol'||team==='rom'||team==='both'){
-  return (clean?clean+' ':'')+`[${team}]`;
- }
- return clean||null;
+ const eff=(team==='smol'||team==='rom'||team==='both')?team:'both';
+ return (clean?clean+' ':'')+`[${eff}]`;
 }
 function teamCounts(){
  let smol=0,rom=0,both=0;
@@ -528,12 +526,12 @@ function teamCounts(){
   const tag=parseTeamTag(p.nick);
   if(tag==='smol')smol++;
   else if(tag==='rom')rom++;
-  else if(tag==='both')both++;
+  else both++;
  });
  if(me&&!people.some(p=>p.user_id==me)){
   if(askaTeam==='smol')smol++;
   else if(askaTeam==='rom')rom++;
-  else if(askaTeam==='both')both++;
+  else both++;
  }
  return{smol,rom,both};
 }
@@ -580,7 +578,7 @@ async function saveNick(){
  const inp=$('nick-in');
  const val=stripTeamTag(inp?inp.value:'').slice(0,22);
  const fullVal=formatNickWithTeam(val,askaTeam);
- setLocalNick(fullVal||'');
+ setLocalNick(fullVal);
  if(sb&&me){
   const{error}=await sb.from('profiles_public').update({nick:fullVal}).eq('user_id',me);
   if(error){toast('Не вдалося оновити псевдонім у базі');return}
