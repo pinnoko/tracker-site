@@ -31,6 +31,8 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .btn:hover{border-color:var(--ac)}
 .btn:active{transform:scale(.98)}
 .btn.p{background:var(--ac);border-color:var(--ac);color:var(--bg)}
+.btn.secret{border-style:dashed;border-color:color-mix(in srgb,#e86aa0 45%,var(--ln));background:color-mix(in srgb,#e86aa0 7%,var(--sf))}
+.btn.secret:hover{border-color:#e86aa0}
 .pop{position:absolute;top:calc(100% + 8px);right:0;z-index:150;width:min(400px,calc(100vw - 40px));border-radius:14px;padding:16px}
 .pop[hidden]{display:none}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:18px}
@@ -183,6 +185,12 @@ li{flex-wrap:wrap}
 .sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
 .sw2 input{margin-top:3px;accent-color:var(--ac)}
 
+/* Секретне завдання від Тайлера */
+.tyler-box{margin-top:10px;padding:15px 16px;border-radius:14px;border:1px dashed color-mix(in srgb,#e86aa0 50%,var(--ln));background:color-mix(in srgb,#e86aa0 6%,var(--bg));line-height:1.58}
+.tyler-tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:#c94c82;margin-bottom:6px}
+.tyler-quote{margin:0;font-size:14.5px;color:var(--tx);font-weight:500}
+.tyler-ps{margin:10px 0 0;font-size:12.5px;color:var(--mu);font-style:italic}
+
 .x-cv{position:fixed;inset:0;pointer-events:none;z-index:250}
 .x-top-btn{position:fixed;left:18px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:165;border:1px solid var(--ln);background:var(--sf);color:var(--tx);box-shadow:var(--sh);border-radius:99px;padding:7px 13px;font:600 12.5px Inter,system-ui,sans-serif;cursor:pointer;opacity:0;transform:translateY(8px);pointer-events:none;transition:opacity .2s ease,transform .2s ease,border-color .18s ease}
 .x-top-btn.show{opacity:.9;transform:translateY(0);pointer-events:auto}
@@ -280,7 +288,7 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
   <div class="tile pop" id="bk" hidden><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
   <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
@@ -659,6 +667,7 @@ $('q').oninput=e=>{
  if(ql==='рибка'||ql==='fish'){catSay('Тсс... рибка ><(((º> знайдена в пошуку. Нікому не кажи 🐟','happy',true);return}
  if(ql==='смольський'){catSay('Смольський зачувся... чи то лише мені здалося? 😼','happy',false);return}
  if(ql==='романко'){catSay('Романко вже тримає олівець напоготові ✏️','happy',false);return}
+ if(ql==='тайлер'||ql==='лижі'){catSay('Ой, хтось згадав таємне завдання Тайлера й лижі... 🎿💌','happy',true);return}
  if(q.length%5===1)catSay('Шукаєш щось конкретне чи просто перевіряєш, скільки ще болю? 😼','happy',false);
 };
 $('seg').onclick=e=>{const b=e.target.closest('[data-fl]');if(!b)return;fl=b.dataset.fl;[...$('seg').children].forEach(x=>x.classList.toggle('on',x==b));render();catSay('Фільтр змінено. Аби очі не розбігалися від списку 👀','happy',false)};
@@ -1492,6 +1501,43 @@ function openM(html,cb){closeM();ov.hidden=false;onClose=cb||null;$('y-body').in
 function closeM(){if(ov.hidden)return;ov.hidden=true;document.body.style.overflow='';const f=onClose;onClose=null;try{f&&f()}catch(e){}}
 ov.addEventListener('click',e=>{if(e.target===ov||e.target.closest('.y-x'))closeM()});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+
+/* ---------- секретне завдання від Тайлера ---------- */
+const TYLER_TASK_TEXT='Розроби постер формату 210×148 мм, у якому ніжно поєднується історія: Смольський із Йончі на ОВМ у вівторок, заходить Олег Сусленко й каже: «Дай мені ключі», — а завершується все словами: «Я згадав, що я хочу на лижі».';
+function openTylerSecret(){
+ tone(659.25,.18,'sine',.05,0);tone(880,.24,'triangle',.045,.08);
+ openM(`<h3>Секретне завдання від Тайлера</h3>
+  <p>Тайлер залишив для тебе маленьку таємну нотатку — зовсім не страшно, але дуже мило.</p>
+  <div class="tyler-box">
+   <div class="tyler-tag">💌 Таємний бриф · А5 (210×148 мм)</div>
+   <p class="tyler-quote">${esc(TYLER_TASK_TEXT)}</p>
+   <p class="tyler-ps">Підказка: хай у кадрі буде трохи тепла, легкої абсурдності й зимового настрою.</p>
+  </div>
+  <div class="y-row">
+   <button class="btn p" id="tyler-add" type="button">Додати в ОВМ</button>
+   <button class="btn" id="tyler-copy" type="button">Скопіювати текст</button>
+  </div>`);
+ $('tyler-copy').onclick=async()=>{
+  try{await navigator.clipboard.writeText(TYLER_TASK_TEXT)}catch(e){}
+  tst('Текст завдання скопійовано 💌');
+ };
+ $('tyler-add').onclick=()=>{
+  const target=S.find(s=>/овм/i.test(s.name))||S.find(s=>/проєктування|проектування/i.test(s.name))||S[0];
+  if(!target)return;
+  const shortTitle='Постер 210×148 мм: Смольський, Йончі, ключі Олега Сусленка й лижі';
+  const exists=target.tasks.some(t=>t.t===shortTitle);
+  if(!exists){
+   target.tasks.push({id:uid(),t:shortTitle,h:1,s:0,n:TYLER_TASK_TEXT});
+   if(target.tasks.length>LIM)OPEN.add(target.id);
+   save();render();
+  }
+  closeM();
+  tst(`Додано до предмета «${target.name}» 💌`);
+  say('Ого, таємне завдання від Тайлера! Мяу, лижі — це звучить затишно 🎿🐾','happy',true);
+ };
+}
+const tylerBtn=$('tyler-btn');
+if(tylerBtn)tylerBtn.onclick=openTylerSecret;
 
 /* ---------- журнал активності з урахуванням наявної історії ---------- */
 const LK='y-log',BK_SEED='y-log-seeded-v2';
