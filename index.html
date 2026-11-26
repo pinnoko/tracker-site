@@ -468,7 +468,7 @@ const PROJ_STICKERS_TASK='Підготувати стікери до друку 
 /* НОВІ ПРЕДМЕТИ ДЛЯ ВСІХ додавайте сюди (лише в КІНЕЦЬ списку, нічого не видаляйте й не міняйте місцями):
    вони самі з'являться в усіх користувачів, враховуються в рейтингу, а прогрес інших у рейтингу перерахується одразу.
    Приклад: {name:'Історія мистецтв',color:'#e5584a',tasks:[['Реферат',0],['Презентація',2]]}   (число = години) */
-const GLOBAL_SUBJECTS=[
+const GLOBAL_SUBJECTS=[{name:'Проєктування',color:'#29a6dc',tasks:[['Зробити 1 макет Йончі',0]]},
 ];
 const SHARED_MANDATORY_TASKS=[{subj:'проєктування',title:PROJ_STICKERS_TASK},...GLOBAL_SUBJECTS.flatMap(g=>g.tasks.map(t=>({subj:g.name.trim().toLowerCase(),title:t[0]})))];
 const SITE_UPDATES=[
