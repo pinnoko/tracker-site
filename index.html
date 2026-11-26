@@ -61,22 +61,43 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .badge{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:color-mix(in srgb,var(--grp) 15%,transparent);color:var(--grp);white-space:nowrap}
 .more-btn{border:0;background:none;color:var(--mu);font:700 16px/1 sans-serif;padding:3px 6px;border-radius:8px;cursor:pointer}
 .more-btn:hover{color:var(--tx);background:var(--bg)}
-.grp-list{margin-top:12px;padding-top:10px;padding-right:4px;border-top:1px solid var(--ln);display:flex;flex-direction:column;gap:7px;max-height:190px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ln) transparent}
+
+/* Бейдж профілю (фон + іконка) та список учасників */
+.av-badge{display:inline-grid;place-items:center;border-radius:12px;color:#fff;font-weight:700;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);text-shadow:0 1px 2px rgba(0,0,0,.28)}
+.av-sm{width:28px;height:28px;font-size:14px;border-radius:9px}
+.av-lg{width:56px;height:56px;font-size:28px;border-radius:16px}
+.grp-list{margin-top:12px;padding-top:10px;padding-right:4px;border-top:1px solid var(--ln);display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ln) transparent}
 .grp-list::-webkit-scrollbar{width:4px}
 .grp-list::-webkit-scrollbar-thumb{background:var(--ln);border-radius:99px}
-.grp-row{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.3;padding:3px 6px;border-radius:8px}
+.grp-row{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.3;padding:5px 7px;border-radius:10px;cursor:pointer;border:1px solid transparent;transition:background-color .15s ease,border-color .15s ease}
+.grp-row:hover{background:var(--bg);border-color:var(--ln)}
 .grp-row.me{background:color-mix(in srgb,var(--grp) 12%,transparent)}
 .grp-row .rk{font-weight:600;color:var(--mu);min-width:22px;flex:none}
-.grp-row .who{color:var(--tx);flex:0 0 148px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grp-row .who-wrap{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.grp-row .who{color:var(--tx);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .grp-row .who.anon{color:var(--mu)}
-.grp-row .bar{flex:1 1 auto;min-width:56px;height:5px;border-radius:99px;background:var(--ln);overflow:hidden}
-.grp-row .bar i{display:block;height:100%;border-radius:inherit;background:var(--grp)}
-.grp-row .pct{font-size:13px;font-weight:600;color:var(--tx);min-width:36px;text-align:right;flex:none}
-@media (max-width:600px){.grp-row .who{flex:0 0 112px}}
-.nick-bar{display:flex;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--ln)}
-.nick-bar input{flex:1;min-width:0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:5px 8px;font:inherit;font-size:12.5px}
-.nick-bar button{border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:8px;padding:5px 10px;font:inherit;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap}
-.nick-bar button:hover{border-color:var(--grp);color:var(--grp)}
+.grp-row .sub-act{font-size:11px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.grp-row .pct{font-size:13px;font-weight:700;color:var(--tx);min-width:36px;text-align:right;flex:none}
+
+/* Модальне вікно профілю (свій редактор і перегляд інших) */
+.prof-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.prof-name{margin:0;font-size:20px;letter-spacing:-.02em}
+.prof-meta{font-size:12.5px;color:var(--mu);margin-top:2px}
+.prof-bio{padding:11px 13px;border-radius:12px;background:var(--bg);border:1px solid var(--ln);font-size:13.5px;line-height:1.48;margin-bottom:14px;white-space:pre-wrap;word-break:break-word}
+.prof-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px}
+@media (max-width:520px){.prof-metrics{grid-template-columns:1fr}}
+.prof-m{padding:11px 12px;border-radius:12px;background:var(--bg);border:1px solid var(--ln)}
+.prof-m small{display:block;color:var(--mu);font-size:11.5px}
+.prof-m b{font-size:21px;letter-spacing:-.02em;margin-top:2px;display:block}
+.prof-form label{display:block;font-size:12px;font-weight:600;color:var(--mu);margin:10px 0 4px}
+.prof-form input[type="text"],.prof-form textarea{width:100%;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:10px;padding:8px 11px;font:inherit}
+.prof-form textarea{resize:vertical;min-height:64px}
+.preset-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.icon-opt{width:34px;height:34px;border-radius:9px;border:1px solid var(--ln);background:var(--bg);color:var(--tx);font-size:16px;cursor:pointer;display:grid;place-items:center}
+.icon-opt.on{border-color:var(--ac);box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 35%,transparent)}
+.bg-opt{width:28px;height:28px;border-radius:99px;border:2px solid transparent;cursor:pointer;padding:0}
+.bg-opt.on{border-color:var(--tx);transform:scale(1.08)}
+
 .guest-note{margin:10px 0 0;padding-top:8px;border-top:1px solid var(--ln);font-size:12.5px;color:var(--mu);line-height:1.45}
 .guest-lnk{border:0;background:none;color:var(--ac);font:inherit;font-size:12.5px;font-weight:600;padding:0;text-decoration:underline;cursor:pointer}
 .tile b{font-size:28px;letter-spacing:-.025em;line-height:1.15}
@@ -106,7 +127,7 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .clr::-webkit-color-swatch{border:0;border-radius:50%}
 .clr::-moz-color-swatch{border:0;border-radius:50%}
 .nm{flex:1;min-width:0;border:0;background:none;color:var(--tx);font:600 16px Inter,system-ui,sans-serif;padding:4px 6px;border-radius:6px}
-input:focus-visible,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+input:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
 
 .meta{display:flex;justify-content:space-between;gap:8px;color:var(--mu);font-size:12.5px;padding:12px 16px 6px}
 .card .pb{margin:0 16px 8px;height:6px}
@@ -311,10 +332,10 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="st-btn" type="button" title="Налаштування та резервна копія">Налаштування</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">Сповіщення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="prof-btn" type="button" hidden>👤 Мій профіль</button><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="st-btn" type="button" title="Налаштування та резервна копія">Налаштування</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">Сповіщення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button>
   <div class="tile pop" id="st-pop" hidden><small>Налаштування</small><div class="st-sec"><button class="btn" id="bkb" type="button">Резервна копія (JSON)</button></div><div id="bk-box" hidden><small style="display:block;margin-top:10px">Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="5"></textarea><button class="btn p" id="imp" type="button">Імпортувати</button></div></div>
   <div class="tile pop" id="ntf-pop" hidden><small>Сповіщення</small><div class="notif-list" id="ntf-list"></div></div>
-  <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
+  <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Показувати мене в списку учасників і загальному рейтингу. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
 </div>
 <div class="tiles" id="sum"></div>
@@ -461,21 +482,19 @@ li{flex-wrap:wrap}
 </div>
 
 <script>
-const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter-v2',TYLER_PHOTO_KEY='study-tracker-tyler-photo',NTF_SEEN_KEY='study-tracker-ntf-seen-v2',uid=()=>Math.random().toString(36).slice(2,9);
+const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',PROF_META_KEY='study-tracker-prof-meta-v1',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter-v2',TYLER_PHOTO_KEY='study-tracker-tyler-photo',NTF_SEEN_KEY='study-tracker-ntf-seen-v2',uid=()=>Math.random().toString(36).slice(2,9);
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const PROJ_STICKERS_TASK='Підготувати стікери до друку і надіслати старості';
-/* НОВІ ПРЕДМЕТИ ДЛЯ ВСІХ додавайте сюди (лише в КІНЕЦЬ списку, нічого не видаляйте й не міняйте місцями):
-   вони самі з'являться в усіх користувачів, враховуються в рейтингу, а прогрес інших у рейтингу перерахується одразу.
-   Приклад: {name:'Історія мистецтв',color:'#e5584a',tasks:[['Реферат',0],['Презентація',2]]}   (число = години) */
 const GLOBAL_SUBJECTS=[
 {name:'Проєктування',color:'#29a6dc',tasks:[['Зробити 1 макет Йончі',0]]},
 {name:'Проєктування',color:'#29a6dc',tasks:[['Зробити 2 макет Йончі',0]]},
 ];
 const SHARED_MANDATORY_TASKS=[{subj:'проєктування',title:PROJ_STICKERS_TASK},...GLOBAL_SUBJECTS.flatMap(g=>g.tasks.map(t=>({subj:g.name.trim().toLowerCase(),title:t[0]})))];
 const SITE_UPDATES=[
+ {id:'profiles-v1-2026-11-26',text:'Додано акаунти з профілем (ніком, описом, фоном та іконкою), останньою активністю, метриками закритих завдань за сьогодні/вчора/тиждень та переглядом профілів учасників.',tag:'Профілі · Нове'},
  {id:'maket-yonchi-2026-12-01',text:'Додалось 2 нових завдання в проєктуванні: «Зробити 1 макет Йончі» і «Зробити 2 макет Йончі».',tag:'Проєктування'},
- {id:'proj-stickers-2026-11-26',text:'Додалось нове завдання на проєктування: «Підготувати стікери до друку і надіслати старості».',tag:'Проєктування · Сьогодні'},
+ {id:'proj-stickers-2026-11-26',text:'Додалось нове завдання на проєктування: «Підготувати стікери до друку і надіслати старості».',tag:'Проєктування'},
  {id:'zavd4-cov-2026-11-26',text:'Додалось нове завдання «Завдання 4» та «Обкладинка» у предметі «Шрифти».',tag:'Завдання'},
  {id:'tyler-race-2026-11-26',text:'Додалось вікно таємного завдання від Тайлера із завантаженням фото для всіх і рейтинг перегонів у грі з Аскою.',tag:'Нові функції'}
 ];
@@ -530,6 +549,85 @@ function migrate(arr){
   g.tasks.forEach(t=>{if(!sub.tasks.some(x=>x&&String(x.t||'').trim().toLowerCase()===String(t[0]).toLowerCase())){sub.tasks.push({id:uid(),t:t[0],h:t[1]||0,s:0});changed=true}});
  });
  return changed;
+}
+
+const AVATAR_ICONS=['🐱','🦊','✒️','🎨','📐','🌙','⚡','☕','📚','🔥','✨','🌿'];
+const AVATAR_BGS=[
+ 'linear-gradient(135deg,#4f5bd5,#289b8e)',
+ 'linear-gradient(135deg,#e86aa0,#eda53a)',
+ 'linear-gradient(135deg,#29a6dc,#8a63dc)',
+ 'linear-gradient(135deg,#1f9d6b,#2c8ca8)',
+ 'linear-gradient(135deg,#e5584a,#e08e2b)',
+ 'linear-gradient(135deg,#2c3e75,#6c5ce7)'
+];
+const localDayKey=(d=new Date())=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function shiftDayKey(dayStr,deltaDays){
+ const[y,m,d]=String(dayStr).split('-').map(Number);
+ const dt=new Date(y,(m||1)-1,(d||1)+deltaDays);
+ return localDayKey(dt);
+}
+function getLocalProfMap(){try{return JSON.parse(localStorage.getItem(PROF_META_KEY))||{}}catch(e){return{}}}
+function getMyProfMeta(){
+ const m=getLocalProfMap();
+ const cur=(typeof me!=='undefined'&&me&&m[me])?m[me]:(m._default||{});
+ return{
+  bio:String(cur.bio||'').slice(0,140),
+  icon:AVATAR_ICONS.includes(cur.icon)?cur.icon:'🐱',
+  bg:AVATAR_BGS.includes(cur.bg)?cur.bg:AVATAR_BGS[0],
+  dailyLog:(cur.dailyLog&&typeof cur.dailyLog==='object')?cur.dailyLog:{}
+ };
+}
+function setMyProfMeta(patch){
+ const m=getLocalProfMap();
+ const prev=getMyProfMeta();
+ const next={
+  bio:patch.bio!=null?String(patch.bio).slice(0,140):prev.bio,
+  icon:patch.icon&&AVATAR_ICONS.includes(patch.icon)?patch.icon:prev.icon,
+  bg:patch.bg&&AVATAR_BGS.includes(patch.bg)?patch.bg:prev.bg,
+  dailyLog:patch.dailyLog&&typeof patch.dailyLog==='object'?patch.dailyLog:prev.dailyLog
+ };
+ if(typeof me!=='undefined'&&me)m[me]=next;
+ m._default=next;
+ try{localStorage.setItem(PROF_META_KEY,JSON.stringify(m))}catch(e){}
+ return next;
+}
+function recordTaskCompletionDelta(delta){
+ if(!delta)return;
+ const meta=getMyProfMeta();
+ const k=localDayKey();
+ const log={...meta.dailyLog};
+ log[k]=Math.max(0,(Number(log[k])||0)+delta);
+ const keys=Object.keys(log).sort();
+ while(keys.length>45)delete log[keys.shift()];
+ setMyProfMeta({dailyLog:log});
+}
+function computePeriodCounts(dailyLog){
+ const map=(dailyLog&&typeof dailyLog==='object')?dailyLog:{};
+ const todayK=localDayKey();
+ const yestK=shiftDayKey(todayK,-1);
+ let week=0;
+ for(let i=0;i<7;i++){
+  week+=Math.max(0,Number(map[shiftDayKey(todayK,-i)])||0);
+ }
+ return{
+  today:Math.max(0,Number(map[todayK])||0),
+  yesterday:Math.max(0,Number(map[yestK])||0),
+  week
+ };
+}
+function formatLastSeen(iso){
+ if(!iso)return'Активність невідома';
+ const ts=new Date(iso).getTime();
+ if(!Number.isFinite(ts))return'Активність невідома';
+ const diffSec=Math.max(0,Math.floor((Date.now()-ts)/1000));
+ if(diffSec<45)return'Щойно в мережі';
+ const mins=Math.floor(diffSec/60);
+ if(mins<60)return`${mins} хв тому`;
+ const hrs=Math.floor(mins/60);
+ if(hrs<24)return`${hrs} год тому`;
+ const days=Math.floor(hrs/24);
+ if(days===1)return'Вчора';
+ return `${days} дн. тому`;
 }
 
 /* ---------- Вирівняний підрахунок для групової статистики ---------- */
@@ -688,10 +786,14 @@ G.addEventListener('click',e=>{
  const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
  if(a=='st'){
   const prevDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
+  const wasDone=t.s==2;
   t.s=(t.s+1)%3;
-  const nowDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
-  if(nowDone&&!prevDone){sfx.done();catSubjectDone(s)}
-  else if(t.s==2){sfx.done();catTaskDone(s,t)}
+  const nowDone=t.s==2;
+  if(!wasDone&&nowDone)recordTaskCompletionDelta(1);
+  else if(wasDone&&!nowDone)recordTaskCompletionDelta(-1);
+  const subjNowDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
+  if(subjNowDone&&!prevDone){sfx.done();catSubjectDone(s)}
+  else if(nowDone){sfx.done();catTaskDone(s,t)}
   else if(t.s==1){sfx.wip();catPick(ASKA_WIP,'happy',false)}
   else{sfx.reset();catPick(ASKA_RESET,'sad',false)}
  }
@@ -701,13 +803,28 @@ G.addEventListener('click',e=>{
   else{sfx.reset();catSay('Затвердження знято. Щось підправляєш? 😼','happy',false)}
  }
  else if(a=='tired'){tiredBtn(s);return}
- else if(a=='all'){s.tasks.forEach(x=>x.s=2);sfx.done();catSubjectDone(s)}
- else if(a=='none'){s.tasks.forEach(x=>x.s=0);sfx.reset();catPick(ASKA_RESET,'sad',false)}
+ else if(a=='all'){
+  const addCnt=s.tasks.filter(x=>x.s!=2).length;
+  s.tasks.forEach(x=>x.s=2);
+  if(addCnt)recordTaskCompletionDelta(addCnt);
+  sfx.done();catSubjectDone(s)
+ }
+ else if(a=='none'){
+  const remCnt=s.tasks.filter(x=>x.s==2).length;
+  s.tasks.forEach(x=>x.s=0);
+  if(remCnt)recordTaskCompletionDelta(-remCnt);
+  sfx.reset();catPick(ASKA_RESET,'sad',false)
+ }
  else if(a=='note'){OPENN.has(t.id)?OPENN.delete(t.id):OPENN.add(t.id);render();const n=G.querySelector(`[data-tid="${t.id}"] textarea`);n&&n.focus();return}
  else if(a=='more'){OPEN.has(s.id)?OPEN.delete(s.id):OPEN.add(s.id);render();return}
- else if(a=='delt'){s.tasks=s.tasks.filter(x=>x!=t);sfx.reset();catPick(ASKA_DEL,'happy',false)}
+ else if(a=='delt'){
+  if(t.s==2)recordTaskCompletionDelta(-1);
+  s.tasks=s.tasks.filter(x=>x!=t);sfx.reset();catPick(ASKA_DEL,'happy',false)
+ }
  else if(a=='delsub'){
   if(pend!=s.id){pend=s.id;b.textContent='Точно видалити?';b.classList.add('arm');catSay('Ой-ой, точно видалити? Хвіст аж сіпнувся 🙀','sad',false);setTimeout(()=>{if(pend==s.id){pend=null;b.textContent='Видалити';b.classList.remove('arm')}},3000);return}
+  const remCnt=s.tasks.filter(x=>x.s==2).length;
+  if(remCnt)recordTaskCompletionDelta(-remCnt);
   S=S.filter(x=>x!=s);pend=null;catSay('Мінус цілий предмет зі списку. Дихається легше? 🐾','happy',false)}
  else if(a=='addt'){
   const i=sc.querySelectorAll('.add input'),v=i[0].value.trim();if(!v){i[0].focus();return}
@@ -831,7 +948,7 @@ async function pull(first){
   if(changed){dirty=true;await pushNow(0)}
  }
  sy('Збережено')}
-async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;$('inb').hidden=true;showAu(false);sy('Завантаження…');await pull(true);await sharedInit()}
+async function start(user){me=user.id;acc=user.email||'';$('out').hidden=false;$('inb').hidden=true;$('prof-btn').hidden=false;showAu(false);sy('Завантаження…');await pull(true);await sharedInit()}
 const msg=m=>/invalid login/i.test(m)?'Невірна пошта або пароль':/already|registered/i.test(m)?'Ця пошта вже зареєстрована. Натисніть «Увійти»':/password/i.test(m)?'Пароль має бути від 6 символів':m;
 async function doAuth(up){
  const email=$('ae').value.trim(),password=$('ap').value,er=$('ar');er.textContent='';
@@ -844,13 +961,13 @@ $('si').onclick=()=>doAuth(false);
 $('su').onclick=()=>doAuth(true);
 $('ap').onkeydown=e=>{if(e.key=='Enter')doAuth(false)};
 $('inb').onclick=()=>showAu(true);
-$('skip').onclick=()=>{showAu(false);$('inb').hidden=false;sy('Лише цей браузер');grp();render()};
-$('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;$('inb').hidden=true;sy('');render();showAu(true)};
+$('skip').onclick=()=>{showAu(false);$('inb').hidden=false;$('prof-btn').hidden=true;sy('Лише цей браузер');grp();render()};
+$('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();try{localStorage.removeItem(KEY)}catch(e){}me=null;acc='';stamp=null;dirty=false;S=seed();$('out').hidden=true;$('inb').hidden=true;$('prof-btn').hidden=true;sy('');render();showAu(true)};
 const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасувати «Я замахався/лась»',RD='2026-12-04',WHO=['людина замахалась','людини замахались','людей замахались'];
 const GUEST_LOCK_MSG='Прогрес інших приховано, і вас не враховано, тому що ви не зареєстровані.';
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=true;
-let verOk=true;
+let verOk=true,extColsOk=true;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
 const getLocalNick=()=>me?(getNicks()[me]||'').trim():'';
 const setLocalNick=v=>{if(!me)return;const m=getNicks(),t=String(v||'').trim().slice(0,28);if(t)m[me]=t;else delete m[me];try{localStorage.setItem(NICK_KEY,JSON.stringify(m))}catch(e){}};
@@ -878,7 +995,8 @@ function activeTeamMembers(){
  const active=people.filter(p=>Number(p.pct)>0);
  const myPct=sharedStatsSnapshot(S).pct;
  if(me&&share&&myPct>0&&!active.some(p=>p.user_id==me)){
-  return[...active,{user_id:me,pct:myPct,nick:formatNickWithTeam(getLocalNick(),askaTeam)}];
+  const pm=getMyProfMeta();
+  return[...active,{user_id:me,pct:myPct,nick:formatNickWithTeam(getLocalNick(),askaTeam),avatar_icon:pm.icon,avatar_bg:pm.bg}];
  }
  return active;
 }
@@ -892,6 +1010,11 @@ function teamCounts(){
  });
  return{smol,rom,both};
 }
+function renderBadge(icon,bg,cls='av-sm'){
+ const ic=AVATAR_ICONS.includes(icon)?icon:'🐱';
+ const styleBg=bg||'linear-gradient(135deg,#4f5bd5,#289b8e)';
+ return`<span class="av-badge ${cls}" style="background:${E(styleBg)}" aria-hidden="true">${E(ic)}</span>`;
+}
 function cd(){
  const d=cfgS.review_date||RD,t=cfgS.review_title||'Перегляд (вивішування робіт)',a=new Date(d+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);
  const k=Math.round((a-n)/864e5);if(isNaN(k))return'';
@@ -903,37 +1026,56 @@ function gtile(){
   return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><span class="badge">Приховано</span></div><div class="stat-row"><b>•••</b><span class="mu">дані групи</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:45%;opacity:.35"></i></div><p class="guest-note">${E(GUEST_LOCK_MSG)} <button type="button" class="guest-lnk" data-open-auth="1">Зареєструватися / Увійти</button></p></div>`;
  }
  const myNick=stripTeamTag(getMyNick());
+ const myMeta=getMyProfMeta();
  const mySnap=sharedStatsSnapshot(S);
+ const myPeriods=computePeriodCounts(myMeta.dailyLog);
  const mergedMap=new Map();
- people.filter(p=>Number(p.pct)>0).forEach(p=>{
-  mergedMap.set(String(p.user_id),{user_id:p.user_id,pct:Number(p.pct)||0,nick:p.nick});
+ people.forEach(p=>{
+  mergedMap.set(String(p.user_id),{
+   user_id:p.user_id,
+   pct:Number(p.pct)||0,
+   done:Number(p.done)||0,
+   hours_done:Number(p.hours_done)||0,
+   nick:p.nick,
+   bio:p.bio||'',
+   avatar_icon:p.avatar_icon||'🐱',
+   avatar_bg:p.avatar_bg||AVATAR_BGS[0],
+   last_seen_at:p.last_seen_at||'',
+   daily_log:p.daily_log||{}
+  });
  });
  if(share){
   const prevMe=mergedMap.get(String(me));
-  if(mySnap.pct>0){
-   mergedMap.set(String(me),{
-    user_id:me,
-    pct:mySnap.pct,
-    nick:prevMe&&prevMe.nick?prevMe.nick:formatNickWithTeam(getLocalNick(),askaTeam)
-   });
-  }else{
-   mergedMap.delete(String(me));
-  }
+  mergedMap.set(String(me),{
+   user_id:me,
+   pct:mySnap.pct,
+   done:mySnap.d,
+   hours_done:mySnap.dh,
+   nick:prevMe&&prevMe.nick?prevMe.nick:formatNickWithTeam(getLocalNick(),askaTeam),
+   bio:myMeta.bio,
+   avatar_icon:myMeta.icon,
+   avatar_bg:myMeta.bg,
+   last_seen_at:new Date().toISOString(),
+   daily_log:myMeta.dailyLog,
+   _periods:myPeriods
+  });
  }else{
   mergedMap.delete(String(me));
  }
- const active=[...mergedMap.values()].filter(p=>Number(p.pct)>0).sort((a,b)=>Number(b.pct)-Number(a.pct));
+ const list=[...mergedMap.values()].sort((a,b)=>Number(b.pct)-Number(a.pct));
+ const active=list.filter(p=>Number(p.pct)>0);
  const n=active.length,avg=n?Math.round(active.reduce((x,p)=>x+Number(p.pct),0)/n):0;
- const rows=active.map((p,i)=>{
+ const rows=list.map((p,i)=>{
   const isMe=String(p.user_id)==String(me);
   const v=Math.min(100,Math.max(0,Math.round(isMe?mySnap.pct:(Number(p.pct)||0))));
   const pubNick=stripTeamTag(p.nick);
   const label=isMe?(myNick?`Ви (${myNick})`:'Ви (Анонімний котик)'):(pubNick||'Анонімний котик');
-  return`<div class="grp-row${isMe?' me':''}"><span class="rk">#${i+1}</span><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="bar"><i style="width:${v}%"></i></span><span class="pct">${v}%</span></div>`;
+  const per=p._periods||computePeriodCounts(p.daily_log);
+  const actTxt=isMe?'Щойно в мережі':formatLastSeen(p.last_seen_at);
+  return`<div class="grp-row${isMe?' me':''}" data-uid="${E(p.user_id)}" title="Відкрити профіль">${renderBadge(p.avatar_icon,p.avatar_bg,'av-sm')}<span class="rk">#${i+1}</span><span class="who-wrap"><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="sub-act">${E(actTxt)} · тиждень: ${per.week}</span></span><span class="pct">${v}%</span></div>`;
  }).join('');
  const foot=!share?'<p class="guest-note">Вас не враховано (див. «Приватність»).</p>':'';
- const nickBox=`<div class="nick-bar"><input type="text" id="nick-in" maxlength="28" placeholder="Ваш псевдонім" value="${E(myNick)}"><button type="button" id="nick-save">Зберегти</button></div>`;
- return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-refresh-btn" title="Оновити рейтинг зараз">↻</button><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Рейтинг учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${foot}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників з прогресом більше 0%.</span>'}${nickBox}</div></div>`}
+ return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-refresh-btn" title="Оновити рейтинг зараз">↻</button><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Список учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${foot}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників.</span>'}</div></div>`}
 function ttile(){
  if(!me){
   return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Приховано</span></div><div class="stat-row"><b>•••</b><span class="mu">відмітки групи</span></div><p class="guest-note">${E(GUEST_LOCK_MSG)} <button type="button" class="guest-lnk" data-open-auth="1">Зареєструватися</button></p></div>`;
@@ -949,22 +1091,7 @@ function teamStrip(){
 function grp(){
  if(!sb){$('grp').innerHTML='';return}
  $('grp').innerHTML=`<div class="grp-wrap"><div class="grp-hd">Командний зріз</div><div class="grp-grid">${cd()}${gtile()}${ttile()}</div>${me?teamStrip():''}</div>`}
-async function saveNick(){
- if(!me){showAu(true);return}
- const inp=$('nick-in');
- const val=stripTeamTag(inp?inp.value:'').slice(0,22);
- const fullVal=formatNickWithTeam(val,askaTeam);
- setLocalNick(fullVal);
- if(sb&&me){
-  const{error}=await sb.from('profiles_public').update({nick:fullVal}).eq('user_id',me);
-  if(error){toast('Не вдалося оновити псевдонім у базі');return}
-  lastS='';
-  await pushStats(true);
-  await loadShared();
- }
- toast(val?'Псевдонім збережено для всіх':'Псевдонім прибрано');
- refreshShared();
-}
+
 $('grp').addEventListener('click',async e=>{
  if(e.target.closest('[data-open-auth]')){showAu(true);return}
  if(e.target.closest('#grp-refresh-btn')){
@@ -982,14 +1109,12 @@ $('grp').addEventListener('click',async e=>{
   b.setAttribute('aria-expanded',String(grpOpen));
   return;
  }
- if(e.target.closest('#nick-save'))await saveNick();
-});
-$('grp').addEventListener('keydown',e=>{
- if(e.key=='Enter'&&e.target&&e.target.id=='nick-in'){
-  e.preventDefault();
-  saveNick();
+ const row=e.target.closest('.grp-row[data-uid]');
+ if(row&&window.openMemberProfile){
+  window.openMemberProfile(row.dataset.uid);
  }
 });
+
 const hasMyTired=s=>!!me&&tiredRows.some(r=>r.user_id==me&&nk(r.subject)==nk(s.name));
 const trTxt=s=>{const k=nk(s.name),u=new Set(tiredRows.filter(r=>nk(r.subject)==k).map(r=>r.user_id));return u.size+' '+pl(u.size,WHO)};
 function trow(s){
@@ -1019,7 +1144,6 @@ async function tiredBtn(s){
  if(error){toast(/Забагато/.test(error.message)?'Забагато натискань. Спробуйте через годину':'Не вдалося зберегти');return}
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
  toast('Записано, ви не самі');catPick(ASKA_TIRED,'sad',false);refreshShared()}
-/* Прогрес чужого рядка перераховується з done/total + нові обов'язкові завдання, яких той користувач ще не бачив (ver = скільки їх було враховано при його останньому збереженні) */
 const effPct=p=>{
  const total=Number(p.total)||0,done=Number(p.done)||0;
  const ver=p.ver==null?0:(Number(p.ver)||0);
@@ -1029,26 +1153,49 @@ const effPct=p=>{
 };
 async function loadShared(){
  if(!sb||!me)return;
+ const fullCols='user_id,pct,done,total,hours_done,ver,nick,bio,avatar_icon,avatar_bg,last_seen_at,daily_log';
+ const baseCols=verOk?'user_id,pct,done,total,ver,nick':'user_id,pct,done,nick';
  const[a,b,c]=await Promise.all([
   sb.from('settings').select('key,value'),
-  sb.from('profiles_public').select(verOk?'user_id,pct,done,total,ver,nick':'user_id,pct,done,nick').eq('share',true),
+  sb.from('profiles_public').select(extColsOk?fullCols:baseCols).eq('share',true),
   sb.from('tired').select('id,user_id,subject,created_at').order('created_at',{ascending:false}).limit(2000)]);
  if(!a.error)cfgS=Object.fromEntries(a.data.map(r=>[r.key,r.value]));
- if(b.error&&verOk&&/ver|total/i.test(b.error.message||'')){verOk=false;const r=await sb.from('profiles_public').select('user_id,pct,done,nick').eq('share',true);if(!r.error)people=r.data||[]}
- else if(!b.error)people=(b.data||[]).map(p=>({...p,pct:effPct(p)}));
+ if(b.error&&extColsOk){
+  extColsOk=false;
+  const r2=await sb.from('profiles_public').select(baseCols).eq('share',true);
+  if(!r2.error)people=(r2.data||[]).map(p=>({...p,pct:effPct(p)}));
+ }else if(b.error&&verOk&&/ver|total/i.test(b.error.message||'')){
+  verOk=false;
+  const r3=await sb.from('profiles_public').select('user_id,pct,done,nick').eq('share',true);
+  if(!r3.error)people=r3.data||[];
+ }else if(!b.error){
+  people=(b.data||[]).map(p=>({...p,pct:effPct(p)}));
+ }
  if(!c.error)tiredRows=c.data||[];
  if(window.ySyncShared)window.ySyncShared();
  refreshShared()}
 const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,250)};
 async function pushStats(force=false){
  if(!sb||!me||!profReady)return;
- const o=sharedStatsSnapshot(S),nick=formatNickWithTeam(getLocalNick(),askaTeam);
+ const o=sharedStatsSnapshot(S),nick=formatNickWithTeam(getLocalNick(),askaTeam),pm=getMyProfMeta();
  const row={user_id:me,share,pct:share?o.pct:0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0,nick};
  if(verOk)row.ver=SHARED_MANDATORY_TASKS.length;
- const k=JSON.stringify(row);
+ if(extColsOk){
+  row.bio=share?pm.bio:'';
+  row.avatar_icon=pm.icon;
+  row.avatar_bg=pm.bg;
+  row.last_seen_at=new Date().toISOString();
+  row.daily_log=share?pm.dailyLog:{};
+ }
+ const k=JSON.stringify({...row,last_seen_at:undefined});
  if(!force&&k==lastS)return;
  lastS=k;
  let{error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'});
+ if(error&&extColsOk){
+  extColsOk=false;
+  delete row.bio;delete row.avatar_icon;delete row.avatar_bg;delete row.last_seen_at;delete row.daily_log;
+  ({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}));
+ }
  if(error&&verOk&&/ver/i.test(error.message||'')){verOk=false;delete row.ver;({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}))}
  if(!error){await loadShared()}
 }
@@ -1057,7 +1204,7 @@ $('pfb').onclick=e=>{e.stopPropagation();togglePop('pf')&&openPf()};
 $('psv').onclick=async()=>{share=$('ps').checked;lastS='';await pushStats(true);$('pf').hidden=true;toast('Збережено');await loadShared()};
 async function sharedInit(){
  if(migrate(S))lsave();
- const{data:p}=await sb.from('profiles_public').select('share,nick').eq('user_id',me).maybeSingle();
+ const{data:p}=await sb.from('profiles_public').select('share,nick,bio,avatar_icon,avatar_bg,daily_log').eq('user_id',me).maybeSingle();
  if(p){
   share=!!p.share;
   if(p.nick){
@@ -1069,8 +1216,20 @@ async function sharedInit(){
     if(window.syncAskaTeamUI)window.syncAskaTeamUI();
    }
   }
+  const localM=getMyProfMeta();
+  const remLog=(p.daily_log&&typeof p.daily_log==='object')?p.daily_log:{};
+  const mergedLog={...remLog};
+  for(const[dkKey,cnt]of Object.entries(localM.dailyLog||{})){
+   mergedLog[dkKey]=Math.max(Number(mergedLog[dkKey])||0,Number(cnt)||0);
+  }
+  setMyProfMeta({
+   bio:p.bio!=null?p.bio:localM.bio,
+   icon:p.avatar_icon||localM.icon,
+   bg:p.avatar_bg||localM.bg,
+   dailyLog:mergedLog
+  });
  }
- profReady=true;$('pfb').hidden=false;
+ profReady=true;$('pfb').hidden=false;$('prof-btn').hidden=false;
  lastS='';
  await pushStats(true);
  await loadShared();
@@ -1080,7 +1239,7 @@ async function sharedInit(){
 function sharedOff(){
  if(ch&&sb)sb.removeChannel(ch);
  ch=null;clearInterval(pt);pt=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
- $('pfb').hidden=true;$('pf').hidden=true}
+ $('pfb').hidden=true;$('pf').hidden=true;$('prof-btn').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready){pushStats(true);loadShared()}}});
 
 /* ---------- Конфеті ---------- */
@@ -1284,7 +1443,7 @@ function catSubjectDone(s){
  catPick(ASKA_BLOCK_OTHER,'happy',true);
 }
 function catStatusLine(){
- const o=st(S.flatMap(s=>s.tasks)),p=pc(o),left=o.n-o.d,hrs=Math.max(0,o.h-o.dh);
+ const o=sharedStatsSnapshot(S),p=o.pct,left=o.n-o.d,hrs=Math.max(0,st(S.flatMap(s=>s.tasks)).h-o.dh);
  const a=new Date((cfgS.review_date||RD)+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);
  const k=Math.round((a-n)/864e5),dd=k+' '+pl(k,['день','дні','днів']),lf=left+' '+pl(left,['завдання','завдання','завдань']);
  if(!o.n)return'Список порожній. Підозріло спокійно... додай хоч одне завдання 🐾';
@@ -1297,7 +1456,7 @@ function catStatusLine(){
  if(hrs>0)return`Лишилось ${lf} і десь ${fh(hrs)} роботи. Це менше, ніж здається 🐾`;
  return`Готово ${p}%, лишилось ${lf}, до перегляду ${dd}. Усе під контролем 🐾`}
 function catMilestone(){
- const p=pc(st(S.flatMap(s=>s.tasks))),prev=lastPctSeen;lastPctSeen=p;
+ const p=sharedStatsSnapshot(S).pct,prev=lastPctSeen;lastPctSeen=p;
  if(prev==null)return false;
  const M=[[100,'СТО ВІДСОТКІВ! Усе виконано. Я не плачу, це вуса пітніють 🏆'],[75,'Три чверті шляху! Далі вже спуск з гори 🏔️'],[50,'Рівно половина! Звідси список виглядає не так страшно ✨'],[25,'Чверть готова. Початок покладено, коти схвалюють 🐾']];
  for(const[m,t]of M)if(prev<m&&p>=m){burst(m>=100?220:95);catSay(t,'happy',true,true);return true}
@@ -1584,7 +1743,7 @@ function catPick(arr,mood='happy',hop=true){
 (()=>{
  function fav(){
   try{
-   const p=pc(st(S.flatMap(s=>s.tasks))),c=document.createElement('canvas');c.width=c.height=64;
+   const p=sharedStatsSnapshot(S).pct,c=document.createElement('canvas');c.width=c.height=64;
    const x=c.getContext('2d');if(!x)return;
    x.lineWidth=10;x.lineCap='round';x.strokeStyle='#d5d9e8';x.beginPath();x.arc(32,32,24,0,7);x.stroke();
    if(p>0){x.strokeStyle=p>=100?'#46c995':winterOn?'#48a8c4':'#4f5bd5';x.beginPath();x.arc(32,32,24,-Math.PI/2,-Math.PI/2+Math.PI*2*p/100);x.stroke()}
@@ -1615,7 +1774,7 @@ ready=true;
  if(data.session)start(data.session.user);else{grp();showAu(true)}})();
 </script>
 <script>
-/* ===== Графік спалювання, колесо долі, вогник групі, присутність, секретне завдання Тайлера, гра з Аскою та перегони ===== */
+/* ===== Графік спалювання, колесо долі, вогник групі, присутність, секретне завдання Тайлера, гра з Аскою, перегони та профілі ===== */
 (()=>{
 'use strict';
 const q$=s=>document.querySelector(s),el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
@@ -1665,6 +1824,109 @@ function openM(html,cb){closeM();ov.hidden=false;onClose=cb||null;$('y-body').in
 function closeM(){if(ov.hidden)return;ov.hidden=true;document.body.style.overflow='';const f=onClose;onClose=null;try{f&&f()}catch(e){}}
 ov.addEventListener('click',e=>{if(e.target===ov||e.target.closest('.y-x'))closeM()});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+
+/* ---------- профіль користувача та перегляд профілів учасників ---------- */
+function openMyProfileEditor(){
+ if(typeof me==='undefined'||!me){try{showAu(true)}catch(e){}return}
+ const meta=getMyProfMeta();
+ const nickClean=stripTeamTag(getMyNick());
+ let selIcon=meta.icon;
+ let selBg=meta.bg;
+ let selTeam=askaTeam;
+ const per=computePeriodCounts(meta.dailyLog);
+ const snap=sharedStatsSnapshot(S);
+
+ openM(`<h3>Мій профіль</h3>
+  <p>Нікнейм, опис, фон та іконка бейджа — без зайвих соцмереж</p>
+  <div class="prof-metrics">
+   <div class="prof-m"><small>Закрито сьогодні</small><b>${per.today}</b></div>
+   <div class="prof-m"><small>Закрито вчора</small><b>${per.yesterday}</b></div>
+   <div class="prof-m"><small>За останні 7 днів</small><b>${per.week}</b></div>
+  </div>
+  <div class="prof-form">
+   <label for="pf-nick">Нікнейм</label>
+   <input type="text" id="pf-nick" maxlength="22" placeholder="Як підписувати в списку учасників" value="${esc(nickClean)}">
+   <label for="pf-bio">Короткий опис (до 140 символів)</label>
+   <textarea id="pf-bio" maxlength="140" placeholder="Наприклад: шрифти й ОВМ перед переглядом, тримаюсь на каві">${esc(meta.bio)}</textarea>
+   <label>Іконка бейджа</label>
+   <div class="preset-row" id="pf-icons">${AVATAR_ICONS.map(ic=>`<button type="button" class="icon-opt${ic===selIcon?' on':''}" data-ic="${esc(ic)}">${esc(ic)}</button>`).join('')}</div>
+   <label>Фон бейджа</label>
+   <div class="preset-row" id="pf-bgs">${AVATAR_BGS.map((bg,i)=>`<button type="button" class="bg-opt${bg===selBg?' on':''}" data-bg-i="${i}" style="background:${esc(bg)}" aria-label="Фон ${i+1}"></button>`).join('')}</div>
+   <label>Команда</label>
+   <div class="preset-row" id="pf-teams">
+    <button type="button" class="btn${selTeam==='smol'?' p':''}" data-pt="smol">Смоленятко</button>
+    <button type="button" class="btn${selTeam==='rom'?' p':''}" data-pt="rom">Романятко</button>
+    <button type="button" class="btn${selTeam==='both'?' p':''}" data-pt="both">Обидва</button>
+   </div>
+  </div>
+  <div class="prof-meta" style="margin-top:10px">Прогрес: ${snap.pct}% (${snap.d} з ${snap.n}) · Остання активність: щойно в мережі</div>
+  <div class="y-row">
+   <button class="btn p" id="pf-save-btn" type="button">Зберегти профіль</button>
+  </div>`);
+
+ $('pf-icons').onclick=e=>{
+  const b=e.target.closest('[data-ic]');if(!b)return;
+  selIcon=b.dataset.ic;
+  $('pf-icons').querySelectorAll('.icon-opt').forEach(x=>x.classList.toggle('on',x===b));
+ };
+ $('pf-bgs').onclick=e=>{
+  const b=e.target.closest('[data-bg-i]');if(!b)return;
+  selBg=AVATAR_BGS[Number(b.dataset.bg-i)]||AVATAR_BGS[Number(b.getAttribute('data-bg-i'))]||AVATAR_BGS[0];
+  $('pf-bgs').querySelectorAll('.bg-opt').forEach(x=>x.classList.toggle('on',x===b));
+ };
+ $('pf-teams').onclick=e=>{
+  const b=e.target.closest('[data-pt]');if(!b)return;
+  selTeam=b.dataset.pt;
+  $('pf-teams').querySelectorAll('button').forEach(x=>x.classList.toggle('p',x===b));
+ };
+ $('pf-save-btn').onclick=async()=>{
+  const nVal=stripTeamTag($('pf-nick').value).slice(0,22);
+  const bVal=$('pf-bio').value.trim().slice(0,140);
+  askaTeam=selTeam;
+  try{localStorage.setItem(TEAM_KEY,askaTeam)}catch(err){}
+  if(typeof window.syncAskaTeamUI==='function')window.syncAskaTeamUI();
+  const fullNick=formatNickWithTeam(nVal,askaTeam);
+  setLocalNick(fullNick);
+  setMyProfMeta({bio:bVal,icon:selIcon,bg:selBg});
+  lastS='';
+  await pushStats(true);
+  await loadShared();
+  closeM();
+  tst('Профіль збережено');
+ };
+}
+
+function openMemberProfile(targetUid){
+ if(typeof me!=='undefined'&&me&&String(targetUid)===String(me)){
+  openMyProfileEditor();
+  return;
+ }
+ const p=(typeof people!=='undefined'&&Array.isArray(people))?people.find(x=>String(x.user_id)===String(targetUid)):null;
+ if(!p){tst('Профіль недоступний');return}
+ const nameClean=stripTeamTag(p.nick)||'Анонімний котик';
+ const tag=parseTeamTag(p.nick);
+ const teamTxt=tag==='smol'?'Смоленятко':tag==='rom'?'Романятко':'Обидва';
+ const per=computePeriodCounts(p.daily_log);
+ const pctVal=Math.min(100,Math.max(0,Math.round(Number(p.pct)||0)));
+
+ openM(`<div class="prof-head">
+   ${renderBadge(p.avatar_icon,p.avatar_bg,'av-lg')}
+   <div>
+    <h3 class="prof-name">${esc(nameClean)}</h3>
+    <div class="prof-meta">${esc(formatLastSeen(p.last_seen_at))} · Команда: ${esc(teamTxt)}</div>
+   </div>
+  </div>
+  <div class="prof-bio">${p.bio?esc(p.bio):'<span class="mu">Користувач ще не додав опис профілю.</span>'}</div>
+  <div class="prof-metrics">
+   <div class="prof-m"><small>Закрито сьогодні</small><b>${per.today}</b></div>
+   <div class="prof-m"><small>Закрито вчора</small><b>${per.yesterday}</b></div>
+   <div class="prof-m"><small>За останні 7 днів</small><b>${per.week}</b></div>
+  </div>
+  <div class="prof-meta">Загальний прогрес: <strong>${pctVal}%</strong>${p.done!=null?` · Виконано завдань: <strong>${Number(p.done)||0}</strong>`:''}${Number(p.hours_done)>0?` · Годин: <strong>${Math.round(Number(p.hours_done)*10)/10} год</strong>`:''}</div>`);
+}
+window.openMemberProfile=openMemberProfile;
+const profBtn=$('prof-btn');
+if(profBtn)profBtn.onclick=openMyProfileEditor;
 
 /* ---------- секретне завдання від Тайлера + фото для всіх ---------- */
 const TYLER_TASK_TEXT='Розроби постер формату 210×148 мм: Смольський із Йончі на ОВМ у вівторок, заходить Олег Сусленко й каже: «Дай мені ключі», а фінал — «Я згадав, що я хочу на лижі».';
