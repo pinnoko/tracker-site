@@ -150,7 +150,9 @@ li.drop-a{box-shadow:0 2px 0 var(--ac)}
 .card.drop-b{box-shadow:0 -8px 0 -4px var(--ac)}
 .card.drop-a{box-shadow:0 8px 0 -4px var(--ac)}
 .card.drop-in{outline:2px solid var(--ac);outline-offset:-2px}
-#bk textarea{width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace}
+#pf textarea{width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px;font:12px/1.4 ui-monospace,Menlo,Consolas,monospace}
+#pf details{margin-top:12px;padding-top:10px;border-top:1px solid var(--ln)}
+#pf summary{cursor:pointer;color:var(--mu);font-size:12px}
 @media (prefers-reduced-motion:reduce){.pb i{transition:none}}
 .au{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:20px;background:var(--bg)}
 .au[hidden]{display:none}
@@ -310,10 +312,9 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">🔔 Оновлення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
-  <div class="tile pop" id="ntf-pop" hidden><small>Оновлення сайту</small><div class="notif-list" id="ntf-list"></div></div>
-  <div class="tile pop" id="bk" hidden><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
-  <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">🔔 Сповіщення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button>
+  <div class="tile pop" id="ntf-pop" hidden><small>Сповіщення</small><div class="notif-list" id="ntf-list"></div></div>
+  <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button><details><summary>Резервна копія</summary><small style="display:block;margin-top:8px">Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="5"></textarea><button class="btn" id="imp" type="button">Імпортувати</button></details></div>
  </div>
 </div>
 <div class="tiles" id="sum"></div>
@@ -755,7 +756,7 @@ if(topBtn){
  addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>360),{passive:true});
 }
 
-const closeAllPops=()=>{if($('bk'))$('bk').hidden=true;if($('pf'))$('pf').hidden=true;if($('ntf-pop'))$('ntf-pop').hidden=true};
+const closeAllPops=()=>{if($('pf'))$('pf').hidden=true;if($('ntf-pop'))$('ntf-pop').hidden=true};
 const togglePop=id=>{const el=$(id),open=el.hidden;closeAllPops();if(open)el.hidden=false;return open};
 document.addEventListener('click',e=>{if(!e.target.closest('.top-acts'))closeAllPops()});
 $('ntf-btn').onclick=e=>{
@@ -765,11 +766,10 @@ $('ntf-btn').onclick=e=>{
   renderNotifs();
  }
 };
-$('bkb').onclick=e=>{e.stopPropagation();if(togglePop('bk')){$('bt').value=JSON.stringify(S,null,1);catSay('Роблю бекап? Правильно, раптом я випадково пройдусь по клавіатурі 🐾','happy',false)}};
 $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)||!d.every(s=>s&&s.name&&Array.isArray(s.tasks)))throw 0;
  S=d.map(s=>({id:s.id||uid(),name:String(s.name),color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#4f5bd5',tasks:s.tasks.map(t=>({id:t.id||uid(),t:String(t.t),h:+t.h||0,s:+t.s||0,a:!!t.a,n:String(t.n||'')})),ap:s.ap!==false,cov:1}));
  migrate(S);
- save();render();$('bk').hidden=true;catSay('Дані імпортовано! Мяу, ніби нічого не загубили ✨','happy',true)}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
+ save();render();$('pf').hidden=true;catSay('Дані імпортовано! Мяу, ніби нічого не загубили ✨','happy',true)}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
 render();
 const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
 let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
@@ -970,7 +970,7 @@ function pushStats(){
  const row={user_id:me,share,pct:share?pc(o):0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0,nick},k=JSON.stringify(row);
  if(k==lastS)return;lastS=k;
  sb.from('profiles_public').upsert(row).then(({error})=>{if(!error)lq()})}
-const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
+const openPf=()=>{$('ps').checked=share;$('bt').value=JSON.stringify(S,null,1);$('pf').hidden=false};
 $('pfb').onclick=e=>{e.stopPropagation();togglePop('pf')&&openPf()};
 $('psv').onclick=()=>{share=$('ps').checked;lastS='';pushStats();$('pf').hidden=true;toast('Збережено');setTimeout(loadShared,900)};
 async function sharedInit(){
