@@ -465,7 +465,12 @@ const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-t
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const PROJ_STICKERS_TASK='Підготувати стікери до друку і надіслати старості';
-const SHARED_MANDATORY_TASKS=[{subj:'проєктування',title:PROJ_STICKERS_TASK}];
+/* НОВІ ПРЕДМЕТИ ДЛЯ ВСІХ додавайте сюди (лише в КІНЕЦЬ списку, нічого не видаляйте й не міняйте місцями):
+   вони самі з'являться в усіх користувачів, враховуються в рейтингу, а прогрес інших у рейтингу перерахується одразу.
+   Приклад: {name:'Історія мистецтв',color:'#e5584a',tasks:[['Реферат',0],['Презентація',2]]}   (число = години) */
+const GLOBAL_SUBJECTS=[
+];
+const SHARED_MANDATORY_TASKS=[{subj:'проєктування',title:PROJ_STICKERS_TASK},...GLOBAL_SUBJECTS.flatMap(g=>g.tasks.map(t=>({subj:g.name.trim().toLowerCase(),title:t[0]})))];
 const SITE_UPDATES=[
  {id:'proj-stickers-2026-11-26',text:'Додалось нове завдання на проєктування: «Підготувати стікери до друку і надіслати старості».',tag:'Проєктування · Сьогодні'},
  {id:'zavd4-cov-2026-11-26',text:'Додалось нове завдання «Завдання 4» та «Обкладинка» у предметі «Шрифти».',tag:'Завдання'},
@@ -514,6 +519,12 @@ function migrate(arr){
    s.tasks.push({id:uid(),t:'Завдання 4',h:0,s:0});
    changed=true;
   }
+ });
+ GLOBAL_SUBJECTS.forEach(g=>{
+  const nm=g.name.trim().toLowerCase(),sub=arr.find(s=>s&&String(s.name||'').trim().toLowerCase()===nm);
+  if(!sub){arr.push(mk(g.name,g.color||'#4f5bd5',g.tasks.map(t=>[t[0],t[1]||0,0])));changed=true;return}
+  if(!Array.isArray(sub.tasks))sub.tasks=[];
+  g.tasks.forEach(t=>{if(!sub.tasks.some(x=>x&&String(x.t||'').trim().toLowerCase()===String(t[0]).toLowerCase())){sub.tasks.push({id:uid(),t:t[0],h:t[1]||0,s:0});changed=true}});
  });
  return changed;
 }
@@ -839,6 +850,7 @@ const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасуват�
 const GUEST_LOCK_MSG='Прогрес інших приховано, і вас не враховано, тому що ви не зареєстровані.';
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=true;
+let verOk=true;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
 const getLocalNick=()=>me?(getNicks()[me]||'').trim():'';
 const setLocalNick=v=>{if(!me)return;const m=getNicks(),t=String(v||'').trim().slice(0,28);if(t)m[me]=t;else delete m[me];try{localStorage.setItem(NICK_KEY,JSON.stringify(m))}catch(e){}};
@@ -1001,14 +1013,22 @@ async function tiredBtn(s){
  if(error){toast(/Забагато/.test(error.message)?'Забагато натискань. Спробуйте через годину':'Не вдалося зберегти');return}
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
  toast('Записано, ви не самі');catPick(ASKA_TIRED,'sad',false);refreshShared()}
+/* Прогрес чужого рядка перераховується з done/total + нові обов'язкові завдання, яких той користувач ще не бачив (ver = скільки їх було враховано при його останньому збереженні) */
+const effPct=p=>{
+ const total=Number(p.total)||0,done=Number(p.done)||0;
+ if(p.ver==null)return Number(p.pct)||0;
+ const T=total+Math.max(0,SHARED_MANDATORY_TASKS.length-(Number(p.ver)||0));
+ return T?Math.min(100,Math.round(done/T*100)):0;
+};
 async function loadShared(){
  if(!sb||!me)return;
  const[a,b,c]=await Promise.all([
   sb.from('settings').select('key,value'),
-  sb.from('profiles_public').select('user_id,pct,done,nick').eq('share',true),
+  sb.from('profiles_public').select(verOk?'user_id,pct,done,total,ver,nick':'user_id,pct,done,nick').eq('share',true),
   sb.from('tired').select('id,user_id,subject,created_at').order('created_at',{ascending:false}).limit(2000)]);
  if(!a.error)cfgS=Object.fromEntries(a.data.map(r=>[r.key,r.value]));
- if(!b.error)people=b.data||[];
+ if(b.error&&verOk&&/ver|total/i.test(b.error.message||'')){verOk=false;const r=await sb.from('profiles_public').select('user_id,pct,done,nick').eq('share',true);if(!r.error)people=r.data||[]}
+ else if(!b.error)people=(b.data||[]).map(p=>({...p,pct:effPct(p)}));
  if(!c.error)tiredRows=c.data||[];
  if(window.ySyncShared)window.ySyncShared();
  refreshShared()}
@@ -1016,10 +1036,13 @@ const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,250)};
 async function pushStats(force=false){
  if(!sb||!me||!profReady)return;
  const o=sharedStatsSnapshot(S),nick=formatNickWithTeam(getLocalNick(),askaTeam);
- const row={user_id:me,share,pct:share?o.pct:0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0,nick},k=JSON.stringify(row);
+ const row={user_id:me,share,pct:share?o.pct:0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0,nick};
+ if(verOk)row.ver=SHARED_MANDATORY_TASKS.length;
+ const k=JSON.stringify(row);
  if(!force&&k==lastS)return;
  lastS=k;
- const{error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'});
+ let{error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'});
+ if(error&&verOk&&/ver/i.test(error.message||'')){verOk=false;delete row.ver;({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}))}
  if(!error){await loadShared()}
 }
 const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
