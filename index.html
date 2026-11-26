@@ -1090,12 +1090,14 @@ function gtile(){
  }else{
   mergedMap.delete(String(me));
  }
- const list=[...mergedMap.values()].sort((a,b)=>Number(b.pct)-Number(a.pct));
- const active=list.filter(p=>Number(p.pct)>0);
- const n=active.length,avg=n?Math.round(active.reduce((x,p)=>x+Number(p.pct),0)/n):0;
- const rows=list.map((p,i)=>{
+ const list=[...mergedMap.values()]
+  .map(p=>({...p,pct:Math.min(100,Math.max(0,Math.round(String(p.user_id)==String(me)?mySnap.pct:(Number(p.pct)||0))))}))
+  .sort((a,b)=>b.pct-a.pct);
+ const active=list.filter(p=>p.pct>0);
+ const n=active.length,avg=n?Math.round(active.reduce((x,p)=>x+p.pct,0)/n):0;
+ const rows=active.map((p,i)=>{
   const isMe=String(p.user_id)==String(me);
-  const v=Math.min(100,Math.max(0,Math.round(isMe?mySnap.pct:(Number(p.pct)||0))));
+  const v=p.pct;
   const pubNick=stripTeamTag(p.nick);
   const label=isMe?(myNick?`Ви (${myNick})`:'Ви (Анонімний котик)'):(pubNick||'Анонімний котик');
   const hasHist=isMe?true:hasMemberHistory(p.daily_log,p.last_seen_at);
@@ -1104,7 +1106,7 @@ function gtile(){
   return`<div class="grp-row${isMe?' me':''}" data-uid="${E(p.user_id)}" title="Відкрити профіль">${renderBadge(p.avatar_icon,p.avatar_bg,'av-sm')}<span class="rk">#${i+1}</span><span class="who-wrap"><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="sub-act">${E(actTxt)} · тиждень: ${per.week}</span></span><span class="pct">${v}%</span></div>`;
  }).join('');
  const foot=!share?'<p class="guest-note">Вас не враховано (див. «Налаштування → Приватність»).</p>':'';
- return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-refresh-btn" title="Оновити рейтинг зараз">↻</button><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Список учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${foot}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників.</span>'}</div></div>`}
+ return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-refresh-btn" title="Оновити рейтинг зараз">↻</button><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Список учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${foot}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників з прогресом вище 0%.</span>'}</div></div>`}
 function ttile(){
  if(!me){
   return`<div class="tile shared"><div class="tile-top"><small>Втома групи</small><span class="badge">Приховано</span></div><div class="stat-row"><b>•••</b><span class="mu">відмітки групи</span></div><p class="guest-note">${E(GUEST_LOCK_MSG)} <button type="button" class="guest-lnk" data-open-auth="1">Зареєструватися</button></p></div>`;
