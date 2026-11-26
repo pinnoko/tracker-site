@@ -44,6 +44,7 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .pop{position:absolute;top:calc(100% + 8px);right:0;z-index:150;width:min(400px,calc(100vw - 40px));border-radius:14px;padding:16px}
 .pop[hidden]{display:none}
 .st-sec{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.st-block{margin-top:12px;padding-top:12px;border-top:1px solid var(--ln)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:18px}
 .grp-wrap{margin-bottom:24px}
 .grp-hd{display:flex;align-items:center;gap:8px;margin:0 0 10px;color:var(--mu);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
@@ -211,9 +212,8 @@ li{flex-wrap:wrap}
 .tired.on{background:var(--no);color:var(--bg)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:300;background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
 .toast[hidden]{display:none}
-#pf input[type=text]{display:block;width:100%;margin:8px 0;border:1px solid var(--ln);background:var(--bg);color:var(--tx);border-radius:8px;padding:8px 10px;font:inherit}
-.sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 12px}
-.sw2 input{margin-top:3px;accent-color:var(--ac)}
+.sw2{display:flex;gap:8px;align-items:flex-start;color:var(--mu);margin:4px 0 10px;font-size:12.5px;line-height:1.4}
+.sw2 input{margin-top:2px;accent-color:var(--ac);flex:none}
 
 /* Секретне завдання від Тайлера */
 .tyler-box{margin-top:10px;padding:15px 16px;border-radius:14px;border:1px dashed color-mix(in srgb,#e86aa0 50%,var(--ln));background:color-mix(in srgb,#e86aa0 6%,var(--bg));line-height:1.55}
@@ -332,10 +332,18 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="prof-btn" type="button" hidden>👤 Мій профіль</button><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="st-btn" type="button" title="Налаштування та резервна копія">Налаштування</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">Сповіщення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button>
-  <div class="tile pop" id="st-pop" hidden><small>Налаштування</small><div class="st-sec"><button class="btn" id="bkb" type="button">Резервна копія (JSON)</button></div><div id="bk-box" hidden><small style="display:block;margin-top:10px">Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="5"></textarea><button class="btn p" id="imp" type="button">Імпортувати</button></div></div>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn" id="prof-btn" type="button" hidden>👤 Мій профіль</button><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="st-btn" type="button" title="Налаштування, приватність та резервна копія">Налаштування</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">Сповіщення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button>
+  <div class="tile pop" id="st-pop" hidden>
+   <small>Налаштування</small>
+   <div class="st-sec"><button class="btn" id="bkb" type="button">Резервна копія (JSON)</button></div>
+   <div id="bk-box" hidden><small style="display:block;margin-top:10px">Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="5"></textarea><button class="btn p" id="imp" type="button">Імпортувати</button></div>
+   <div class="st-block" id="st-priv-box" hidden>
+    <small>Приватність</small>
+    <label class="sw2"><input type="checkbox" id="ps"><span>Показувати мене в списку учасників і загальному рейтингу. Предмети та завдання лишаються приватними.</span></label>
+    <button class="btn p" id="psv" type="button">Зберегти приватність</button>
+   </div>
+  </div>
   <div class="tile pop" id="ntf-pop" hidden><small>Сповіщення</small><div class="notif-list" id="ntf-list"></div></div>
-  <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Показувати мене в списку учасників і загальному рейтингу. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
 </div>
 <div class="tiles" id="sum"></div>
@@ -635,7 +643,7 @@ function formatLastSeen(iso){
  if(hrs<24)return`${hrs} год тому`;
  const days=Math.floor(hrs/24);
  if(days===1)return'Вчора';
- return `${days} дн. тому`;
+ return`${days} дн. тому`;
 }
 
 /* ---------- Вирівняний підрахунок для групової статистики ---------- */
@@ -912,10 +920,13 @@ if(topBtn){
  addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>360),{passive:true});
 }
 
-const closeAllPops=()=>{if($('st-pop'))$('st-pop').hidden=true;if($('pf'))$('pf').hidden=true;if($('ntf-pop'))$('ntf-pop').hidden=true};
+const closeAllPops=()=>{if($('st-pop'))$('st-pop').hidden=true;if($('ntf-pop'))$('ntf-pop').hidden=true};
 const togglePop=id=>{const el=$(id),open=el.hidden;closeAllPops();if(open)el.hidden=false;return open};
 document.addEventListener('click',e=>{if(!e.target.closest('.top-acts'))closeAllPops()});
-$('st-btn').onclick=e=>{e.stopPropagation();togglePop('st-pop')};
+$('st-btn').onclick=e=>{
+ e.stopPropagation();
+ if(togglePop('st-pop')&&me){$('ps').checked=share}
+};
 $('ntf-btn').onclick=e=>{
  e.stopPropagation();
  if(togglePop('ntf-pop')){
@@ -934,6 +945,15 @@ $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)
  S=d.map(s=>({id:s.id||uid(),name:String(s.name),color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#4f5bd5',tasks:s.tasks.map(t=>({id:t.id||uid(),t:String(t.t),h:+t.h||0,s:+t.s||0,a:!!t.a,n:String(t.n||'')})),ap:s.ap!==false,cov:1}));
  migrate(S);
  save();render();$('st-pop').hidden=true;catSay('Дані імпортовано! Мяу, ніби нічого не загубили ✨','happy',true)}catch(e){$('bt').value='Не вдалося прочитати копію. Вставте текст у форматі JSON, який дає ця сторінка.'}};
+$('psv').onclick=async()=>{
+ if(!me)return;
+ share=$('ps').checked;
+ lastS='';
+ await pushStats(true);
+ $('st-pop').hidden=true;
+ toast('Налаштування приватності збережено');
+ await loadShared();
+};
 render();
 const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
 let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
@@ -1083,7 +1103,7 @@ function gtile(){
   const actTxt=isMe?'Щойно в мережі':formatLastSeen(p.last_seen_at);
   return`<div class="grp-row${isMe?' me':''}" data-uid="${E(p.user_id)}" title="Відкрити профіль">${renderBadge(p.avatar_icon,p.avatar_bg,'av-sm')}<span class="rk">#${i+1}</span><span class="who-wrap"><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="sub-act">${E(actTxt)} · тиждень: ${per.week}</span></span><span class="pct">${v}%</span></div>`;
  }).join('');
- const foot=!share?'<p class="guest-note">Вас не враховано (див. «Приватність»).</p>':'';
+ const foot=!share?'<p class="guest-note">Вас не враховано (див. «Налаштування → Приватність»).</p>':'';
  return`<div class="tile shared"><div class="tile-top"><small>Середній по групі</small><div style="display:flex;align-items:center;gap:4px"><span class="badge">Група · ${n}</span><button type="button" class="more-btn" id="grp-refresh-btn" title="Оновити рейтинг зараз">↻</button><button type="button" class="more-btn" id="grp-menu-btn" aria-expanded="${grpOpen}" title="Список учасників">⋮</button></div></div><div class="stat-row"><b>${avg}%</b><span class="mu">${n} ${pl(n,['учасник','учасники','учасників'])}</span></div><div class="pb grp-pb" style="margin-top:10px"><i style="width:${avg}%"></i></div>${foot}<div class="grp-list" id="grp-list"${grpOpen?'':' hidden'}>${rows||'<span class="mu" style="font-size:12.5px">Поки немає учасників.</span>'}</div></div>`}
 function ttile(){
  if(!me){
@@ -1208,9 +1228,6 @@ async function pushStats(force=false){
  if(error&&verOk&&/ver/i.test(error.message||'')){verOk=false;delete row.ver;({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}))}
  if(!error){await loadShared()}
 }
-const openPf=()=>{$('ps').checked=share;$('pf').hidden=false};
-$('pfb').onclick=e=>{e.stopPropagation();togglePop('pf')&&openPf()};
-$('psv').onclick=async()=>{share=$('ps').checked;lastS='';await pushStats(true);$('pf').hidden=true;toast('Збережено');await loadShared()};
 async function sharedInit(){
  if(migrate(S))lsave();
  const{data:p}=await sb.from('profiles_public').select('share,nick,bio,avatar_icon,avatar_bg,daily_log').eq('user_id',me).maybeSingle();
@@ -1238,7 +1255,8 @@ async function sharedInit(){
    dailyLog:mergedLog
   });
  }
- profReady=true;$('pfb').hidden=false;$('prof-btn').hidden=false;
+ profReady=true;$('prof-btn').hidden=false;
+ if($('st-priv-box')){$('st-priv-box').hidden=false;$('ps').checked=share}
  lastS='';
  await pushStats(true);
  await loadShared();
@@ -1248,7 +1266,8 @@ async function sharedInit(){
 function sharedOff(){
  if(ch&&sb)sb.removeChannel(ch);
  ch=null;clearInterval(pt);pt=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
- $('pfb').hidden=true;$('pf').hidden=true;$('prof-btn').hidden=true}
+ $('prof-btn').hidden=true;
+ if($('st-priv-box'))$('st-priv-box').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready){pushStats(true);loadShared()}}});
 
 /* ---------- Конфеті ---------- */
