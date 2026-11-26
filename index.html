@@ -33,6 +33,14 @@ h1{font-size:28px;letter-spacing:-.025em;margin:0}
 .btn.p{background:var(--ac);border-color:var(--ac);color:var(--bg)}
 .btn.secret{border-style:dashed;border-color:color-mix(in srgb,#e86aa0 45%,var(--ln));background:color-mix(in srgb,#e86aa0 7%,var(--sf))}
 .btn.secret:hover{border-color:#e86aa0}
+.btn.notif{position:relative;display:inline-flex;align-items:center;gap:6px}
+.notif-cnt{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--no);color:#fff;font-size:11px;font-weight:700;line-height:1}
+.notif-cnt[hidden]{display:none}
+.notif-list{margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto}
+.notif-item{padding:10px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--ln);font-size:13px;line-height:1.42}
+.notif-item.unread{border-color:color-mix(in srgb,var(--ac) 50%,var(--ln));background:color-mix(in srgb,var(--ac) 6%,var(--bg))}
+.notif-title{font-weight:600;color:var(--tx)}
+.notif-meta{font-size:11.5px;color:var(--mu);margin-top:3px}
 .pop{position:absolute;top:calc(100% + 8px);right:0;z-index:150;width:min(400px,calc(100vw - 40px));border-radius:14px;padding:16px}
 .pop[hidden]{display:none}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:18px}
@@ -302,7 +310,8 @@ li{flex-wrap:wrap}
 <div class="w">
 <div class="top">
  <div><h1>Навчальний трекер</h1><p class="sub">Предмети, завдання та години в одному місці</p></div>
- <div class="top-acts"><span id="sy" class="mu"></span><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
+ <div class="top-acts"><span id="sy" class="mu"></span><button class="btn notif" id="ntf-btn" type="button" title="Сповіщення про оновлення сайту">🔔 Оновлення <span class="notif-cnt" id="ntf-cnt" hidden>0</span></button><button class="btn secret" id="tyler-btn" type="button" title="Секретне завдання від Тайлера">💌 Таємниця</button><button class="btn" id="wnt" title="Легкий сніг (можна вимкнути)">❄️ Сніг</button><button class="btn" id="snd" title="Звукові підказки">🔊 Звук</button><button class="btn" id="bkb">Резервна копія</button><button class="btn" id="th" title="Змінити тему">Тема</button><button class="btn" id="pfb" hidden>Приватність</button><button class="btn p" id="inb" hidden>Увійти</button><button class="btn" id="out" hidden>Вийти</button>
+  <div class="tile pop" id="ntf-pop" hidden><small>Оновлення сайту</small><div class="notif-list" id="ntf-list"></div></div>
   <div class="tile pop" id="bk" hidden><small>Скопіюйте текст, щоб зберегти дані, або вставте свою копію й натисніть «Імпортувати».</small><textarea id="bt" rows="6"></textarea><button class="btn p" id="imp">Імпортувати</button></div>
   <div class="tile pop" id="pf" hidden><small>Приватність</small><label class="sw2"><input type="checkbox" id="ps"><span>Враховувати мене в загальній статистиці. Показуються лише відсоток прогресу й кількість людей, без імен і пошт. Предмети та завдання лишаються приватними.</span></label><button class="btn p" id="psv">Зберегти</button></div>
  </div>
@@ -451,15 +460,21 @@ li{flex-wrap:wrap}
 </div>
 
 <script>
-const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter-v2',TYLER_PHOTO_KEY='study-tracker-tyler-photo',uid=()=>Math.random().toString(36).slice(2,9);
+const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter-v2',TYLER_PHOTO_KEY='study-tracker-tyler-photo',NTF_SEEN_KEY='study-tracker-ntf-seen-v1',uid=()=>Math.random().toString(36).slice(2,9);
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
+const PROJ_STICKERS_TASK='Підготувати стікери до друку і надіслати старості';
+const SITE_UPDATES=[
+ {id:'proj-stickers-2026-11-26',text:'Додалось нове завдання на проєктування: «Підготувати стікери до друку і надіслати старості».',tag:'Проєктування · Сьогодні'},
+ {id:'zavd4-cov-2026-11-26',text:'Додалось нове завдання «Завдання 4» та «Обкладинка» у предметі «Шрифти».',tag:'Завдання'},
+ {id:'tyler-race-2026-11-26',text:'Додалось вікно таємного завдання від Тайлера із завантаженням фото для всіх і рейтинг перегонів у грі з Аскою.',tag:'Нові функції'}
+];
 const seed=()=>[
  mk('Шрифти','#4a6cf0',[['Грецький абетка',2,0],['Грецький стилізація',2,0],['Капітально-квадратний абетка',2,0],['Капітально-квадратний стилізація',2,0],['Унціал абетка',0,0],['Унціал стилізація',0,0],['Готика абетка',0,0],['Готика стилізація',0,0],['Устав абетка',0,0],['Устав стилізація',0,0],['Півустав абетка',0,0],['Півустав стилізація',0,0],['В’язь абетка',0,0],['В’язь стилізація',0,0],['Скоропис абетка',0,0],['Скоропис стилізація',0,0],['Обкладинка',0,0]]),
  mk('Нагірний Візуальна комунікація','#1fb5a3',[['Завдання 1',0,0],['Завдання 2',0,0],['Завдання 3',0,0],['Завдання 4',0,0]]),
  mk('Основи здоров’я','#e86aa0',[['шпалера',2,0]]),
  mk('ОВМ','#8a63dc',[['1 живопис',0,0],['2 живопис',0,0],['1 рисунок',0,0],['2 рисунок',0,0],['дз',0,0]]),
- mk('Проєктування','#29a6dc',[['1 завдання',2,0],['2 завдання',1,0],['3 завдання',5,0]]),
+ mk('Проєктування','#29a6dc',[['1 завдання',2,0],['2 завдання',1,0],['3 завдання',5,0],[PROJ_STICKERS_TASK,0,0]]),
  mk('Комп’ютерна графіка','#e5584a',Array.from({length:8},(_,i)=>['Завдання '+(i+1),0,0])),
  mk('Англ мова','#eda53a',[]),
  mk('Історія','#4cb85a',[])
@@ -477,10 +492,17 @@ function migrate(arr){
    changed=true;
   }
   if(!Array.isArray(s.tasks))return;
-  if(typeof s.name=='string'&&s.name.trim().toLowerCase().includes('шрифт')){
+  const subLow=String(s.name||'').trim().toLowerCase();
+  if(subLow.includes('шрифт')){
    if(!s.cov){s.cov=1;changed=true}
    if(!s.tasks.some(t=>t&&String(t.t||'').trim().toLowerCase()==='обкладинка')){
     s.tasks.push({id:uid(),t:'Обкладинка',h:0,s:0});
+    changed=true;
+   }
+  }
+  if(subLow.includes('проєктування')||subLow.includes('проектування')){
+   if(!s.tasks.some(t=>t&&String(t.t||'').trim().toLowerCase()===PROJ_STICKERS_TASK.toLowerCase())){
+    s.tasks.push({id:uid(),t:PROJ_STICKERS_TASK,h:0,s:0});
     changed=true;
    }
   }
@@ -492,6 +514,30 @@ function migrate(arr){
   }
  });
  return changed;
+}
+
+/* ---------- Сповіщення про оновлення сайту ---------- */
+function readSeenNotifs(){
+ try{return JSON.parse(localStorage.getItem(NTF_SEEN_KEY))||[]}catch(e){return[]}
+}
+function writeSeenNotifs(ids){
+ try{localStorage.setItem(NTF_SEEN_KEY,JSON.stringify([...new Set(ids)]))}catch(e){}
+}
+function renderNotifs(){
+ const seen=new Set(readSeenNotifs());
+ const unread=SITE_UPDATES.filter(u=>!seen.has(u.id)).length;
+ const cnt=$('ntf-cnt');
+ if(cnt){
+  cnt.textContent=String(unread);
+  cnt.hidden=unread<=0;
+ }
+ const list=$('ntf-list');
+ if(list){
+  list.innerHTML=SITE_UPDATES.map(u=>{
+   const isUn=!seen.has(u.id);
+   return`<div class="notif-item${isUn?' unread':''}"><div class="notif-title">${E(u.text)}</div><div class="notif-meta">${E(u.tag)}${isUn?' · Нове':''}</div></div>`;
+  }).join('');
+ }
 }
 
 /* ---------- Приємні звуки (Web Audio) ---------- */
@@ -592,6 +638,7 @@ try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 if(!Array.isArray(S))S=seed();
 const lsave=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},save=()=>{lsave();push()};
 if(migrate(S))lsave();
+renderNotifs();
 const OPEN=new Set(),OPENN=new Set(),LIM=6;
 const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);return{n:a.length,d:d.length,ap:a.filter(x=>x.a).length,h:f(a),dh:f(d)}};
 const fh=n=>Math.round(n*10)/10+' год',pc=o=>o.n?Math.round(o.d/o.n*100):0;
@@ -708,8 +755,16 @@ if(topBtn){
  addEventListener('scroll',()=>topBtn.classList.toggle('show',scrollY>360),{passive:true});
 }
 
-const togglePop=id=>{const el=$(id),open=el.hidden;$('bk').hidden=$('pf').hidden=true;if(open)el.hidden=false;return open};
-document.addEventListener('click',e=>{if(!e.target.closest('.top-acts'))$('bk').hidden=$('pf').hidden=true});
+const closeAllPops=()=>{if($('bk'))$('bk').hidden=true;if($('pf'))$('pf').hidden=true;if($('ntf-pop'))$('ntf-pop').hidden=true};
+const togglePop=id=>{const el=$(id),open=el.hidden;closeAllPops();if(open)el.hidden=false;return open};
+document.addEventListener('click',e=>{if(!e.target.closest('.top-acts'))closeAllPops()});
+$('ntf-btn').onclick=e=>{
+ e.stopPropagation();
+ if(togglePop('ntf-pop')){
+  writeSeenNotifs(SITE_UPDATES.map(u=>u.id));
+  renderNotifs();
+ }
+};
 $('bkb').onclick=e=>{e.stopPropagation();if(togglePop('bk')){$('bt').value=JSON.stringify(S,null,1);catSay('Роблю бекап? Правильно, раптом я випадково пройдусь по клавіатурі 🐾','happy',false)}};
 $('imp').onclick=()=>{try{const d=JSON.parse($('bt').value);if(!Array.isArray(d)||!d.every(s=>s&&s.name&&Array.isArray(s.tasks)))throw 0;
  S=d.map(s=>({id:s.id||uid(),name:String(s.name),color:/^#[0-9a-f]{6}$/i.test(s.color)?s.color:'#4f5bd5',tasks:s.tasks.map(t=>({id:t.id||uid(),t:String(t.t),h:+t.h||0,s:+t.s||0,a:!!t.a,n:String(t.n||'')})),ap:s.ap!==false,cov:1}));
