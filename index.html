@@ -1024,7 +1024,7 @@ $('out').onclick=async()=>{clearTimeout(tm);sharedOff();await sb.auth.signOut();
 const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасувати «Я замахався/лась»',RD='2026-12-04',WHO=['людина замахалась','людини замахались','людей замахались'];
 const GUEST_LOCK_MSG='Прогрес інших приховано, і вас не враховано, тому що ви не зареєстровані.';
 var ready=false;
-let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=true;
+let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,profSynced=false,grpOpen=true;
 let verOk=true,extColsOk=true,updatedAtColOk=true;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
 const getLocalNick=()=>me?(getNicks()[me]||'').trim():'';
@@ -1231,7 +1231,7 @@ async function loadShared(){
  if(b.error){
   const errMsg=b.error.message||'';
   if(updatedAtColOk&&/updated_at/i.test(errMsg))updatedAtColOk=false;
-  else if(extColsOk)extColsOk=false;
+  else if(extColsOk&&/avatar_|bio|last_seen|daily_log|column/i.test(errMsg))extColsOk=false;
   else if(verOk&&/ver|total/i.test(errMsg))verOk=false;
   const r2=await sb.from('profiles_public').select(buildPeopleCols()).eq('share',true);
   if(!r2.error)people=(r2.data||[]).map(p=>({...p,pct:effPct(p)}));
@@ -1248,7 +1248,7 @@ async function pushStats(force=false){
  const nowIso=new Date().toISOString();
  const row={user_id:me,share,pct:share?o.pct:0,done:share?o.pts:0,total:share?o.n:0,hours_done:share?o.dh:0,nick};
  if(verOk)row.ver=SHARED_MANDATORY_TASKS.length;
- if(extColsOk){
+ if(extColsOk&&profSynced){
   row.bio=share?pm.bio:'';
   row.avatar_icon=pm.icon;
   row.avatar_bg=pm.bg;
@@ -1259,12 +1259,13 @@ async function pushStats(force=false){
  if(!force&&k==lastS)return;
  lastS=k;
  let{error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'});
- if(error&&extColsOk){
+ if(error&&extColsOk&&/avatar_|bio|last_seen|daily_log|column/i.test(error.message||'')){
   extColsOk=false;
   delete row.bio;delete row.avatar_icon;delete row.avatar_bg;delete row.last_seen_at;delete row.daily_log;
   ({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}));
  }
  if(error&&verOk&&/ver/i.test(error.message||'')){verOk=false;delete row.ver;({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}))}
+ if(error)lastS='';
  if(!error){await loadShared()}
 }
 async function pingPresence(){
@@ -1275,7 +1276,12 @@ async function pingPresence(){
 }
 async function sharedInit(){
  if(migrate(S))lsave();
- const{data:p}=await sb.from('profiles_public').select('share,nick,bio,avatar_icon,avatar_bg,daily_log').eq('user_id',me).maybeSingle();
+ const{data:p,error:pErr}=await sb.from('profiles_public').select('share,nick,bio,avatar_icon,avatar_bg,daily_log').eq('user_id',me).maybeSingle();
+ if(pErr){
+  if(/avatar_|bio|last_seen|daily_log|column/i.test(pErr.message||''))extColsOk=false;
+  else{sy('Не вдалося завантажити профіль, повторюю…');setTimeout(()=>{if(me)sharedInit()},5000);return}
+ }
+ profSynced=!pErr;
  if(p){
   share=!!p.share;
   if(p.nick){
@@ -1312,7 +1318,7 @@ async function sharedInit(){
  pt=setInterval(loadShared,20000)}
 function sharedOff(){
  if(ch&&sb)sb.removeChannel(ch);
- ch=null;clearInterval(pt);pt=null;clearInterval(hbTimer);hbTimer=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
+ ch=null;clearInterval(pt);pt=null;clearInterval(hbTimer);hbTimer=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;profSynced=false;
  $('prof-btn').hidden=true;
  if($('st-priv-box'))$('st-priv-box').hidden=true}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready){pingPresence();pushStats(true);loadShared()}}});
