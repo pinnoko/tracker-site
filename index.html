@@ -491,7 +491,6 @@ li{flex-wrap:wrap}
 
 <script>
 const $=id=>document.getElementById(id),KEY='study-tracker-v1',NICK_KEY='study-tracker-nick',PROF_META_KEY='study-tracker-prof-meta-v1',CAT_KEY='study-tracker-aska-hide',TEAM_KEY='study-tracker-aska-team',SND_KEY='study-tracker-snd',WNT_KEY='study-tracker-winter-v2',TYLER_PHOTO_KEY='study-tracker-tyler-photo',NTF_SEEN_KEY='study-tracker-ntf-seen-v2',uid=()=>Math.random().toString(36).slice(2,9);
-const PROFILE_EPOCH_MS=Date.parse('2026-11-26T21:00:00Z');
 const E=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mk=(name,color,a)=>({id:uid(),name,color,tasks:a.map(x=>({id:uid(),t:x[0],h:x[1],s:x[2]}))});
 const PROJ_STICKERS_TASK='Підготувати стікери до друку і надіслати старості';
@@ -501,7 +500,8 @@ const GLOBAL_SUBJECTS=[
 ];
 const SHARED_MANDATORY_TASKS=[{subj:'проєктування',title:PROJ_STICKERS_TASK},...GLOBAL_SUBJECTS.flatMap(g=>g.tasks.map(t=>({subj:g.name.trim().toLowerCase(),title:t[0]})))];
 const SITE_UPDATES=[
- {id:'half-task-pct-2026-11-27',text:'Завдання в процесі («Наполовину») тепер дають половину відсотків і годин — рейтинг і загальний прогрес перераховуються відповідно.',tag:'Прогрес · Оновлено'},
+ {id:'activity-independent-2026-11-27',text:'Активність учасників («... тому» та історія за 7 днів) тепер бере реальний час останнього візиту з бази і не збивається після оновлень HTML.',tag:'Активність · Оновлено'},
+ {id:'half-task-pct-2026-11-27',text:'Завдання в процесі («Наполовину») дають половину відсотків і годин — рейтинг і загальний прогрес перераховуються відповідно.',tag:'Прогрес · Оновлено'},
  {id:'profiles-v1-2026-11-26',text:'Додано акаунти з профілем (ніком, описом, фоном та іконкою), останньою активністю, метриками закритих завдань за сьогодні/вчора/тиждень та переглядом профілів учасників.',tag:'Профілі · Нове'},
  {id:'maket-yonchi-2026-12-01',text:'Додалось 2 нових завдання в проєктуванні: «Зробити 1 макет Йончі» і «Зробити 2 макет Йончі».',tag:'Проєктування'},
  {id:'proj-stickers-2026-11-26',text:'Додалось нове завдання на проєктування: «Підготувати стікери до друку і надіслати старості».',tag:'Проєктування'},
@@ -611,17 +611,23 @@ function recordTaskCompletionDelta(delta){
  while(keys.length>45)delete log[keys.shift()];
  setMyProfMeta({dailyLog:log});
 }
-function hasMemberHistory(dailyLog,lastSeenIso){
+function resolveActivityIso(lastSeenIso,updatedAtIso){
+ const raw=lastSeenIso||updatedAtIso||'';
+ if(!raw)return'';
+ const ts=new Date(raw).getTime();
+ return Number.isFinite(ts)?new Date(ts).toISOString():'';
+}
+function hasMemberHistory(dailyLog,lastSeenIso,updatedAtIso){
  const hasLog=!!(dailyLog&&typeof dailyLog==='object'&&Object.keys(dailyLog).length>0);
- const seenTs=lastSeenIso?new Date(lastSeenIso).getTime():NaN;
- const hasSeen=Number.isFinite(seenTs)&&seenTs>=PROFILE_EPOCH_MS;
- return hasLog||hasSeen;
+ return hasLog||!!resolveActivityIso(lastSeenIso,updatedAtIso);
 }
 function computePeriodCounts(dailyLog,hasHistory=true){
  if(!hasHistory)return{today:0,yesterday:'—',week:'—'};
  const map=(dailyLog&&typeof dailyLog==='object')?dailyLog:{};
  const todayK=localDayKey();
  const yestK=shiftDayKey(todayK,-1);
+ const hasAnyLog=Object.keys(map).length>0;
+ if(!hasAnyLog)return{today:0,yesterday:'—',week:'—'};
  let week=0;
  for(let i=0;i<7;i++){
   week+=Math.max(0,Number(map[shiftDayKey(todayK,-i)])||0);
@@ -632,16 +638,16 @@ function computePeriodCounts(dailyLog,hasHistory=true){
   week
  };
 }
-function formatLastSeen(iso){
+function formatLastSeen(lastSeenIso,updatedAtIso){
+ const iso=resolveActivityIso(lastSeenIso,updatedAtIso);
  if(!iso)return'Невідомо';
  const ts=new Date(iso).getTime();
- if(!Number.isFinite(ts)||ts<PROFILE_EPOCH_MS)return'Невідомо';
  const diffSec=Math.max(0,Math.floor((Date.now()-ts)/1000));
- if(diffSec<45)return'Щойно в мережі';
+ if(diffSec<60)return'Щойно в мережі';
  const mins=Math.floor(diffSec/60);
  if(mins<60)return`${mins} хв тому`;
  const hrs=Math.floor(mins/60);
- if(hrs<24)return`${hrs} год тому`;
+ if(hrs<24)return`${hrs} ${pl(hrs,['год','год','год'])} тому`;
  const days=Math.floor(hrs/24);
  if(days===1)return'Вчора';
  return`${days} дн. тому`;
@@ -980,7 +986,7 @@ $('psv').onclick=async()=>{
 };
 render();
 const SB_URL='https://aqmsegyosohowvqwuawy.supabase.co',SB_KEY='sb_publishable_J5BB3OJdQBZLXsD98FFomA_6sRpgldI';
-let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false;
+let sb=null,me=null,acc='',stamp=null,tm=null,dirty=false,hbTimer=null;
 const sy=t=>{$('sy').textContent=(acc?acc+' · ':'')+t};
 const showAu=on=>{$('au').hidden=!on};
 function push(){if(!sb||!me)return;dirty=true;clearTimeout(tm);sy('Збереження…');tm=setTimeout(()=>pushNow(0),400)}
@@ -1019,7 +1025,7 @@ const TIRED_LABEL='Я замахався/лась',TIRED_UNDO='Скасуват�
 const GUEST_LOCK_MSG='Прогрес інших приховано, і вас не враховано, тому що ви не зареєстровані.';
 var ready=false;
 let share=true,people=[],tiredRows=[],cfgS={},ch=null,gt=null,pt=null,lastS='',profReady=false,grpOpen=true;
-let verOk=true,extColsOk=true;
+let verOk=true,extColsOk=true,updatedAtColOk=true;
 const getNicks=()=>{try{return JSON.parse(localStorage.getItem(NICK_KEY))||{}}catch(e){return{}}};
 const getLocalNick=()=>me?(getNicks()[me]||'').trim():'';
 const setLocalNick=v=>{if(!me)return;const m=getNicks(),t=String(v||'').trim().slice(0,28);if(t)m[me]=t;else delete m[me];try{localStorage.setItem(NICK_KEY,JSON.stringify(m))}catch(e){}};
@@ -1093,11 +1099,13 @@ function gtile(){
    avatar_icon:p.avatar_icon||'🐱',
    avatar_bg:p.avatar_bg||AVATAR_BGS[0],
    last_seen_at:p.last_seen_at||'',
+   updated_at:p.updated_at||'',
    daily_log:p.daily_log||{}
   });
  });
  if(share){
   const prevMe=mergedMap.get(String(me));
+  const nowIso=new Date().toISOString();
   mergedMap.set(String(me),{
    user_id:me,
    pct:mySnap.pct,
@@ -1107,9 +1115,11 @@ function gtile(){
    bio:myMeta.bio,
    avatar_icon:myMeta.icon,
    avatar_bg:myMeta.bg,
-   last_seen_at:new Date().toISOString(),
+   last_seen_at:(prevMe&&prevMe.last_seen_at)||nowIso,
+   updated_at:(prevMe&&prevMe.updated_at)||nowIso,
    daily_log:myMeta.dailyLog,
-   _periods:myPeriods
+   _periods:myPeriods,
+   _isSelfNow:true
   });
  }else{
   mergedMap.delete(String(me));
@@ -1124,9 +1134,9 @@ function gtile(){
   const v=p.pct;
   const pubNick=stripTeamTag(p.nick);
   const label=isMe?(myNick?`Ви (${myNick})`:'Ви (Анонімний котик)'):(pubNick||'Анонімний котик');
-  const hasHist=isMe?true:hasMemberHistory(p.daily_log,p.last_seen_at);
+  const hasHist=isMe?true:hasMemberHistory(p.daily_log,p.last_seen_at,p.updated_at);
   const per=p._periods||computePeriodCounts(p.daily_log,hasHist);
-  const actTxt=isMe?'Щойно в мережі':formatLastSeen(p.last_seen_at);
+  const actTxt=isMe?'Щойно в мережі':formatLastSeen(p.last_seen_at,p.updated_at);
   return`<div class="grp-row${isMe?' me':''}" data-uid="${E(p.user_id)}" title="Відкрити профіль">${renderBadge(p.avatar_icon,p.avatar_bg,'av-sm')}<span class="rk">#${i+1}</span><span class="who-wrap"><span class="who${!pubNick&&!isMe?' anon':''}">${E(label)}</span><span class="sub-act">${E(actTxt)} · тиждень: ${per.week}</span></span><span class="pct">${v}%</span></div>`;
  }).join('');
  const foot=!share?'<p class="guest-note">Вас не враховано (див. «Налаштування → Приватність»).</p>':'';
@@ -1206,24 +1216,26 @@ const effPct=p=>{
  const T=total+missing;
  return T?Math.min(100,Math.round(pts/T*100)):0;
 };
+function buildPeopleCols(){
+ const base=verOk?'user_id,pct,done,total,ver,nick':'user_id,pct,done,nick';
+ const ext=extColsOk?`${base},bio,avatar_icon,avatar_bg,last_seen_at,daily_log`:base;
+ return updatedAtColOk?`${ext},updated_at`:ext;
+}
 async function loadShared(){
  if(!sb||!me)return;
- const fullCols='user_id,pct,done,total,hours_done,ver,nick,bio,avatar_icon,avatar_bg,last_seen_at,daily_log';
- const baseCols=verOk?'user_id,pct,done,total,ver,nick':'user_id,pct,done,nick';
  const[a,b,c]=await Promise.all([
   sb.from('settings').select('key,value'),
-  sb.from('profiles_public').select(extColsOk?fullCols:baseCols).eq('share',true),
+  sb.from('profiles_public').select(buildPeopleCols()).eq('share',true),
   sb.from('tired').select('id,user_id,subject,created_at').order('created_at',{ascending:false}).limit(2000)]);
  if(!a.error)cfgS=Object.fromEntries(a.data.map(r=>[r.key,r.value]));
- if(b.error&&extColsOk){
-  extColsOk=false;
-  const r2=await sb.from('profiles_public').select(baseCols).eq('share',true);
+ if(b.error){
+  const errMsg=b.error.message||'';
+  if(updatedAtColOk&&/updated_at/i.test(errMsg))updatedAtColOk=false;
+  else if(extColsOk)extColsOk=false;
+  else if(verOk&&/ver|total/i.test(errMsg))verOk=false;
+  const r2=await sb.from('profiles_public').select(buildPeopleCols()).eq('share',true);
   if(!r2.error)people=(r2.data||[]).map(p=>({...p,pct:effPct(p)}));
- }else if(b.error&&verOk&&/ver|total/i.test(b.error.message||'')){
-  verOk=false;
-  const r3=await sb.from('profiles_public').select('user_id,pct,done,nick').eq('share',true);
-  if(!r3.error)people=r3.data||[];
- }else if(!b.error){
+ }else{
   people=(b.data||[]).map(p=>({...p,pct:effPct(p)}));
  }
  if(!c.error)tiredRows=c.data||[];
@@ -1233,13 +1245,14 @@ const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,250)};
 async function pushStats(force=false){
  if(!sb||!me||!profReady)return;
  const o=sharedStatsSnapshot(S),nick=formatNickWithTeam(getLocalNick(),askaTeam),pm=getMyProfMeta();
+ const nowIso=new Date().toISOString();
  const row={user_id:me,share,pct:share?o.pct:0,done:share?o.pts:0,total:share?o.n:0,hours_done:share?o.dh:0,nick};
  if(verOk)row.ver=SHARED_MANDATORY_TASKS.length;
  if(extColsOk){
   row.bio=share?pm.bio:'';
   row.avatar_icon=pm.icon;
   row.avatar_bg=pm.bg;
-  row.last_seen_at=new Date().toISOString();
+  row.last_seen_at=nowIso;
   row.daily_log=share?pm.dailyLog:{};
  }
  const k=JSON.stringify({...row,last_seen_at:undefined});
@@ -1253,6 +1266,12 @@ async function pushStats(force=false){
  }
  if(error&&verOk&&/ver/i.test(error.message||'')){verOk=false;delete row.ver;({error}=await sb.from('profiles_public').upsert(row,{onConflict:'user_id'}))}
  if(!error){await loadShared()}
+}
+async function pingPresence(){
+ if(!sb||!me||!profReady||document.hidden||!extColsOk)return;
+ try{
+  await sb.from('profiles_public').update({last_seen_at:new Date().toISOString()}).eq('user_id',me);
+ }catch(e){}
 }
 async function sharedInit(){
  if(migrate(S))lsave();
@@ -1287,14 +1306,16 @@ async function sharedInit(){
  await pushStats(true);
  await loadShared();
  render();
+ clearInterval(hbTimer);
+ hbTimer=setInterval(pingPresence,60000);
  ch=sb.channel('shared').on('postgres_changes',{event:'*',schema:'public',table:'profiles_public'},lq).on('postgres_changes',{event:'*',schema:'public',table:'tired'},lq).on('postgres_changes',{event:'*',schema:'public',table:'settings'},lq).subscribe();
  pt=setInterval(loadShared,20000)}
 function sharedOff(){
  if(ch&&sb)sb.removeChannel(ch);
- ch=null;clearInterval(pt);pt=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
+ ch=null;clearInterval(pt);pt=null;clearInterval(hbTimer);hbTimer=null;people=[];tiredRows=[];share=true;lastS='';profReady=false;
  $('prof-btn').hidden=true;
  if($('st-priv-box'))$('st-priv-box').hidden=true}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready){pushStats(true);loadShared()}}});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){pull();if(me&&ready){pingPresence();pushStats(true);loadShared()}}});
 
 /* ---------- Конфеті ---------- */
 let cv=null;
@@ -1962,7 +1983,7 @@ function openMemberProfile(targetUid){
  const nameClean=stripTeamTag(p.nick)||'Анонімний котик';
  const tag=parseTeamTag(p.nick);
  const teamTxt=tag==='smol'?'Смоленятко':tag==='rom'?'Романятко':'Обидва';
- const hasHist=hasMemberHistory(p.daily_log,p.last_seen_at);
+ const hasHist=hasMemberHistory(p.daily_log,p.last_seen_at,p.updated_at);
  const per=computePeriodCounts(p.daily_log,hasHist);
  const pctVal=Math.min(100,Math.max(0,Math.round(Number(p.pct)||0)));
 
@@ -1970,7 +1991,7 @@ function openMemberProfile(targetUid){
    ${renderBadge(p.avatar_icon,p.avatar_bg,'av-lg')}
    <div>
     <h3 class="prof-name">${esc(nameClean)}</h3>
-    <div class="prof-meta">${esc(formatLastSeen(p.last_seen_at))} · Команда: ${esc(teamTxt)}</div>
+    <div class="prof-meta">${esc(formatLastSeen(p.last_seen_at,p.updated_at))} · Команда: ${esc(teamTxt)}</div>
    </div>
   </div>
   <div class="prof-bio">${p.bio?esc(p.bio):'<span class="mu">Користувач ще не додав опис профілю.</span>'}</div>
