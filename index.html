@@ -501,6 +501,7 @@ const GLOBAL_SUBJECTS=[
 ];
 const SHARED_MANDATORY_TASKS=[{subj:'проєктування',title:PROJ_STICKERS_TASK},...GLOBAL_SUBJECTS.flatMap(g=>g.tasks.map(t=>({subj:g.name.trim().toLowerCase(),title:t[0]})))];
 const SITE_UPDATES=[
+ {id:'half-task-pct-2026-11-27',text:'Завдання в процесі («Наполовину») тепер дають половину відсотків і годин — рейтинг і загальний прогрес перераховуються відповідно.',tag:'Прогрес · Оновлено'},
  {id:'profiles-v1-2026-11-26',text:'Додано акаунти з профілем (ніком, описом, фоном та іконкою), останньою активністю, метриками закритих завдань за сьогодні/вчора/тиждень та переглядом профілів учасників.',tag:'Профілі · Нове'},
  {id:'maket-yonchi-2026-12-01',text:'Додалось 2 нових завдання в проєктуванні: «Зробити 1 макет Йончі» і «Зробити 2 макет Йончі».',tag:'Проєктування'},
  {id:'proj-stickers-2026-11-26',text:'Додалось нове завдання на проєктування: «Підготувати стікери до друку і надіслати старості».',tag:'Проєктування'},
@@ -646,7 +647,7 @@ function formatLastSeen(iso){
  return`${days} дн. тому`;
 }
 
-/* ---------- Вирівняний підрахунок для групової статистики ---------- */
+/* ---------- Вирівняний підрахунок для групової статистики (s=1 дає 0.5, s=2 дає 1) ---------- */
 function sharedStatsSnapshot(arr){
  const safeArr=Array.isArray(arr)?arr:[];
  const base=st(safeArr.flatMap(s=>Array.isArray(s&&s.tasks)?s.tasks:[]));
@@ -657,9 +658,11 @@ function sharedStatsSnapshot(arr){
   if(!found)extraTotal+=1;
  });
  const total=base.n+extraTotal;
+ const pts=Math.round(base.pts*10)/10;
  const done=base.d;
- const pct=total?Math.round(done/total*100):0;
- return{n:total,d:done,pct,dh:base.dh};
+ const wip=base.wip;
+ const pct=total?Math.round(pts/total*100):0;
+ return{n:total,d:done,wip,pts,pct,dh:base.dh};
 }
 
 /* ---------- Сповіщення про оновлення сайту ---------- */
@@ -786,14 +789,34 @@ const lsave=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}},sav
 if(migrate(S))lsave();
 renderNotifs();
 const OPEN=new Set(),OPENN=new Set(),LIM=6;
-const st=a=>{const d=a.filter(x=>x.s==2),f=l=>l.reduce((p,x)=>p+(+x.h||0),0);return{n:a.length,d:d.length,ap:a.filter(x=>x.a).length,h:f(a),dh:f(d)}};
-const fh=n=>Math.round(n*10)/10+' год',pc=o=>o.n?Math.round(o.d/o.n*100):0;
-const mt=(o,s)=>`<span>${o.d} з ${o.n} завдань${o.n?` · ${pc(o)}%`:''}${s&&s.ap!==false&&o.n?`, затверджено ${o.ap}`:''}</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
+
+/* Почате завдання (s == 1) дає 0.5, виконане (s == 2) — 1 */
+const taskWeight=x=>x&&x.s==2?1:x&&x.s==1?0.5:0;
+const st=a=>{
+ const d=a.filter(x=>x.s==2),wip=a.filter(x=>x.s==1);
+ const pts=Math.round(a.reduce((p,x)=>p+taskWeight(x),0)*10)/10;
+ const dh=Math.round(a.reduce((p,x)=>p+(+x.h||0)*taskWeight(x),0)*10)/10;
+ const h=Math.round(a.reduce((p,x)=>p+(+x.h||0),0)*10)/10;
+ return{n:a.length,d:d.length,wip:wip.length,pts,ap:a.filter(x=>x.a).length,h,dh};
+};
+const fh=n=>Math.round(n*10)/10+' год';
+const fpts=n=>{const r=Math.round(n*10)/10;return Number.isInteger(r)?String(r):r.toFixed(1).replace('.',',')};
+const pc=o=>o.n?Math.min(100,Math.round(o.pts/o.n*100)):0;
+const mt=(o,s)=>{
+ const wipTxt=o.wip?` · в процесі ${o.wip}`:'';
+ return`<span>${o.d} з ${o.n} завд.${wipTxt}${o.n?` · ${pc(o)}%`:''}${s&&s.ap!==false&&o.n?`, затверджено ${o.ap}`:''}</span><span>${fh(o.dh)} з ${fh(o.h)}</span>`;
+};
 const tb=(s,ap)=>`<div class="tb">${s.tasks.length?'<button class="tl" data-act="all">Відмітити все</button><button class="tl" data-act="none">Зняти все</button>':''}<label class="sw"><input type="checkbox" data-f="ap"${ap?' checked':''}>Затвердження</label></div>`;
-const sum=()=>{ready&&grp();const o=sharedStatsSnapshot(S);lastPctSeen=o.pct;$('sum').innerHTML=`<div class="tile"><div class="tile-top"><small>Мій прогрес</small></div><div class="stat-row"><b>${o.pct}%</b></div><div class="pb" style="margin-top:10px"><i style="width:${o.pct}%"></i></div></div><div class="tile"><div class="tile-top"><small>Виконано завдань</small></div><div class="stat-row"><b>${o.d}</b><span class="mu">з ${o.n}</span></div></div><div class="tile"><div class="tile-top"><small>Годин виконано</small></div><div class="stat-row"><b>${fh(o.dh)}</b></div></div><div class="tile"><div class="tile-top"><small>Годин залишилось</small></div><div class="stat-row"><b>${fh(st(S.flatMap(s=>s.tasks)).h-o.dh)}</b></div></div>`};
+const sum=()=>{
+ ready&&grp();
+ const o=sharedStatsSnapshot(S);
+ lastPctSeen=o.pct;
+ const totH=st(S.flatMap(s=>s.tasks)).h;
+ $('sum').innerHTML=`<div class="tile"><div class="tile-top"><small>Мій прогрес</small></div><div class="stat-row"><b>${o.pct}%</b><span class="mu">${fpts(o.pts)} з ${o.n}</span></div><div class="pb" style="margin-top:10px"><i style="width:${o.pct}%"></i></div></div><div class="tile"><div class="tile-top"><small>Виконано завдань</small></div><div class="stat-row"><b>${o.d}</b><span class="mu">з ${o.n}${o.wip?` (${o.wip} наполовину)`:''}</span></div></div><div class="tile"><div class="tile-top"><small>Годин виконано</small></div><div class="stat-row"><b>${fh(o.dh)}</b></div></div><div class="tile"><div class="tile-top"><small>Годин залишилось</small></div><div class="stat-row"><b>${fh(Math.max(0,totH-o.dh))}</b></div></div>`;
+};
 const PAL=['#eda53a','#4a6cf0','#1fb5a3','#4cb85a','#e86aa0','#8a63dc','#29a6dc','#e5584a'];
 const addCard=()=>`<section class="card"><div class="add" style="border:0;padding:16px"><input placeholder="Назва нового предмета"><input type="color" class="clr" value="${PAL[S.length%PAL.length]}" title="Колір"><button class="btn p" data-act="adds">Додати предмет</button></div></section>`;
-const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false,done=s.tasks.length>0&&s.tasks.every(t=>t.s==2);return`<section class="card${done?' x-done':''}" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
+const card=(s,ts)=>{const o=st(s.tasks),flt=q||fl!='all',op=OPEN.has(s.id)||flt,vis=op?ts:ts.slice(0,LIM),ap=s.ap!==false,done=s.tasks.length>0&&s.tasks.every(t=>t.s==2);return`<section class="card${done?' x-done':''}" data-sid="${s.id}" style="--c:${s.color}"><div class="ch"><span class="gh" data-drag="sub" tabindex="0" role="button" aria-label="Перетягнути предмет або натиснути стрілки вгору чи вниз" title="Перетягнути предмет"></span><input type="color" class="clr" value="${s.color}" data-f="color" title="Колір предмета"><input class="nm" value="${E(s.name)}" data-f="name" aria-label="Назва предмета"><button class="ib" data-act="delsub" title="Видалити предмет">Видалити</button></div><div class="meta">${mt(o,s)}</div><div class="pb"><i style="width:${pc(o)}%"></i></div>${tb(s,ap)}<ul>${vis.map(t=>`<li class="s${t.s}" data-tid="${t.id}"><span class="gh" data-drag="task" tabindex="0" role="button" aria-label="Перетягнути завдання або натиснути стрілки вгору чи вниз" title="Перетягнути завдання"></span><button class="st" data-act="st" title="Змінити статус (0 → 0.5 → 1)" aria-label="Змінити статус"></button><span class="nw"><input class="tn" value="${E(t.t)}" data-f="t" aria-label="Завдання"><button class="nb${t.n?' has':''}" data-act="note" title="Нотатка" aria-label="Нотатка">✎</button></span><label class="hr"><input type="number" min="0" step="0.5" placeholder="—" value="${t.h||''}" data-f="h" aria-label="Години">год</label><button class="ib" data-act="delt" title="Видалити завдання" aria-label="Видалити завдання">✕</button>${ap?`<div class="al"><button class="ap${t.a?' on':''}" data-act="ap" title="Натисніть, щоб змінити">${t.a?'✓ Затверджено':'Не затверджено'}</button></div>`:''}${OPENN.has(t.id)?`<div class="nt"><textarea rows="2" data-f="n" placeholder="Нотатка до завдання" aria-label="Нотатка">${E(t.n||'')}</textarea></div>`:''}</li>`).join('')||'<li class="empty">Завдань ще немає. Додайте перше нижче.</li>'}</ul>${ts.length>LIM&&!flt?`<button class="more" data-act="more">${op?'Згорнути':'Показати ще '+(ts.length-LIM)}</button>`:''}<div class="add"><input placeholder="Нове завдання"><input type="number" min="0" step="0.5" placeholder="год"><button class="btn p" data-act="addt">Додати</button></div>${trow(s)}</section>`};
 function render(){S=[...S.filter(s=>s.tasks.length),...S.filter(s=>!s.tasks.length)];sum();const f=q.toLowerCase();$('grid').innerHTML=S.map(s=>{const ts=s.tasks.filter(t=>(fl=='all'||t.s==fl)&&(!f||t.t.toLowerCase().includes(f)||s.name.toLowerCase().includes(f)));return(f||fl!='all')&&!ts.length?'':card(s,ts)}).join('')+addCard()}
 const upd=(sc,s)=>{const o=st(s.tasks);sc.querySelector('.meta').innerHTML=mt(o,s);sc.querySelector('.pb i').style.width=pc(o)+'%';sc.style.setProperty('--c',s.color);sc.classList.toggle('x-done',!!(s.tasks.length&&s.tasks.every(t=>t.s==2)))};
 const G=$('grid');
@@ -802,14 +825,14 @@ G.addEventListener('click',e=>{
  const sc=b.closest('[data-sid]'),s=sc&&S.find(x=>x.id==sc.dataset.sid),li=b.closest('[data-tid]'),t=li&&s.tasks.find(x=>x.id==li.dataset.tid),a=b.dataset.act;
  if(a=='st'){
   const prevDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
-  const wasDone=t.s==2;
+  const prevW=taskWeight(t);
   t.s=(t.s+1)%3;
-  const nowDone=t.s==2;
-  if(!wasDone&&nowDone)recordTaskCompletionDelta(1);
-  else if(wasDone&&!nowDone)recordTaskCompletionDelta(-1);
+  const nextW=taskWeight(t);
+  const delta=Math.round((nextW-prevW)*10)/10;
+  if(delta)recordTaskCompletionDelta(delta);
   const subjNowDone=s.tasks.length>0&&s.tasks.every(x=>x.s==2);
   if(subjNowDone&&!prevDone){sfx.done();catSubjectDone(s)}
-  else if(nowDone){sfx.done();catTaskDone(s,t)}
+  else if(t.s==2){sfx.done();catTaskDone(s,t)}
   else if(t.s==1){sfx.wip();catPick(ASKA_WIP,'happy',false)}
   else{sfx.reset();catPick(ASKA_RESET,'sad',false)}
  }
@@ -820,27 +843,28 @@ G.addEventListener('click',e=>{
  }
  else if(a=='tired'){tiredBtn(s);return}
  else if(a=='all'){
-  const addCnt=s.tasks.filter(x=>x.s!=2).length;
+  const addPts=s.tasks.reduce((acc,x)=>acc+(1-taskWeight(x)),0);
   s.tasks.forEach(x=>x.s=2);
-  if(addCnt)recordTaskCompletionDelta(addCnt);
+  if(addPts)recordTaskCompletionDelta(Math.round(addPts*10)/10);
   sfx.done();catSubjectDone(s)
  }
  else if(a=='none'){
-  const remCnt=s.tasks.filter(x=>x.s==2).length;
+  const remPts=s.tasks.reduce((acc,x)=>acc+taskWeight(x),0);
   s.tasks.forEach(x=>x.s=0);
-  if(remCnt)recordTaskCompletionDelta(-remCnt);
+  if(remPts)recordTaskCompletionDelta(-Math.round(remPts*10)/10);
   sfx.reset();catPick(ASKA_RESET,'sad',false)
  }
  else if(a=='note'){OPENN.has(t.id)?OPENN.delete(t.id):OPENN.add(t.id);render();const n=G.querySelector(`[data-tid="${t.id}"] textarea`);n&&n.focus();return}
  else if(a=='more'){OPEN.has(s.id)?OPEN.delete(s.id):OPEN.add(s.id);render();return}
  else if(a=='delt'){
-  if(t.s==2)recordTaskCompletionDelta(-1);
+  const w=taskWeight(t);
+  if(w)recordTaskCompletionDelta(-Math.round(w*10)/10);
   s.tasks=s.tasks.filter(x=>x!=t);sfx.reset();catPick(ASKA_DEL,'happy',false)
  }
  else if(a=='delsub'){
   if(pend!=s.id){pend=s.id;b.textContent='Точно видалити?';b.classList.add('arm');catSay('Ой-ой, точно видалити? Хвіст аж сіпнувся 🙀','sad',false);setTimeout(()=>{if(pend==s.id){pend=null;b.textContent='Видалити';b.classList.remove('arm')}},3000);return}
-  const remCnt=s.tasks.filter(x=>x.s==2).length;
-  if(remCnt)recordTaskCompletionDelta(-remCnt);
+  const remPts=s.tasks.reduce((acc,x)=>acc+taskWeight(x),0);
+  if(remPts)recordTaskCompletionDelta(-Math.round(remPts*10)/10);
   S=S.filter(x=>x!=s);pend=null;catSay('Мінус цілий предмет зі списку. Дихається легше? 🐾','happy',false)}
  else if(a=='addt'){
   const i=sc.querySelectorAll('.add input'),v=i[0].value.trim();if(!v){i[0].focus();return}
@@ -1077,7 +1101,7 @@ function gtile(){
   mergedMap.set(String(me),{
    user_id:me,
    pct:mySnap.pct,
-   done:mySnap.d,
+   done:mySnap.pts,
    hours_done:mySnap.dh,
    nick:prevMe&&prevMe.nick?prevMe.nick:formatNickWithTeam(getLocalNick(),askaTeam),
    bio:myMeta.bio,
@@ -1091,8 +1115,8 @@ function gtile(){
   mergedMap.delete(String(me));
  }
  const list=[...mergedMap.values()]
-  .map(p=>({...p,pct:Math.min(100,Math.max(0,Math.round(String(p.user_id)==String(me)?mySnap.pct:(Number(p.pct)||0))))}))
-  .sort((a,b)=>b.pct-a.pct);
+  .map(p=>({...p,pct:Math.min(100,Math.max(0,Math.round(String(p.user_id)==String(me)?mySnap.pct:(Number(p.pct)||0)))),done:String(p.user_id)==String(me)?mySnap.pts:(Number(p.done)||0)}))
+  .sort((a,b)=>(b.pct-a.pct)||(b.done-a.done));
  const active=list.filter(p=>p.pct>0);
  const n=active.length,avg=n?Math.round(active.reduce((x,p)=>x+p.pct,0)/n):0;
  const rows=active.map((p,i)=>{
@@ -1176,11 +1200,11 @@ async function tiredBtn(s){
  if(!tiredRows.some(r=>r.id==data.id))tiredRows.unshift(data);
  toast('Записано, ви не самі');catPick(ASKA_TIRED,'sad',false);refreshShared()}
 const effPct=p=>{
- const total=Number(p.total)||0,done=Number(p.done)||0;
+ const total=Number(p.total)||0,pts=Number(p.done)||0;
  const ver=p.ver==null?0:(Number(p.ver)||0);
  const missing=Math.max(0,SHARED_MANDATORY_TASKS.length-ver);
  const T=total+missing;
- return T?Math.min(100,Math.round(done/T*100)):0;
+ return T?Math.min(100,Math.round(pts/T*100)):0;
 };
 async function loadShared(){
  if(!sb||!me)return;
@@ -1209,7 +1233,7 @@ const lq=()=>{clearTimeout(gt);gt=setTimeout(loadShared,250)};
 async function pushStats(force=false){
  if(!sb||!me||!profReady)return;
  const o=sharedStatsSnapshot(S),nick=formatNickWithTeam(getLocalNick(),askaTeam),pm=getMyProfMeta();
- const row={user_id:me,share,pct:share?o.pct:0,done:share?o.d:0,total:share?o.n:0,hours_done:share?o.dh:0,nick};
+ const row={user_id:me,share,pct:share?o.pct:0,done:share?o.pts:0,total:share?o.n:0,hours_done:share?o.dh:0,nick};
  if(verOk)row.ver=SHARED_MANDATORY_TASKS.length;
  if(extColsOk){
   row.bio=share?pm.bio:'';
@@ -1357,7 +1381,7 @@ function ovmTaskDoneLines(){
  ];
  const b=whoSmolRom();
  return[
-  `Плюс один пункт по ОВМ. Смоленятко чи Романятко — ${b} би оцінили штрих 🎨`,
+  `Плюс один пункт по ОВМ. Смоленятко чи Романко — ${b} би оцінили штрих 🎨`,
   `${b} глянули б на екран і підколупнули по-доброму 😼`,
   'ОВМ рухається! Не дай фарбам і олівцю засумувати.'
  ];
@@ -1375,11 +1399,11 @@ function catTaskDone(s,t){
  catPick(pool,'happy',true);
 }
 const ASKA_WIP=[
- 'О, розпочато! Дивись не засни над екраном 👀',
- 'В процесі — це вже краще, ніж у планах на колись.',
- 'Рух пішов! Головне не застрягти в деталях на три години.',
+ 'О, розпочато! Вже півсправи зафіксовано — дивись не засни над екраном 👀',
+ 'В процесі — це вже половина відсотків і точно краще, ніж у планах на колись.',
+ 'Рух пішов! Півкруга вже рахується в прогресі, але дожимай до кінця 🌗',
  'Є старт. Я поглядаю одним оком 😸',
- 'Півкруга — вже не нуль. Дожимай 🌗'
+ 'Наполовину — вже не нуль. Продовжуй у тому ж дусі 🐾'
 ];
 const ASKA_RESET=[
  'Галочку знято. Передумали чи перевіряємо нерви кота? 😼',
@@ -1473,11 +1497,11 @@ function catSubjectDone(s){
  catPick(ASKA_BLOCK_OTHER,'happy',true);
 }
 function catStatusLine(){
- const o=sharedStatsSnapshot(S),p=o.pct,left=o.n-o.d,hrs=Math.max(0,st(S.flatMap(s=>s.tasks)).h-o.dh);
+ const o=sharedStatsSnapshot(S),p=o.pct,left=Math.max(0,Math.round((o.n-o.pts)*10)/10),hrs=Math.max(0,st(S.flatMap(s=>s.tasks)).h-o.dh);
  const a=new Date((cfgS.review_date||RD)+'T00:00:00'),n=new Date();n.setHours(0,0,0,0);
- const k=Math.round((a-n)/864e5),dd=k+' '+pl(k,['день','дні','днів']),lf=left+' '+pl(left,['завдання','завдання','завдань']);
+ const k=Math.round((a-n)/864e5),dd=k+' '+pl(k,['день','дні','днів']),lf=fpts(left)+' '+pl(Math.ceil(left),['завдання','завдання','завдань']);
  if(!o.n)return'Список порожній. Підозріло спокійно... додай хоч одне завдання 🐾';
- if(!left)return'Усе виконано! Можна з чистою совістю лягти на клавіатуру 🏆';
+ if(left<=0)return'Усе виконано! Можна з чистою совістю лягти на клавіатуру 🏆';
  if(isNaN(k))return`Готово ${p}%, лишилось ${lf}. Рухаємось 🐾`;
  if(k<0)return'Перегляд позаду. Тепер можна видихнути й помуркотіти 🐾';
  if(k==0)return'Сьогодні перегляд! Дихай, вивішуй роботи й не гризи нігті від хвилювання 🎨';
@@ -1889,7 +1913,7 @@ function openMyProfileEditor(){
     <button type="button" class="btn${selTeam==='both'?' p':''}" data-pt="both">Обидва</button>
    </div>
   </div>
-  <div class="prof-meta" style="margin-top:10px">Прогрес: ${snap.pct}% (${snap.d} з ${snap.n}) · Остання активність: щойно в мережі</div>
+  <div class="prof-meta" style="margin-top:10px">Прогрес: ${snap.pct}% (${fpts(snap.pts)} з ${snap.n}) · Остання активність: щойно в мережі</div>
   <div class="y-row">
    <button class="btn p" id="pf-save-btn" type="button">Зберегти профіль</button>
   </div>`);
@@ -1955,7 +1979,7 @@ function openMemberProfile(targetUid){
    <div class="prof-m"><small>Закрито вчора</small><b>${per.yesterday}</b></div>
    <div class="prof-m"><small>За останні 7 днів</small><b>${per.week}</b></div>
   </div>
-  <div class="prof-meta">Загальний прогрес: <strong>${pctVal}%</strong>${p.done!=null?` · Виконано завдань: <strong>${Number(p.done)||0}</strong>`:''}${Number(p.hours_done)>0?` · Годин: <strong>${Math.round(Number(p.hours_done)*10)/10} год</strong>`:''}</div>`);
+  <div class="prof-meta">Загальний прогрес: <strong>${pctVal}%</strong>${p.done!=null?` · Виконано (з урахуванням 0.5 за початі): <strong>${fpts(Number(p.done)||0)}</strong>`:''}${Number(p.hours_done)>0?` · Годин: <strong>${Math.round(Number(p.hours_done)*10)/10} год</strong>`:''}</div>`);
 }
 window.openMemberProfile=openMemberProfile;
 const profBtn=$('prof-btn');
@@ -2097,7 +2121,7 @@ function remoteDoneCount(){
  return 0;
 }
 function ensureBaseline(l){
- const today=mid(new Date()),tk=dk(today),o=st(all()),doneNow=Math.max(o.d,remoteDoneCount()),remNow=Math.max(0,o.n-o.d);
+ const today=mid(new Date()),tk=dk(today),o=st(all()),doneNow=Math.max(o.pts,remoteDoneCount()),remNow=Math.max(0,o.n-o.pts);
  const totalLoggedDone=Object.values(l).reduce((s,x)=>s+(+(x&&x.d)||0),0);
  let seeded=false;
  try{seeded=localStorage.getItem(BK_SEED)==='1'}catch(e){}
@@ -2115,8 +2139,8 @@ function ensureBaseline(l){
 }
 function snap(delta){
  const l=logGet(),changedBase=ensureBaseline(l),k=dk(new Date()),o=st(all()),e=l[k]=l[k]||{d:0};
- if(delta)e.d=Math.max(0,(e.d||0)+delta);
- e.rem=o.n-o.d;e.n=o.n;e.p=pc(o);e.h=o.dh;
+ if(delta)e.d=Math.max(0,Math.round(((e.d||0)+delta)*10)/10);
+ e.rem=Math.max(0,Math.round((o.n-o.pts)*10)/10);e.n=o.n;e.p=pc(o);e.h=o.dh;
  const ks=Object.keys(l).sort();while(ks.length>120)delete l[ks.shift()];
  if(delta||changedBase||!l[k].rem)logSet(l);
  else{l[k]=e;logSet(l)}
@@ -2125,8 +2149,8 @@ let lastAct=0,prev=null,deb=null;
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{lastAct=Date.now()},true));
 function onSum(){
  try{
-  const d=Math.max(all().filter(t=>t.s==2).length,remoteDoneCount());
-  snap(prev!=null&&d!==prev&&Date.now()-lastAct<1500?d-prev:0);
+  const d=Math.max(st(all()).pts,remoteDoneCount());
+  snap(prev!=null&&d!==prev&&Date.now()-lastAct<1500?Math.round((d-prev)*10)/10:0);
   prev=d;
  }catch(e){}
  if(typeof cfgS!=='undefined'&&cfgS&&typeof cfgS.tyler_photo==='string'&&cfgS.tyler_photo!==tylerPhoto){
@@ -2143,7 +2167,7 @@ function openBurn(){
  onSum();
  const l=logGet(),ks=Object.keys(l).sort(),today=mid(new Date());
  const end=mid(parse((typeof cfgS!=='undefined'&&cfgS.review_date)||RD)),start=ks.length?parse(ks[0]):today;
- const o=st(all()),rem=o.n-o.d,rem0=ks.length?(l[ks[0]].rem??rem):rem;
+ const o=st(all()),rem=Math.max(0,Math.round((o.n-o.pts)*10)/10),rem0=ks.length?(l[ks[0]].rem??rem):rem;
  const span=Math.max(1,Math.round((end-start)/MS)),daysLeft=Math.round((end-today)/MS);
  const W=640,H=300,ml=44,mr=16,mt=14,mb=34,iw=W-ml-mr,ih=H-mt-mb,ymax=Math.max(rem0,rem,1,...ks.map(k=>l[k].rem||0));
  const X=d=>ml+Math.min(1,Math.max(0,(mid(d)-start)/MS/span))*iw,Y=v=>mt+ih-(v/ymax)*ih;
@@ -2168,9 +2192,9 @@ function openBurn(){
  else if(daysLeft<0)fc='Перегляд уже позаду.';
  else if(pace>0){const nd=Math.ceil(rem/pace),fin=new Date(today.getTime()+nd*MS);fc=nd<=daysLeft?`У вашому темпі (${pace.toFixed(1)} завд. на день) усе буде готово до ${fd(fin)}: це на ${daysLeft-nd} ${pl(daysLeft-nd,['день','дні','днів'])} раніше за перегляд.`:`У темпі ${pace.toFixed(1)} завд. на день не вистачає часу. Треба закривати по ${need.toFixed(1)} на день.`}
  else fc='Щойно закриєте перше завдання, я порахую темп і прогноз. Крива наростає щодня, поки ви відкриваєте трекер.';
- openM(`<h3>Графік спалювання</h3><p>Пунктир показує ідеальний шлях до перегляду, суцільна лінія ваші справжні залишки.</p>
+ openM(`<h3>Графік спалювання</h3><p>Пунктир показує ідеальний шлях до перегляду, суцільна лінія ваші справжні залишки (почате завдання зменшує залишок на 0.5).</p>
  <div class="y-chart">${svg}</div>
- <div class="y-stats"><div><small>Лишилось завдань</small><b>${rem}</b></div><div><small>Днів до перегляду</small><b>${Math.max(0,daysLeft)}</b></div><div><small>Треба на день</small><b>${rem?need.toFixed(1):'0'}</b></div></div><p style="margin:0">${fc}</p>`);
+ <div class="y-stats"><div><small>Лишилось завдань</small><b>${fpts(rem)}</b></div><div><small>Днів до перегляду</small><b>${Math.max(0,daysLeft)}</b></div><div><small>Треба на день</small><b>${rem?need.toFixed(1):'0'}</b></div></div><p style="margin:0">${fc}</p>`);
 }
 
 /* ---------- 2. колесо долі ---------- */
@@ -2197,7 +2221,7 @@ function openWheel(){
   res.innerHTML=`<b>${esc(it.t.t)}</b><br><span class="mu">${esc(it.s.name)}</span><div class="y-row" style="justify-content:center"><button class="btn p" id="y-take" type="button">Беру в роботу</button></div>`;
   btn.disabled=false;btn.textContent='Крутити ще';tone(784,.14,'triangle',.05);tone(1046,.2,'sine',.04,.1);
   try{burst(40)}catch(e){}
-  $('y-take').onclick=()=>{if(it.t.s==0)it.t.s=1;save();render();closeM();say(`Колесо вирішило: «${it.t.t}». Вперед, я вірю 🐾`,'happy',true)};
+  $('y-take').onclick=()=>{if(it.t.s==0){it.t.s=1;recordTaskCompletionDelta(0.5)}save();render();closeM();say(`Колесо вирішило: «${it.t.t}». Вперед, я вірю 🐾`,'happy',true)};
  }
  btn.onclick=()=>{
   if(spinning)return;spinning=true;btn.disabled=true;res.innerHTML='';
